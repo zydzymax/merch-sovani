@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/db/prisma'
 import { formatPrice } from '@/lib/utils/format'
-import HeroShowcase from '@/components/HeroShowcase'
+import HeroShowcaseSticky from '@/components/HeroShowcaseSticky'
 
 export default async function HomePage() {
   // Fetch featured products
@@ -56,8 +56,8 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Hero Showcase - новый трехколоночный дизайн */}
-      <HeroShowcase />
+      {/* Hero Showcase Sticky - трехколоночный дизайн с липкими фото */}
+      <HeroShowcaseSticky />
 
       {/* Featured Products */}
       <section className="py-16 bg-white">
