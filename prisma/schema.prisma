@@ -1,0 +1,487 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  MOCK
+  YUKASSA
+}
+
+enum ShipmentStatus {
+  PENDING
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  CANCELLED
+}
+
+enum DrawStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum ProductCategory {
+  CLOTHING
+  SUPPLEMENTS
+  TICKETS
+}
+
+// ==================== USERS & AUTH ====================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?
+  name      String?
+  phone     String?
+  role      UserRole @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  addresses       Address[]
+  orders          Order[]
+  tickets         Ticket[]
+  entries         Entry[]
+  referralLinks   ReferralLink[]
+  sessions        Session[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String?
+  sessionId String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  cart CartItem[]
+
+  @@index([sessionId])
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Address {
+  id         String    @id @default(cuid())
+  userId     String
+  fullName   String
+  phone      String
+  country    String    @default("RU")
+  region     String
+  city       String
+  address    String
+  postalCode String
+  isDefault  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders   Order[]
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+// ==================== PRODUCTS ====================
+
+model Product {
+  id          String          @id @default(cuid())
+  name        String
+  slug        String          @unique
+  description String?         @db.Text
+  category    ProductCategory
+  images      String[]
+  features    Json?
+  seoTitle    String?
+  seoDesc     String?
+  isActive    Boolean         @default(true)
+  isFeatured  Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deletedAt   DateTime?
+
+  variants Variant[]
+
+  @@index([slug])
+  @@index([category])
+  @@index([isActive])
+  @@map("products")
+}
+
+model Variant {
+  id          String   @id @default(cuid())
+  productId   String
+  sku         String   @unique
+  name        String?
+  size        String?
+  color       String?
+  price       Int // в копейках
+  compareAt   Int? // старая цена
+  images      String[]
+  attributes  Json? // дополнительные атрибуты
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  product      Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  inventory    Inventory?
+  orderItems   OrderItem[]
+  cartItems    CartItem[]
+
+  @@index([sku])
+  @@index([productId])
+  @@map("variants")
+}
+
+model Inventory {
+  id        String   @id @default(cuid())
+  variantId String   @unique
+  quantity  Int      @default(0)
+  reserved  Int      @default(0) // зарезервировано в корзинах
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  variant Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([variantId])
+  @@map("inventory")
+}
+
+// ==================== CART ====================
+
+model CartItem {
+  id        String   @id @default(cuid())
+  sessionId String
+  variantId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  variant Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, variantId])
+  @@index([sessionId])
+  @@map("cart_items")
+}
+
+// ==================== ORDERS ====================
+
+model Order {
+  id                   String      @id @default(cuid())
+  orderNumber          String      @unique // ORDER-20250101-XXXX
+  userId               String?
+  sessionId            String?
+  email                String
+  phone                String
+  status               OrderStatus @default(PENDING)
+
+  // Shipping
+  addressId            String?
+  shippingMethod       String? // "pochta_rf", "cdek", etc.
+  shippingCost         Int         @default(0)
+  shippingFullName     String?
+  shippingAddress      String?
+  shippingCity         String?
+  shippingRegion       String?
+  shippingPostalCode   String?
+  shippingCountry      String      @default("RU")
+
+  // Totals
+  subtotal             Int // сумма товаров
+  total                Int // subtotal + shipping
+
+  // Promo participation
+  participatesInPromo  Boolean     @default(false)
+  hasReturnRight       Boolean     @default(true)
+  entryCode            String?     @unique
+
+  // Metadata
+  notes                String?     @db.Text
+  metadata             Json?
+
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  deletedAt            DateTime?
+
+  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  address    Address?    @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  items      OrderItem[]
+  payments   Payment[]
+  shipments  Shipment[]
+  entries    Entry[]
+
+  @@index([orderNumber])
+  @@index([userId])
+  @@index([email])
+  @@index([status])
+  @@index([entryCode])
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String   @id @default(cuid())
+  orderId         String
+  variantId       String
+  quantity        Int
+  priceAtPurchase Int // цена на момент заказа
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant Variant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model Payment {
+  id             String          @id @default(cuid())
+  orderId        String
+  provider       PaymentProvider
+  status         PaymentStatus   @default(PENDING)
+  amount         Int
+  currency       String          @default("RUB")
+  transactionId  String?         @unique
+  confirmationUrl String?
+  metadata       Json?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([transactionId])
+  @@map("payments")
+}
+
+model Shipment {
+  id           String         @id @default(cuid())
+  orderId      String
+  trackingCode String?
+  carrier      String?
+  status       ShipmentStatus @default(PENDING)
+  shippedAt    DateTime?
+  deliveredAt  DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([trackingCode])
+  @@map("shipments")
+}
+
+// ==================== TICKETS ====================
+
+model TicketTier {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  price       Int
+  perks       Json // массив привилегий
+  entryWeight Int      @default(1) // вес шанса
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tickets Ticket[]
+
+  @@map("ticket_tiers")
+}
+
+model Ticket {
+  id        String       @id @default(cuid())
+  tierId    String
+  userId    String?
+  orderId   String?
+  qrPayload String       @unique
+  status    TicketStatus @default(VALID)
+  usedAt    DateTime?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  tier    TicketTier @relation(fields: [tierId], references: [id], onDelete: Restrict)
+  user    User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  entries Entry[]
+
+  @@index([qrPayload])
+  @@index([userId])
+  @@map("tickets")
+}
+
+// ==================== PROMO & DRAWS ====================
+
+model Prize {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  image       String?
+  value       Int? // примерная стоимость в копейках
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  draws Draw[]
+
+  @@map("prizes")
+}
+
+model Draw {
+  id          String     @id @default(cuid())
+  name        String
+  description String?    @db.Text
+  prizeId     String?
+  status      DrawStatus @default(UPCOMING)
+  startsAt    DateTime
+  endsAt      DateTime
+  seed        String? // для воспроизводимого розыгрыша
+  winnerId    String?
+  metadata    Json?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  prize   Prize?  @relation(fields: [prizeId], references: [id], onDelete: SetNull)
+  entries Entry[]
+
+  @@index([status])
+  @@index([startsAt])
+  @@index([endsAt])
+  @@map("draws")
+}
+
+model Entry {
+  id         String   @id @default(cuid())
+  uniqueCode String   @unique
+  userId     String?
+  orderId    String?
+  ticketId   String?
+  drawId     String?
+  weight     Int      @default(1) // вес шанса (от тира билета или реферала)
+  source     String? // "order", "ticket", "referral"
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  order  Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  ticket Ticket? @relation(fields: [ticketId], references: [id], onDelete: SetNull)
+  draw   Draw?   @relation(fields: [drawId], references: [id], onDelete: SetNull)
+
+  @@index([uniqueCode])
+  @@index([userId])
+  @@index([drawId])
+  @@map("entries")
+}
+
+// ==================== REFERRALS ====================
+
+model ReferralLink {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  ownerId   String
+  utm       Json?
+  clicks    Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  hits  ReferralHit[]
+
+  @@index([code])
+  @@index([ownerId])
+  @@map("referral_links")
+}
+
+model ReferralHit {
+  id               String    @id @default(cuid())
+  referralLinkId   String
+  ipAddress        String?
+  userAgent        String?
+  convertedOrderId String?
+  createdAt        DateTime  @default(now())
+
+  referralLink ReferralLink @relation(fields: [referralLinkId], references: [id], onDelete: Cascade)
+
+  @@index([referralLinkId])
+  @@map("referral_hits")
+}
+
+// ==================== SETTINGS & AUDIT ====================
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@map("settings")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  changes   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
