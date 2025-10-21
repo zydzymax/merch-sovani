@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/db/prisma'
 import { formatPrice } from '@/lib/utils/format'
+import HeroShowcase from '@/components/HeroShowcase'
 
 export default async function HomePage() {
   // Fetch featured products
@@ -55,39 +56,8 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-secondary via-background to-accent/20 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 text-primary">
-              1 покупка = 1 шанс выиграть
-            </h1>
-            <p className="text-xl mb-8 text-foreground/80">
-              {activeDraw?.prize?.name || 'Удивительные призы'} и многое другое!
-            </p>
-            {daysLeft > 0 && (
-              <div className="inline-block bg-white rounded-lg shadow-lg px-8 py-4 mb-8">
-                <p className="text-sm text-muted-foreground mb-1">До конца акции осталось</p>
-                <p className="text-4xl font-bold text-primary">{daysLeft} дней</p>
-              </div>
-            )}
-            <div className="flex gap-4 justify-center">
-              <Link
-                href="/catalog"
-                className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-lg font-medium"
-              >
-                Начать покупки
-              </Link>
-              <Link
-                href="/promo"
-                className="px-8 py-3 bg-white text-primary border-2 border-primary rounded-lg hover:bg-primary/5 transition-colors text-lg font-medium"
-              >
-                Узнать больше
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Showcase - новый трехколоночный дизайн */}
+      <HeroShowcase />
 
       {/* Featured Products */}
       <section className="py-16 bg-white">
