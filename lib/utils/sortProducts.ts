@@ -1,14 +1,6 @@
 import { chancesForProduct } from '@/lib/chances'
 
-type Product = {
-  id: string
-  slug: string
-  name: string
-  createdAt: Date
-  variants: Array<{
-    price: number
-  }>
-}
+type Product = any // Using any to avoid type conflicts with Prisma generated types
 
 export function sortProducts(products: Product[], sortBy: string = 'new'): Product[] {
   const sorted = [...products]
