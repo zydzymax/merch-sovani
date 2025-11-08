@@ -19,7 +19,6 @@ interface FeaturedProductsGridProps {
 }
 
 export function FeaturedProductsGrid({ products }: FeaturedProductsGridProps) {
-  const displayProducts = products.slice(0, 4)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
@@ -63,7 +62,7 @@ export function FeaturedProductsGrid({ products }: FeaturedProductsGridProps) {
           msOverflowStyle: 'none',
         }}
       >
-      {displayProducts.map((product) => {
+      {products.map((product) => {
         const variant = product.variants[0]
         const hasDiscount = variant?.compareAt && variant.compareAt > variant.price
         const chances = chancesForProduct({ id: product.id, slug: product.slug, name: product.name })
