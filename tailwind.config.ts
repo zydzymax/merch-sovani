@@ -51,6 +51,18 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Премиальная новогодняя палитра
+        brand: {
+          red: '#B4002D',
+          gold: '#E8C16A',
+          forest: '#1F3D2B',
+          cream: '#FAF3E7',
+          dark: '#281A12',
+        },
+        // Алиасы для обратной совместимости
+        'christmas-red': '#B4002D',
+        'christmas-green': '#1F3D2B',
+        'christmas-gold': '#E8C16A',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -60,6 +72,7 @@ const config: Config = {
       fontFamily: {
         serif: ['var(--font-playfair)', 'Playfair Display', 'serif'],
         sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
+        script: ['var(--font-marck)', 'Marck Script', 'cursive'],
       },
       keyframes: {
         'accordion-down': {
@@ -70,10 +83,23 @@ const config: Config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'twinkle': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.3' },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'twinkle': 'twinkle 2s ease-in-out infinite',
+        'float': 'float 3s ease-in-out infinite',
+      },
+      backgroundImage: {
+        'snowflakes': "url('/assets/xmas/snowflakes-pattern.svg')",
       },
     },
   },

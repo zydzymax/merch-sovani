@@ -1,4 +1,4 @@
-import { PrismaClient, ProductCategory, DrawStatus, TicketStatus } from '@prisma/client'
+import { PrismaClient, ProductCategory, DrawStatus } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -14,8 +14,6 @@ async function main() {
     prisma.entry.deleteMany(),
     prisma.draw.deleteMany(),
     prisma.prize.deleteMany(),
-    prisma.ticket.deleteMany(),
-    prisma.ticketTier.deleteMany(),
     prisma.shipment.deleteMany(),
     prisma.payment.deleteMany(),
     prisma.orderItem.deleteMany(),
@@ -57,205 +55,66 @@ async function main() {
   })
   console.log('✅ Created test customer:', customer.email)
 
-  // Create products (6 demo products)
+  // Create 6 products (4 from Nikita Minchenko, 2 from SoVAni)
   const products = await Promise.all([
-    // 1. Футболка
+    // 1. Брелок от Никиты Минченко (исправлено)
     prisma.product.create({
       data: {
-        name: 'Хлопковая футболка Premium',
-        slug: 'cotton-premium-tshirt',
+        name: 'Брелок Никита Минченко',
+        slug: 'brelok-nikita-minchenko',
         description:
-          'Классическая футболка из 100% органического хлопка. Комфортная посадка, дышащая ткань, идеально для повседневной носки.',
+          'Стильный брелок от блогера Никиты Минченко из прочных материалов. Компактный и практичный аксессуар для ключей.',
         category: ProductCategory.CLOTHING,
         images: [
-          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
-          'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800',
+          'https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?q=80&w=1600',
         ],
         features: {
-          material: '100% органический хлопок',
-          care: 'Машинная стирка при 30°C',
-          country: 'Турция',
+          material: 'Металл, кожа',
+          care: 'Протирать сухой тканью',
         },
         isFeatured: true,
         isActive: true,
         variants: {
           create: [
             {
-              sku: 'TSHIRT-WHITE-S',
-              name: 'Белая S',
-              size: 'S',
-              color: 'Белый',
-              price: 199000, // 1990 руб
-              compareAt: 249000,
-              images: ['https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'],
+              sku: 'BRELOK-MINCHENKO-01',
+              name: 'Стандартный',
+              price: 150000, // 1500 руб
+              images: ['https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?q=80&w=1600'],
               sortOrder: 1,
               isActive: true,
               inventory: {
-                create: { quantity: 50, reserved: 0 },
-              },
-            },
-            {
-              sku: 'TSHIRT-WHITE-M',
-              name: 'Белая M',
-              size: 'M',
-              color: 'Белый',
-              price: 199000,
-              compareAt: 249000,
-              images: ['https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'],
-              sortOrder: 2,
-              isActive: true,
-              inventory: {
                 create: { quantity: 100, reserved: 0 },
               },
             },
-            {
-              sku: 'TSHIRT-BLACK-M',
-              name: 'Черная M',
-              size: 'M',
-              color: 'Черный',
-              price: 199000,
-              compareAt: 249000,
-              images: ['https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800'],
-              sortOrder: 3,
-              isActive: true,
-              inventory: {
-                create: { quantity: 75, reserved: 0 },
-              },
-            },
           ],
         },
       },
     }),
 
-    // 2. Лонгслив
+    // 2. Значок SoVAni (оставить как есть)
     prisma.product.create({
       data: {
-        name: 'Лонгслив оверсайз',
-        slug: 'oversized-longsleeve',
-        description: 'Стильный оверсайз лонгслив для создания модного casual образа. Мягкая ткань, свободный крой.',
+        name: 'Значок Никита Минченко',
+        slug: 'znachok-nikita-minchenko',
+        description: 'Коллекционный значок SoVAni с фирменным логотипом. Металлическая застежка, яркий дизайн.',
         category: ProductCategory.CLOTHING,
         images: [
-          'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800',
+          'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1600',
         ],
-        isFeatured: false,
-        isActive: true,
-        variants: {
-          create: [
-            {
-              sku: 'LONG-BEIGE-M',
-              name: 'Бежевый M',
-              size: 'M',
-              color: 'Бежевый',
-              price: 299000,
-              images: ['https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800'],
-              isActive: true,
-              inventory: {
-                create: { quantity: 30, reserved: 0 },
-              },
-            },
-            {
-              sku: 'LONG-BEIGE-L',
-              name: 'Бежевый L',
-              size: 'L',
-              color: 'Бежевый',
-              price: 299000,
-              images: ['https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800'],
-              isActive: true,
-              inventory: {
-                create: { quantity: 40, reserved: 0 },
-              },
-            },
-          ],
+        features: {
+          material: 'Металл, эмаль',
+          size: '3x3 см',
         },
-      },
-    }),
-
-    // 3. Худи
-    prisma.product.create({
-      data: {
-        name: 'Худи с капюшоном Premium',
-        slug: 'premium-hoodie',
-        description:
-          'Теплое худи из плотного трикотажа. Удобный капюшон, карман-кенгуру, рибаная отделка.',
-        category: ProductCategory.CLOTHING,
-        images: [
-          'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
-        ],
         isFeatured: true,
         isActive: true,
         variants: {
           create: [
             {
-              sku: 'HOODIE-GRAY-M',
-              name: 'Серое M',
-              size: 'M',
-              color: 'Серый',
-              price: 449000,
-              compareAt: 599000,
-              images: ['https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800'],
-              isActive: true,
-              inventory: {
-                create: { quantity: 60, reserved: 0 },
-              },
-            },
-          ],
-        },
-      },
-    }),
-
-    // 4. Штаны
-    prisma.product.create({
-      data: {
-        name: 'Спортивные брюки комфорт',
-        slug: 'comfort-sport-pants',
-        description: 'Удобные спортивные брюки для активного отдыха и прогулок.',
-        category: ProductCategory.CLOTHING,
-        images: [
-          'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800',
-        ],
-        isActive: true,
-        variants: {
-          create: [
-            {
-              sku: 'PANTS-BLACK-M',
-              name: 'Черные M',
-              size: 'M',
-              color: 'Черный',
-              price: 349000,
-              images: ['https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800'],
-              isActive: true,
-              inventory: {
-                create: { quantity: 45, reserved: 0 },
-              },
-            },
-          ],
-        },
-      },
-    }),
-
-    // 5. БАД 1
-    prisma.product.create({
-      data: {
-        name: 'Витамин C + Цинк',
-        slug: 'vitamin-c-zinc',
-        description:
-          'Комплекс для поддержки иммунитета. 60 капсул. БАД не является лекарственным средством.',
-        category: ProductCategory.SUPPLEMENTS,
-        images: [
-          'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800',
-        ],
-        features: {
-          dosage: '1 капсула в день',
-          capsules: 60,
-          warning: 'Перед применением проконсультируйтесь со специалистом',
-        },
-        isActive: true,
-        variants: {
-          create: [
-            {
-              sku: 'SUPPL-VIT-C-60',
-              price: 79900,
-              images: ['https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800'],
+              sku: 'BADGE-SOVANI-01',
+              name: 'Стандартный',
+              price: 150000, // 1500 руб
+              images: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1600'],
               isActive: true,
               inventory: {
                 create: { quantity: 100, reserved: 0 },
@@ -266,34 +125,132 @@ async function main() {
       },
     }),
 
-    // 6. БАД 2
+    // 3. Стикер от Никиты Минченко (исправлено)
     prisma.product.create({
       data: {
-        name: 'Омега-3 Premium',
-        slug: 'omega-3-premium',
+        name: 'Стикер Никита Минченко',
+        slug: 'stiker-nikita-minchenko',
         description:
-          'Высококачественная Омега-3 из дикой рыбы. 90 капсул. БАД не является лекарственным средством.',
-        category: ProductCategory.SUPPLEMENTS,
+          'Водостойкая виниловая наклейка от блогера Никиты Минченко. Идеально для ноутбука, телефона или любой гладкой поверхности.',
+        category: ProductCategory.CLOTHING,
         images: [
-          'https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=800',
+          'https://images.unsplash.com/photo-1594587411474-18400cd64c8e?q=80&w=1600',
         ],
         features: {
-          dosage: '2 капсулы в день',
-          capsules: 90,
-          warning: 'Перед применением проконсультируйтесь со специалистом',
+          material: 'Виниловая пленка',
+          waterproof: 'Водостойкая',
         },
         isFeatured: true,
         isActive: true,
         variants: {
           create: [
             {
-              sku: 'SUPPL-OMEGA3-90',
-              price: 129900,
-              compareAt: 159900,
-              images: ['https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=800'],
+              sku: 'STICKER-MINCHENKO-01',
+              name: 'Стандартный',
+              price: 150000, // 1500 руб
+              images: ['https://images.unsplash.com/photo-1594587411474-18400cd64c8e?q=80&w=1600'],
               isActive: true,
               inventory: {
-                create: { quantity: 80, reserved: 0 },
+                create: { quantity: 100, reserved: 0 },
+              },
+            },
+          ],
+        },
+      },
+    }),
+
+    // 4. Шеврон от Никиты Минченко (исправлено)
+    prisma.product.create({
+      data: {
+        name: 'Шеврон Никита Минченко',
+        slug: 'shevron-nikita-minchenko',
+        description: 'Вышитый шеврон от блогера Никиты Минченко. Можно пришить или приклеить на одежду, рюкзак или сумку.',
+        category: ProductCategory.CLOTHING,
+        images: [
+          'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1600',
+        ],
+        features: {
+          material: 'Вышивка на ткани',
+          mounting: 'Пришивной или термоклеевой',
+        },
+        isFeatured: true,
+        isActive: true,
+        variants: {
+          create: [
+            {
+              sku: 'PATCH-MINCHENKO-01',
+              name: 'Стандартный',
+              price: 200000, // 2000 руб
+              images: ['https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1600'],
+              isActive: true,
+              inventory: {
+                create: { quantity: 100, reserved: 0 },
+              },
+            },
+          ],
+        },
+      },
+    }),
+
+    // 5. Футболка оверсайз от Никиты Минченко (исправлено)
+    prisma.product.create({
+      data: {
+        name: 'Футболка оверсайз Никита Минченко',
+        slug: 'futbolka-oversize-nikita-minchenko',
+        description: 'Стильная футболка оверсайз от блогера Никиты Минченко из премиального хлопка. Свободный крой, максимальный комфорт.',
+        category: ProductCategory.CLOTHING,
+        images: [
+          'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1600',
+        ],
+        features: {
+          material: '100% премиальный хлопок',
+          fit: 'Oversized',
+        },
+        isFeatured: true,
+        isActive: true,
+        variants: {
+          create: [
+            {
+              sku: 'TSHIRT-OS-MINCHENKO-01',
+              name: 'Оверсайз',
+              price: 250000, // 2500 руб
+              images: ['https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1600'],
+              isActive: true,
+              inventory: {
+                create: { quantity: 100, reserved: 0 },
+              },
+            },
+          ],
+        },
+      },
+    }),
+
+    // 6. Пижама женская SoVAni (оставить как есть)
+    prisma.product.create({
+      data: {
+        name: 'Пижама женская SoVAni',
+        slug: 'pizhama-zhenskaya-sovani',
+        description: 'Уютная женская пижама SoVAni из мягкого трикотажа. Комплект из кофты и брюк для максимального комфорта.',
+        category: ProductCategory.CLOTHING,
+        images: [
+          'https://images.unsplash.com/photo-1609873814058-a8928924184a?q=80&w=1600',
+        ],
+        features: {
+          includes: 'Кофта + брюки',
+          material: 'Мягкий трикотаж',
+        },
+        isFeatured: true,
+        isActive: true,
+        variants: {
+          create: [
+            {
+              sku: 'PAJAMA-SOVANI-01',
+              name: 'Стандартный',
+              price: 300000, // 3000 руб
+              images: ['https://images.unsplash.com/photo-1609873814058-a8928924184a?q=80&w=1600'],
+              isActive: true,
+              inventory: {
+                create: { quantity: 100, reserved: 0 },
               },
             },
           ],
@@ -303,92 +260,33 @@ async function main() {
   ])
   console.log('✅ Created', products.length, 'products')
 
-  // Create ticket tiers (3 tiers)
-  const tiers = await Promise.all([
-    prisma.ticketTier.create({
-      data: {
-        name: 'Стандарт',
-        description: 'Базовый доступ к ивенту',
-        price: 199000,
-        perks: ['Вход на мероприятие', 'Приветственный набор', '1 шанс в розыгрыше'],
-        entryWeight: 1,
-        sortOrder: 1,
-        isActive: true,
-      },
-    }),
-    prisma.ticketTier.create({
-      data: {
-        name: 'VIP',
-        description: 'Расширенный доступ',
-        price: 499000,
-        perks: [
-          'Вход на мероприятие',
-          'VIP-зона',
-          'Meet & Greet',
-          'Эксклюзивный мерч',
-          '3 шанса в розыгрыше',
-        ],
-        entryWeight: 3,
-        sortOrder: 2,
-        isActive: true,
-      },
-    }),
-    prisma.ticketTier.create({
-      data: {
-        name: 'Premium',
-        description: 'Максимальные привилегии',
-        price: 999000,
-        perks: [
-          'Все привилегии VIP',
-          'Backstage-доступ',
-          'Персональный ассистент',
-          'Приоритетная регистрация',
-          '5 шансов в розыгрыше',
-        ],
-        entryWeight: 5,
-        sortOrder: 3,
-        isActive: true,
-      },
-    }),
-  ])
-  console.log('✅ Created', tiers.length, 'ticket tiers')
-
-  // Create prizes (4 prizes)
+  // Create prizes (3 prizes ONLY)
   const prizes = await Promise.all([
     prisma.prize.create({
       data: {
-        name: 'iPhone 16 Pro Max',
-        description: 'Новейший смартфон Apple',
-        image: 'https://images.unsplash.com/photo-1696446702797-60d56d98c076?w=800',
-        value: 15000000,
+        name: 'iPhone 17 Pro',
+        description: 'Новейший смартфон Apple iPhone 17 Pro',
+        image: 'https://images.unsplash.com/photo-1696446702797-60d56d98c076?q=80&w=800',
+        value: 15000000, // 150 тыс руб
         sortOrder: 1,
       },
     }),
     prisma.prize.create({
       data: {
-        name: 'Сертификат 50 000 ₽',
-        description: 'На покупку товаров в нашем магазине',
-        image: 'https://images.unsplash.com/photo-1607863680198-23d4b2565df0?w=800',
-        value: 5000000,
+        name: 'Apple Watch Ultra 3',
+        description: 'Умные часы Apple Watch Ultra 3',
+        image: 'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?q=80&w=800',
+        value: 5000000, // 50 тыс руб
         sortOrder: 2,
       },
     }),
     prisma.prize.create({
       data: {
-        name: 'AirPods Pro',
-        description: 'Беспроводные наушники Apple',
-        image: 'https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=800',
-        value: 2500000,
+        name: 'Xreal One',
+        description: 'AR очки нового поколения Xreal One',
+        image: 'https://images.unsplash.com/photo-1617802690992-15d93263d3a9?q=80&w=800',
+        value: 4000000, // 40 тыс руб
         sortOrder: 3,
-      },
-    }),
-    prisma.prize.create({
-      data: {
-        name: 'Набор одежды Premium',
-        description: 'Эксклюзивный набор из 5 вещей',
-        image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=800',
-        value: 1500000,
-        sortOrder: 4,
       },
     }),
   ])
@@ -399,15 +297,17 @@ async function main() {
   const endsAt = new Date(process.env.PROMO_ENDS_AT || '2025-12-31T23:59:59Z')
   const draw = await prisma.draw.create({
     data: {
-      name: 'Новогодний розыгрыш 2025',
+      name: 'Еженедельный розыгрыш призов SoVAni',
       description:
-        'Главный розыгрыш года! Участвуй в акции "1 покупка = 1 шанс" и выиграй один из призов.',
-      prizeId: prizes[0].id,
+        'Участвуй в акции "1 покупка = 1 шанс". Каждую неделю разыгрываем призы: iPhone 17 Pro, Apple Watch Ultra 3 и Xreal One!',
+      prizeId: prizes[0].id, // iPhone 17 Pro - главный приз
       status: DrawStatus.ACTIVE,
       startsAt: now,
       endsAt: endsAt,
       metadata: {
         rules: 'Полные правила см. на странице /legal/promo-rules',
+        drawFrequency: 'weekly',
+        prizesOrder: 'iPhone 17 Pro, Apple Watch Ultra 3, Xreal One разыгрываются еженедельно.',
       },
     },
   })
@@ -438,16 +338,6 @@ async function main() {
       {
         key: 'promo_ends_at',
         value: endsAt.toISOString(),
-      },
-      {
-        key: 'entry_weights',
-        value: {
-          order: 1,
-          ticket_standard: 1,
-          ticket_vip: 3,
-          ticket_premium: 5,
-          referral: 1,
-        },
       },
       {
         key: 'shipping_pochta_rf',

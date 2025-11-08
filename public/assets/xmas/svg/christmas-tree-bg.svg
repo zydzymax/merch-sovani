@@ -1,0 +1,132 @@
+<svg width="1200" height="1000" viewBox="0 0 1200 1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <radialGradient id="glow-gold" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFD700;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="glow-red" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FF0000;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FF0000;stop-opacity:0" />
+    </radialGradient>
+    <linearGradient id="tree-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1F3D2B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0F2D1B;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Tree trunk -->
+  <rect x="560" y="820" width="80" height="120" fill="#4A2511" rx="5"/>
+  <rect x="565" y="825" width="70" height="110" fill="#5D3319" rx="3"/>
+
+  <!-- Tree layers (bottom to top) -->
+  <!-- Layer 5 - Bottom -->
+  <path d="M 600 820 L 300 820 L 450 650 L 400 650 L 600 400 L 800 650 L 750 650 L 900 820 Z"
+        fill="url(#tree-gradient)" stroke="#1A3321" stroke-width="2"/>
+
+  <!-- Layer 4 -->
+  <path d="M 600 680 L 350 680 L 470 550 L 430 550 L 600 350 L 770 550 L 730 550 L 850 680 Z"
+        fill="url(#tree-gradient)" stroke="#1A3321" stroke-width="2"/>
+
+  <!-- Layer 3 -->
+  <path d="M 600 550 L 400 550 L 490 450 L 460 450 L 600 300 L 740 450 L 710 450 L 800 550 Z"
+        fill="url(#tree-gradient)" stroke="#1A3321" stroke-width="2"/>
+
+  <!-- Layer 2 -->
+  <path d="M 600 430 L 450 430 L 510 360 L 490 360 L 600 250 L 710 360 L 690 360 L 750 430 Z"
+        fill="url(#tree-gradient)" stroke="#1A3321" stroke-width="2"/>
+
+  <!-- Layer 1 - Top -->
+  <path d="M 600 320 L 500 320 L 540 270 L 600 200 L 660 270 L 700 320 Z"
+        fill="url(#tree-gradient)" stroke="#1A3321" stroke-width="2"/>
+
+  <!-- Star on top -->
+  <g transform="translate(600, 180)">
+    <path d="M 0,-30 L 7,-10 L 28,-10 L 11,2 L 18,22 L 0,10 L -18,22 L -11,2 L -28,-10 L -7,-10 Z"
+          fill="#E8C16A" stroke="#D4A843" stroke-width="2"/>
+    <circle cx="0" cy="-15" r="35" fill="url(#glow-gold)" opacity="0.4"/>
+  </g>
+
+  <!-- String lights garland - swooping across tree -->
+  <!-- Light bulbs with glows -->
+  <!-- Row 1 -->
+  <circle cx="320" cy="800" r="12" fill="#FF4444"/>
+  <circle cx="320" cy="800" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="400" cy="760" r="12" fill="#E8C16A"/>
+  <circle cx="400" cy="760" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="480" cy="740" r="12" fill="#FF4444"/>
+  <circle cx="480" cy="740" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="560" cy="730" r="12" fill="#E8C16A"/>
+  <circle cx="560" cy="730" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="640" cy="730" r="12" fill="#FF4444"/>
+  <circle cx="640" cy="730" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="720" cy="740" r="12" fill="#E8C16A"/>
+  <circle cx="720" cy="740" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="800" cy="760" r="12" fill="#FF4444"/>
+  <circle cx="800" cy="760" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="880" cy="800" r="12" fill="#E8C16A"/>
+  <circle cx="880" cy="800" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+
+  <!-- Row 2 -->
+  <circle cx="360" cy="660" r="12" fill="#E8C16A"/>
+  <circle cx="360" cy="660" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="440" cy="630" r="12" fill="#FF4444"/>
+  <circle cx="440" cy="630" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="520" cy="610" r="12" fill="#E8C16A"/>
+  <circle cx="520" cy="610" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="600" cy="600" r="12" fill="#FF4444"/>
+  <circle cx="600" cy="600" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="680" cy="610" r="12" fill="#E8C16A"/>
+  <circle cx="680" cy="610" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="760" cy="630" r="12" fill="#FF4444"/>
+  <circle cx="760" cy="630" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="840" cy="660" r="12" fill="#E8C16A"/>
+  <circle cx="840" cy="660" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+
+  <!-- Row 3 -->
+  <circle cx="420" cy="510" r="12" fill="#FF4444"/>
+  <circle cx="420" cy="510" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="500" cy="490" r="12" fill="#E8C16A"/>
+  <circle cx="500" cy="490" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="580" cy="480" r="12" fill="#FF4444"/>
+  <circle cx="580" cy="480" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="620" cy="480" r="12" fill="#E8C16A"/>
+  <circle cx="620" cy="480" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="700" cy="490" r="12" fill="#FF4444"/>
+  <circle cx="700" cy="490" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="780" cy="510" r="12" fill="#E8C16A"/>
+  <circle cx="780" cy="510" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+
+  <!-- Row 4 -->
+  <circle cx="470" cy="390" r="12" fill="#E8C16A"/>
+  <circle cx="470" cy="390" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="540" cy="370" r="12" fill="#FF4444"/>
+  <circle cx="540" cy="370" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="600" cy="360" r="12" fill="#E8C16A"/>
+  <circle cx="600" cy="360" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+  <circle cx="660" cy="370" r="12" fill="#FF4444"/>
+  <circle cx="660" cy="370" r="18" fill="url(#glow-red)" opacity="0.5"/>
+  <circle cx="730" cy="390" r="12" fill="#E8C16A"/>
+  <circle cx="730" cy="390" r="18" fill="url(#glow-gold)" opacity="0.5"/>
+
+  <!-- Ornament balls on tree -->
+  <circle cx="380" cy="750" r="16" fill="#B4002D" stroke="#8B0022" stroke-width="2"/>
+  <circle cx="550" cy="680" r="18" fill="#E8C16A" stroke="#D4A843" stroke-width="2"/>
+  <circle cx="720" cy="620" r="16" fill="#B4002D" stroke="#8B0022" stroke-width="2"/>
+  <circle cx="480" cy="570" r="20" fill="#E8C16A" stroke="#D4A843" stroke-width="2"/>
+  <circle cx="650" cy="540" r="16" fill="#B4002D" stroke="#8B0022" stroke-width="2"/>
+  <circle cx="520" cy="430" r="18" fill="#E8C16A" stroke="#D4A843" stroke-width="2"/>
+  <circle cx="680" cy="450" r="16" fill="#B4002D" stroke="#8B0022" stroke-width="2"/>
+  <circle cx="570" cy="310" r="14" fill="#E8C16A" stroke="#D4A843" stroke-width="2"/>
+  <circle cx="630" cy="290" r="14" fill="#B4002D" stroke="#8B0022" stroke-width="2"/>
+
+  <!-- Wire connecting lights (subtle) -->
+  <path d="M 320 800 Q 360 780 400 760 T 480 740 T 560 730 T 640 730 T 720 740 T 800 760 T 880 800"
+        stroke="#1A3321" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M 360 660 Q 400 645 440 630 T 520 610 T 600 600 T 680 610 T 760 630 T 840 660"
+        stroke="#1A3321" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M 420 510 Q 460 500 500 490 T 580 480 T 620 480 T 700 490 T 780 510"
+        stroke="#1A3321" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M 470 390 Q 505 380 540 370 T 600 360 T 660 370 T 730 390"
+        stroke="#1A3321" stroke-width="2" fill="none" opacity="0.3"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg width="32" height="40" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="12" y="0" width="8" height="6" rx="2" fill="#E8C16A"/>
+  <circle cx="16" cy="22" r="14" fill="#B4002D"/>
+  <circle cx="16" cy="22" r="14" fill="url(#ornament-gradient)"/>
+  <ellipse cx="10" cy="16" rx="4" ry="6" fill="white" opacity="0.3"/>
+  <defs>
+    <radialGradient id="ornament-gradient">
+      <stop offset="0%" stop-color="#B4002D" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#8B0020" stop-opacity="1"/>
+    </radialGradient>
+  </defs>
+</svg>

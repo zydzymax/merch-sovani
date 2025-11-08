@@ -1,4 +1,4 @@
-# 🚀 Инструкции по деплою Fashion Shop на VPS
+# 🚀 Инструкции по деплою SoVAni на VPS
 
 ## Оглавление
 1. [Локальная разработка](#локальная-разработка)
@@ -78,7 +78,7 @@ SMTP_PORT=465
 SMTP_SECURE=true
 SMTP_USER=noreply@yourdomain.ru
 SMTP_PASS=your-smtp-password
-SMTP_FROM="Fashion Shop <noreply@yourdomain.ru>"
+SMTP_FROM="SoVAni <noreply@yourdomain.ru>"
 
 # Yandex.Metrika
 NEXT_PUBLIC_YANDEX_METRIKA_ID=12345678
@@ -236,7 +236,7 @@ SMTP_PORT=465
 SMTP_SECURE=true
 SMTP_USER=noreply@yourdomain.ru
 SMTP_PASS=your-app-password
-SMTP_FROM="Fashion Shop <noreply@yourdomain.ru>"
+SMTP_FROM="SoVAni <noreply@yourdomain.ru>"
 \`\`\`
 
 ### Вариант 2: Resend
@@ -249,7 +249,7 @@ SMTP_FROM="Fashion Shop <noreply@yourdomain.ru>"
 \`\`\`env
 EMAIL_PROVIDER=resend
 RESEND_API_KEY=re_xxx...
-SMTP_FROM="Fashion Shop <noreply@yourdomain.ru>"
+SMTP_FROM="SoVAni <noreply@yourdomain.ru>"
 \`\`\`
 
 ### Тестирование
@@ -261,7 +261,7 @@ const { sendEmail } = require('./lib/email/send');
 sendEmail({
   to: 'your@email.com',
   subject: 'Test',
-  html: '<p>Hello from Fashion Shop!</p>'
+  html: '<p>Hello from SoVAni!</p>'
 });
 "
 \`\`\`

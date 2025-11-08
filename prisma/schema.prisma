@@ -45,12 +45,6 @@ enum ShipmentStatus {
   RETURNED
 }
 
-enum TicketStatus {
-  VALID
-  USED
-  CANCELLED
-}
-
 enum DrawStatus {
   UPCOMING
   ACTIVE
@@ -61,7 +55,6 @@ enum DrawStatus {
 enum ProductCategory {
   CLOTHING
   SUPPLEMENTS
-  TICKETS
 }
 
 // ==================== USERS & AUTH ====================
@@ -79,7 +72,6 @@ model User {
 
   addresses       Address[]
   orders          Order[]
-  tickets         Ticket[]
   entries         Entry[]
   referralLinks   ReferralLink[]
   sessions        Session[]
@@ -319,45 +311,6 @@ model Shipment {
   @@map("shipments")
 }
 
-// ==================== TICKETS ====================
-
-model TicketTier {
-  id          String   @id @default(cuid())
-  name        String
-  description String?  @db.Text
-  price       Int
-  perks       Json // массив привилегий
-  entryWeight Int      @default(1) // вес шанса
-  sortOrder   Int      @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tickets Ticket[]
-
-  @@map("ticket_tiers")
-}
-
-model Ticket {
-  id        String       @id @default(cuid())
-  tierId    String
-  userId    String?
-  orderId   String?
-  qrPayload String       @unique
-  status    TicketStatus @default(VALID)
-  usedAt    DateTime?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-
-  tier    TicketTier @relation(fields: [tierId], references: [id], onDelete: Restrict)
-  user    User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
-  entries Entry[]
-
-  @@index([qrPayload])
-  @@index([userId])
-  @@map("tickets")
-}
-
 // ==================== PROMO & DRAWS ====================
 
 model Prize {
@@ -403,17 +356,15 @@ model Entry {
   uniqueCode String   @unique
   userId     String?
   orderId    String?
-  ticketId   String?
   drawId     String?
-  weight     Int      @default(1) // вес шанса (от тира билета или реферала)
-  source     String? // "order", "ticket", "referral"
+  weight     Int      @default(1) // вес шанса
+  source     String? // "order", "referral"
   metadata   Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   order  Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
-  ticket Ticket? @relation(fields: [ticketId], references: [id], onDelete: SetNull)
   draw   Draw?   @relation(fields: [drawId], references: [id], onDelete: SetNull)
 
   @@index([uniqueCode])
@@ -484,4 +435,37 @@ model AuditLog {
   @@index([entity, entityId])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+// ==================== LEGAL COMPLIANCE (152-ФЗ) ====================
+
+model LegalDoc {
+  id          String   @id @default(cuid())
+  docKey      String   // 'privacy', 'consent', 'cookies', 'offer', 'promo-rules'
+  version     String   // '1.0', '1.1', etc.
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@unique([docKey, version])
+  @@index([docKey])
+  @@index([publishedAt])
+  @@map("legal_docs")
+}
+
+model Consent {
+  id         String   @id @default(cuid())
+  userId     String?
+  formType   String   // 'checkout', 'registration', 'newsletter', 'promo'
+  docKey     String   // 'privacy', 'consent', 'promo-rules'
+  docVersion String   // версия документа на момент согласия
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?    // дополнительные данные (e.g. orderId, referralCode)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([formType])
+  @@index([docKey, docVersion])
+  @@index([createdAt])
+  @@map("consents")
 }

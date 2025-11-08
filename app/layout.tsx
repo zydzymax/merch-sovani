@@ -1,15 +1,20 @@
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Inter, Playfair_Display, Marck_Script } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils/cn'
+import CookieBanner from '@/components/CookieBanner'
+import TopRibbon from '@/app/_components/TopRibbon'
+import MainNav from '@/app/_components/MainNav'
+import BottomBar from '@/components/layout/BottomBar'
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin', 'cyrillic'], variable: '--font-playfair' })
+const marckScript = Marck_Script({ weight: '400', subsets: ['latin', 'cyrillic'], variable: '--font-marck' })
 
 export const metadata: Metadata = {
-  title: 'Fashion Shop — Стильная одежда с акцией "1 покупка = 1 шанс"',
+  title: 'SoVAni — Стильная одежда с акцией "1 покупка = 1 шанс"',
   description:
-    'Интернет-магазин модной одежды, БАДов и билетов на ивенты. Участвуйте в акции и выигрывайте призы!',
+    'Интернет-магазин модной одежды. Участвуйте в акции "1 покупка = 1 шанс" и выигрывайте iPhone 17 Pro, Apple Watch Ultra и XREAL Air 2 Ultra!',
 }
 
 export default function RootLayout({
@@ -20,7 +25,7 @@ export default function RootLayout({
   const yandexMetrikaId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID
 
   return (
-    <html lang="ru" className={cn(inter.variable, playfair.variable)}>
+    <html lang="ru" className={cn(inter.variable, playfair.variable, marckScript.variable)}>
       <head>
         {yandexMetrikaId && (
           <>
@@ -56,7 +61,15 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="min-h-screen font-sans antialiased">{children}</body>
+      <body className={cn(inter.className, 'antialiased flex flex-col min-h-screen')}>
+        <TopRibbon />
+        <MainNav />
+        <main className="flex-1">
+          {children}
+        </main>
+        <BottomBar />
+        <CookieBanner />
+      </body>
     </html>
   )
 }

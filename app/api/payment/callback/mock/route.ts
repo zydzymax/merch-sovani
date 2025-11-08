@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
-import { generateEntryCode } from '@/lib/utils/format'
+import { generateUniqueEntryCode } from '@/lib/utils/generateUniqueEntryCode'
 
 /**
  * Mock payment webhook
@@ -94,8 +94,9 @@ async function handleSuccessfulPayment(orderId: string) {
 
     // КРИТИЧНО: Если пользователь выбрал участие в акции
     if (order.participatesInPromo) {
-      // Генерируем уникальный код участия
-      const entryCode = generateEntryCode()
+      // Генерируем УНИКАЛЬНЫЙ код участия с проверкой коллизий
+      // Поддерживает до 50k+ участников без коллизий
+      const entryCode = await generateUniqueEntryCode()
 
       // Обновляем заказ: добавляем entryCode, убираем право на возврат
       await tx.order.update({
@@ -122,13 +123,75 @@ async function handleSuccessfulPayment(orderId: string) {
           metadata: {
             orderNumber: order.orderNumber,
             subtotal: order.subtotal,
+            timestamp: new Date().toISOString(),
           },
         },
       })
 
       // TODO: Отправить email с кодом участия
       // await sendPromoParticipationEmail(order.email, entryCode)
-      console.log(`✅ Entry code generated for order ${order.orderNumber}: ${entryCode}`)
+      console.log(`✅ UNIQUE entry code generated for order ${order.orderNumber}: ${entryCode}`)
+      console.log(`   Format: TTTTTTTT-RRRR-C (Timestamp-Random-Checksum)`)
+
+      // РЕФЕРАЛЬНАЯ ПРОГРАММА: +1 шанс для ОБОИХ
+      // Проверяем есть ли реферальный код в метаданных заказа
+      const metadata = order.metadata as { referralCode?: string } | null
+      const referralCode = metadata?.referralCode
+
+      if (referralCode && activeDraw) {
+        const refLink = await tx.referralLink.findUnique({
+          where: { code: referralCode, isActive: true }
+        })
+
+        if (refLink) {
+          // +1 Entry для друга (покупателя)
+          await tx.entry.create({
+            data: {
+              uniqueCode: await generateUniqueEntryCode(),
+              userId: order.userId,
+              orderId: order.id,
+              drawId: activeDraw.id,
+              weight: 1,
+              source: 'referral',
+              metadata: {
+                referralCode,
+                type: 'friend_purchase',
+                timestamp: new Date().toISOString(),
+              },
+            },
+          })
+
+          // +1 Entry для реферера (владельца ссылки)
+          await tx.entry.create({
+            data: {
+              uniqueCode: await generateUniqueEntryCode(),
+              userId: refLink.ownerId,
+              drawId: activeDraw.id,
+              weight: 1,
+              source: 'referral',
+              metadata: {
+                referralCode,
+                friendOrderId: order.id,
+                type: 'referrer_bonus',
+                timestamp: new Date().toISOString(),
+              },
+            },
+          })
+
+          // Обновить ReferralHit - отметить конверсию
+          await tx.referralHit.updateMany({
+            where: {
+              referralLinkId: refLink.id,
+              convertedOrderId: null
+            },
+            data: {
+              convertedOrderId: order.id,
+            }
+          })
+
+          console.log(`✅ Referral bonus: +1 entry for friend (user ${order.userId}) and +1 entry for referrer (user ${refLink.ownerId})`)
+        }
+      }
     } else {
       // Если НЕ участвует в акции — право на возврат сохраняется
       console.log(`ℹ️ Order ${order.orderNumber} does NOT participate in promo. Return right preserved.`)

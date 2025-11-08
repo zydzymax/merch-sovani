@@ -1,4 +1,12 @@
-# Fashion Shop — MVP интернет-магазина с акцией "1 покупка = 1 шанс"
+# SoVAni — Новогодний интернет-магазин с розыгрышами 🎄
+
+> **Версия 2.0.0 - Новогоднее обновление** | [История изменений](CHANGELOG.md)
+
+# SoVAni — MVP интернет-магазина с акцией "1 покупка = 1 шанс"
+
+> **Версия 2.0.0 - SoVAni Новогоднее обновление (2025-01-07)**
+> 
+> Обновлен дизайн с новогодней тематикой, расширен ассортимент товаров, обновлены призы и реквизиты. Полный список изменений см. в [CHANGELOG.md](./CHANGELOG.md).
 
 Полнофункциональный MVP интернет-магазина одежды, БАДов и e-билетов с системой розыгрышей и рефералкой.
 
@@ -34,6 +42,13 @@
 - ✅ **Кэш**: Redis (счетчики, очереди)
 - ✅ **Деплой**: pm2 + nginx (reverse proxy)
 
+### Новое в v2.0.0
+- 🎨 **Новогодняя тематика**: красный, зеленый, золотой цвета с анимациями
+- 🎁 **Обновленный ассортимент**: 6 товаров с брендингом SoVAni
+- 🏆 **Новые призы**: iPhone 17 Pro, Apple Watch Ultra 3, Xreal One AR очки
+- 👥 **Страница "Приведи друга"**: удобная реферальная система
+- 📄 **Обновленные реквизиты**: ИП с реальными данными
+
 ---
 
 ## 📦 Технологический стек
@@ -55,75 +70,75 @@
 
 ### 1. Клонирование и установка зависимостей
 
-\`\`\`bash
+```bash
 cd /root/fashion-shop
 npm install
-\`\`\`
+```
 
 ### 2. Настройка окружения
 
 Скопируйте `.env.sample` в `.env` и заполните:
 
-\`\`\`bash
+```bash
 cp .env.sample .env
-\`\`\`
+```
 
 Основные переменные:
-- \`DATABASE_URL\` — строка подключения к PostgreSQL
-- \`REDIS_URL\` — строка подключения к Redis
-- \`JWT_SECRET\`, \`SESSION_SECRET\` — секреты для auth
-- \`PAYMENT_PROVIDER\` — \`mock\` или \`yukassa\`
-- \`EMAIL_PROVIDER\` — \`mock\`, \`smtp\` или \`resend\`
-- \`NEXT_PUBLIC_YANDEX_METRIKA_ID\` — ID метрики
-- \`ADMIN_EMAIL\`, \`ADMIN_PASSWORD\` — кредсы админа
+- `DATABASE_URL` — строка подключения к PostgreSQL
+- `REDIS_URL` — строка подключения к Redis
+- `JWT_SECRET`, `SESSION_SECRET` — секреты для auth
+- `PAYMENT_PROVIDER` — `mock` или `yukassa`
+- `EMAIL_PROVIDER` — `mock`, `smtp` или `resend`
+- `NEXT_PUBLIC_YANDEX_METRIKA_ID` — ID метрики
+- `ADMIN_EMAIL`, `ADMIN_PASSWORD` — кредсы админа
 
 ### 3. Запуск Docker-контейнеров
 
-\`\`\`bash
+```bash
 make docker-up
 # или
 docker-compose up -d
-\`\`\`
+```
 
 Проверка:
-\`\`\`bash
+```bash
 docker ps
-\`\`\`
+```
 
 Вы должны увидеть:
-- \`fashion-shop-db\` (PostgreSQL, порт 5434)
-- \`fashion-shop-redis\` (Redis, порт 6381)
+- `fashion-shop-db` (PostgreSQL, порт 5434)
+- `fashion-shop-redis` (Redis, порт 6381)
 
 ### 4. Миграции и seed
 
-\`\`\`bash
+```bash
 make db-push      # Применить схему (для dev)
 make db-seed      # Засеять демо-данными
-\`\`\`
+```
 
 Или вручную:
-\`\`\`bash
+```bash
 npx prisma db push
 npm run db:seed
-\`\`\`
+```
 
 **Что создаёт seed:**
-- Админ: \`admin@fashion.local\` / \`Admin123!@#\`
-- Тестовый покупатель: \`customer@test.local\` / \`Customer123!\`
-- 6 товаров (футболка, лонгслив, худи, штаны, 2 БАД)
+- Админ: `admin@fashion.local` / `Admin123!@#`
+- Тестовый покупатель: `customer@test.local` / `Customer123!`
+- 6 товаров (брелок, значок, стикер, шеврон, футболка, пижама)
 - 3 тира билетов (Стандарт, VIP, Premium)
-- 4 приза (iPhone, сертификат, AirPods, набор одежды)
+- 3 приза (iPhone 17 Pro, Apple Watch Ultra 3, Xreal One AR очки)
 - 1 активный розыгрыш
-- 1 реф-ссылка (\`TEST2025\`)
+- 1 реф-ссылка (`TEST2025`)
 - Настройки (Setting)
 
 ### 5. Запуск dev-сервера
 
-\`\`\`bash
+```bash
 make dev
 # или
 npm run dev
-\`\`\`
+```
 
 Откройте [http://localhost:3000](http://localhost:3000)
 
@@ -134,102 +149,102 @@ npm run dev
 ### 1. Подготовка сервера
 
 Установите зависимости:
-\`\`\`bash
+```bash
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g pm2
 sudo apt-get install -y nginx certbot python3-certbot-nginx
-\`\`\`
+```
 
 ### 2. Настройка окружения
 
 Скопируйте проект на сервер:
-\`\`\`bash
+```bash
 git clone https://github.com/your-repo/fashion-shop.git /root/fashion-shop
 cd /root/fashion-shop
 npm install
 cp .env.sample .env
 # Заполните .env production-значениями
-\`\`\`
+```
 
 Обязательно измените:
-- \`NODE_ENV=production\`
-- \`PAYMENT_PROVIDER=yukassa\` (+ заполните YUKASSA_SHOP_ID, YUKASSA_SECRET_KEY)
-- \`EMAIL_PROVIDER=smtp\` или \`resend\` (+ кредсы)
-- Сильные \`JWT_SECRET\` и \`SESSION_SECRET\`
-- \`NEXT_PUBLIC_APP_URL=https://yourdomain.ru\`
+- `NODE_ENV=production`
+- `PAYMENT_PROVIDER=yukassa` (+ заполните YUKASSA_SHOP_ID, YUKASSA_SECRET_KEY)
+- `EMAIL_PROVIDER=smtp` или `resend` (+ кредсы)
+- Сильные `JWT_SECRET` и `SESSION_SECRET`
+- `NEXT_PUBLIC_APP_URL=https://yourdomain.ru`
 
 ### 3. Сборка проекта
 
-\`\`\`bash
+```bash
 make build
 # или
 npm run build
-\`\`\`
+```
 
 ### 4. Запуск с pm2
 
 Скопируйте конфиг pm2:
-\`\`\`bash
+```bash
 cp ecosystem.config.sample.js ecosystem.config.js
 # Отредактируйте пути при необходимости
-\`\`\`
+```
 
 Запустите:
-\`\`\`bash
+```bash
 make deploy
 # или
 pm2 start ecosystem.config.js
 pm2 save
 pm2 startup  # следуйте инструкциям для автозапуска
-\`\`\`
+```
 
 Проверка:
-\`\`\`bash
+```bash
 pm2 status
 pm2 logs fashion-shop
-\`\`\`
+```
 
 ### 5. Настройка nginx
 
 Скопируйте конфиг nginx:
-\`\`\`bash
+```bash
 sudo cp nginx.conf.sample /etc/nginx/sites-available/fashion-shop
-\`\`\`
+```
 
 Отредактируйте файл:
-\`\`\`bash
+```bash
 sudo nano /etc/nginx/sites-available/fashion-shop
-\`\`\`
+```
 
 Замените:
-- \`yourdomain.ru\` → ваш домен
+- `yourdomain.ru` → ваш домен
 - Укажите пути к SSL-сертификатам (см. шаг 6)
 
 Включите сайт:
-\`\`\`bash
+```bash
 sudo ln -s /etc/nginx/sites-available/fashion-shop /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
-\`\`\`
+```
 
 ### 6. SSL-сертификат (Let's Encrypt)
 
-\`\`\`bash
+```bash
 sudo certbot --nginx -d yourdomain.ru -d www.yourdomain.ru
-\`\`\`
+```
 
 Certbot автоматически обновит конфиг nginx с путями к сертификатам.
 
 ### 7. Проверка
 
-Откройте \`https://yourdomain.ru\` в браузере.
+Откройте `https://yourdomain.ru` в браузере.
 
 ---
 
 ## 🛠️ Makefile команды
 
-\`\`\`bash
+```bash
 make help            # Справка по командам
 make install         # Установка зависимостей
 make dev             # Запуск dev-сервера
@@ -248,13 +263,13 @@ make format          # Prettier
 make test            # Тесты
 make clean           # Очистка кэша
 make setup           # Полная установка (install + docker + db + seed)
-\`\`\`
+```
 
 ---
 
 ## 📁 Структура проекта
 
-\`\`\`
+```
 fashion-shop/
 ├── app/                      # Next.js App Router
 │   ├── (auth)/              # Группа auth (login, register)
@@ -305,8 +320,10 @@ fashion-shop/
 ├── package.json
 ├── tsconfig.json
 ├── tailwind.config.ts
-└── README.md                # Этот файл
-\`\`\`
+├── CHANGELOG.md             # История версий
+├── README.md                # Этот файл
+└── PROJECT_SUMMARY.md       # Итоговый отчет проекта
+```
 
 ---
 
@@ -320,14 +337,14 @@ fashion-shop/
    > "Хочу участвовать в акции и получить персональный код участия. Понимаю, что после получения кода возврат товара надлежащего качества невозможен."
 3. Чекбокс **по умолчанию ВЫКЛЮЧЕН**
 4. Если пользователь ставит галочку:
-   - \`Order.participatesInPromo = true\`
+   - `Order.participatesInPromo = true`
    - После успешной оплаты:
-     - Генерируется \`entryCode\` (уникальный код, base36 с checksum)
-     - Создаётся \`Entry\` (запись участия в розыгрыше)
-     - \`Order.hasReturnRight = false\` ← **возврат запрещён**
+     - Генерируется `entryCode` (уникальный код, base36 с checksum)
+     - Создаётся `Entry` (запись участия в розыгрыше)
+     - `Order.hasReturnRight = false` ← **возврат запрещён**
      - Отправляется email с кодом
 5. Если галочка НЕ стояла:
-   - \`Order.hasReturnRight = true\` ← возврат возможен
+   - `Order.hasReturnRight = true` ← возврат возможен
    - Entry не создаётся
 
 **Файлы:**
@@ -339,11 +356,11 @@ fashion-shop/
 ### Билеты и QR
 
 **Флоу:**
-1. \`POST /api/tickets/purchase\` → создание \`Ticket\`
-2. Генерация \`qrPayload\` (ticketId + signature)
-3. QR-код (PNG) через библиотеку \`qrcode\`
+1. `POST /api/tickets/purchase` → создание `Ticket`
+2. Генерация `qrPayload` (ticketId + signature)
+3. QR-код (PNG) через библиотеку `qrcode`
 4. Email с вложением QR
-5. На ивенте: сканирование QR → \`POST /api/tickets/validate\` → проверка подписи, статус
+5. На ивенте: сканирование QR → `POST /api/tickets/validate` → проверка подписи, статус
 
 **Вес шансов (entryWeight):**
 - Стандарт: 1 шанс
@@ -359,11 +376,11 @@ fashion-shop/
 ### Реферальная программа
 
 **Флоу:**
-1. Пользователь генерирует \`ReferralLink\` в ЛК
-2. Делится ссылкой: \`/ref/[code]\`
-3. Переход фиксируется как \`ReferralHit\` (IP, UserAgent)
+1. Пользователь генерирует `ReferralLink` в ЛК
+2. Делится ссылкой: `/ref/[code]`
+3. Переход фиксируется как `ReferralHit` (IP, UserAgent)
 4. Кука/сессия сохраняет ref-код
-5. При оформлении заказа: если ref-код активен → создаётся доп. \`Entry\` для покупателя (или реферера — в зависимости от \`Setting\`)
+5. При оформлении заказа: если ref-код активен → создаётся доп. `Entry` для покупателя (или реферера — в зависимости от `Setting`)
 
 **Файлы:**
 - `app/ref/[code]/route.ts`
@@ -373,11 +390,11 @@ fashion-shop/
 ### Возвраты
 
 **Логика:**
-- Если \`Order.hasReturnRight === false\` → \`403 Forbidden\`
+- Если `Order.hasReturnRight === false` → `403 Forbidden`
 - Иначе — стандартная логика возврата (статус, возврат денег)
 
 **API:**
-\`POST /api/returns/create\` — проверяет \`hasReturnRight\`
+`POST /api/returns/create` — проверяет `hasReturnRight`
 
 ---
 
@@ -388,45 +405,45 @@ fashion-shop/
 1. **Заказ без участия:**
    - Оформите заказ БЕЗ галочки
    - Оплатите (Mock)
-   - Проверьте: \`hasReturnRight = true\`, \`entryCode = null\`
+   - Проверьте: `hasReturnRight = true`, `entryCode = null`
    - Попробуйте создать возврат → должен пройти
 
 2. **Заказ с участием:**
    - Оформите заказ С галочкой
    - Оплатите
-   - Проверьте: \`hasReturnRight = false\`, \`entryCode\` присутствует
+   - Проверьте: `hasReturnRight = false`, `entryCode` присутствует
    - Email с кодом пришёл
    - В ЛК видно код участия
    - Попробуйте создать возврат → 403 ошибка
 
 3. **Покупка билета:**
-   - \`POST /api/tickets/purchase\` (любой тир)
+   - `POST /api/tickets/purchase` (любой тир)
    - Email с QR получен
-   - \`POST /api/tickets/validate\` с qrPayload → статус \`valid\`
+   - `POST /api/tickets/validate` с qrPayload → статус `valid`
 
 4. **Реферальная ссылка:**
-   - Зайдите по \`/ref/TEST2025\`
+   - Зайдите по `/ref/TEST2025`
    - Оформите заказ
-   - Проверьте: создан \`ReferralHit\`, добавлен \`Entry\`
+   - Проверьте: создан `ReferralHit`, добавлен `Entry`
 
 5. **Админка:**
-   - Войдите: \`admin@fashion.local\` / \`Admin123!@#\`
-   - \`/admin\` — CRUD товаров, просмотр заказов
-   - Найдите заказ с \`entryCode\`, попробуйте аннулировать код → \`hasReturnRight\` восстановится
+   - Войдите: `admin@fashion.local` / `Admin123!@#`
+   - `/admin` — CRUD товаров, просмотр заказов
+   - Найдите заказ с `entryCode`, попробуйте аннулировать код → `hasReturnRight` восстановится
 
 ### Unit-тесты
 
-\`\`\`bash
+```bash
 npm run test
-\`\`\`
+```
 
 Тесты покрывают:
-- Генерацию \`entryCode\`
-- Валидацию \`entryCode\`
-- Логику \`hasReturnRight\`
+- Генерацию `entryCode`
+- Валидацию `entryCode`
+- Логику `hasReturnRight`
 - QR-подпись
 
-**Файл:** \`__tests__/utils.test.ts\`
+**Файл:** `__tests__/utils.test.ts`
 
 ---
 
@@ -438,6 +455,12 @@ npm run test
 - **Accent**: #B76E5C (терракотовый)
 - **Dark**: #3A2421 (темно-коричневый)
 - **Light**: #FAF6F1 (светло-бежевый)
+
+**Новогодняя палитра (v2.0.0):**
+- **Christmas Red**: #C41E3A
+- **Christmas Green**: #165B33
+- **Christmas Gold**: #FFD700
+- **Christmas Silver**: #C0C0C0
 
 **Шрифты:**
 - Заголовки: Playfair Display (serif)
@@ -453,32 +476,32 @@ npm run test
 2. **promo_participation.html** — код участия в акции
 3. **ticket_issued.html** — билет с QR
 
-**Путь:** \`lib/email/templates/\`
+**Путь:** `lib/email/templates/`
 
 Шаблоны используют:
-- \`nodemailer\` (SMTP)
-- \`resend\` (API)
+- `nodemailer` (SMTP)
+- `resend` (API)
 - Mock (dev)
 
-Переключение через \`EMAIL_PROVIDER\` в .env.
+Переключение через `EMAIL_PROVIDER` в .env.
 
 ---
 
 ## 📜 Legal-страницы
 
-- \`/legal/offer\` — **Публичная оферта** (полный текст из ТЗ)
-- \`/legal/privacy\` — Политика конфиденциальности
-- \`/legal/promo-rules\` — Правила акции
-- \`/legal/returns\` — Возвраты и обмен
-- \`/legal/supplements\` — Информация о БАДах
+- `/legal/offer` — **Публичная оферта** (полный текст из ТЗ)
+- `/legal/privacy` — Политика конфиденциальности
+- `/legal/promo-rules` — Правила акции
+- `/legal/returns` — Возвраты и обмен
+- `/legal/supplements` — Информация о БАДах
 
-Контент хранится в \`app/legal/[page]/page.tsx\` или загружается из БД (\`Setting\`).
+Контент хранится в `app/legal/[page]/page.tsx` или загружается из БД (`Setting`).
 
 ---
 
 ## 🔐 Безопасность
 
-- **JWT токены**: подписываются секретом \`JWT_SECRET\`
+- **JWT токены**: подписываются секретом `JWT_SECRET`
 - **Пароли**: хешируются через bcryptjs (10 раундов)
 - **CSRF**: Next.js Server Actions автоматически защищены
 - **SQL Injection**: Prisma ORM параметризует запросы
@@ -493,40 +516,40 @@ npm run test
 ### Порты заняты (PostgreSQL/Redis)
 
 Если на VPS уже работают другие сервисы на портах 5432/6379:
-1. Измените порты в \`docker-compose.yml\`:
-   \`\`\`yaml
+1. Измените порты в `docker-compose.yml`:
+   ```yaml
    ports:
      - '5434:5432'  # для postgres
      - '6381:6379'  # для redis
-   \`\`\`
-2. Обновите \`DATABASE_URL\` и \`REDIS_URL\` в \`.env\`
+   ```
+2. Обновите `DATABASE_URL` и `REDIS_URL` в `.env`
 
 ### Prisma не видит изменения схемы
 
-\`\`\`bash
+```bash
 npx prisma generate
 npm run build
-\`\`\`
+```
 
 ### pm2 не стартует
 
-\`\`\`bash
+```bash
 pm2 logs fashion-shop  # проверьте ошибки
 pm2 delete fashion-shop
 make deploy
-\`\`\`
+```
 
 ### nginx 502 Bad Gateway
 
-- Проверьте, запущен ли pm2: \`pm2 status\`
-- Проверьте порт в \`ecosystem.config.js\` (должен быть 3000)
-- Проверьте \`upstream\` в nginx.conf (127.0.0.1:3000)
+- Проверьте, запущен ли pm2: `pm2 status`
+- Проверьте порт в `ecosystem.config.js` (должен быть 3000)
+- Проверьте `upstream` в nginx.conf (127.0.0.1:3000)
 
 ### ЮKassa callback не приходит
 
 1. Убедитесь, что в личном кабинете ЮKassa указан правильный webhook URL:
-   \`https://yourdomain.ru/api/payment/callback/yukassa\`
-2. Проверьте логи: \`pm2 logs fashion-shop | grep payment\`
+   `https://yourdomain.ru/api/payment/callback/yukassa`
+2. Проверьте логи: `pm2 logs fashion-shop | grep payment`
 
 ---
 
@@ -548,11 +571,11 @@ make deploy
 
 ---
 
-**Разработано с ❤️ для Fashion Shop**
+**Разработано с ❤️ для SoVAni**
 
-\`\`\`bash
+```bash
 # Быстрый старт (один скрипт)
 make setup && make dev
-\`\`\`
+```
 
-Откройте [http://localhost:3000](http://localhost:3000) и начните продавать! 🚀
+Откройте [http://localhost:3000](http://localhost:3000) и начните продавать!

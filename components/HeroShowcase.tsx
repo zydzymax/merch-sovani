@@ -27,7 +27,7 @@ export default function HeroShowcase() {
               1 покупка = 1 шанс выиграть
             </h1>
             <p className="mt-3 text-base text-[#6b4b45] md:text-lg">
-              iPhone 16 Pro Max, Apple Watch, Nintendo Switch и автомобиль
+              iPhone 17 Pro Max, Apple Watch, AR очки и автомобиль
             </p>
 
             {/* Таймер-плейсхолдер */}

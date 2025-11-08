@@ -49,27 +49,57 @@ export function generateCode(length: number = 10): string {
 
 /**
  * Generate entry code with checksum
+ * Format: TTTTTTTT-RRRR-C
+ * T = Timestamp (8 chars base36)
+ * R = Random (4 chars base36)
+ * C = Checksum (1 char)
+ *
+ * Capacity: 36^4 = 1,679,616 unique codes per millisecond
+ * For 50k participants: extremely low collision probability
  */
 export function generateEntryCode(): string {
-  const timestamp = Date.now().toString(36).toUpperCase()
+  // Get timestamp in base36 (8 characters for better distribution)
+  const timestamp = Date.now().toString(36).toUpperCase().padStart(8, '0')
+
+  // Generate 4 random characters (36^4 = 1,679,616 combinations)
   const random = generateCode(4)
-  const checksum = (parseInt(timestamp, 36) + parseInt(random, 36)) % 36
-  return `${timestamp}${random}${checksum.toString(36).toUpperCase()}`
+
+  // Calculate checksum for validation
+  const checksumValue = (parseInt(timestamp, 36) + parseInt(random, 36)) % 36
+  const checksum = checksumValue.toString(36).toUpperCase()
+
+  // Format: TTTTTTTT-RRRR-C (e.g., L8X9M2QT-A5B2-K)
+  return `${timestamp}-${random}-${checksum}`
 }
 
 /**
- * Validate entry code
+ * Validate entry code format and checksum
+ * Expected format: TTTTTTTT-RRRR-C
  */
 export function validateEntryCode(code: string): boolean {
-  if (!code || code.length < 6) return false
+  if (!code) return false
+
+  // Check format: TTTTTTTT-RRRR-C
+  const parts = code.split('-')
+  if (parts.length !== 3) return false
+
+  const [timestamp, random, checksum] = parts
+
+  // Validate lengths
+  if (timestamp.length !== 8 || random.length !== 4 || checksum.length !== 1) {
+    return false
+  }
+
+  // Validate characters (base36)
+  const base36Regex = /^[0-9A-Z]+$/
+  if (!base36Regex.test(timestamp) || !base36Regex.test(random) || !base36Regex.test(checksum)) {
+    return false
+  }
+
   try {
-    const checksum = code.slice(-1)
-    const rest = code.slice(0, -1)
-    const timestampLen = Math.ceil(rest.length / 2)
-    const timestamp = rest.slice(0, timestampLen)
-    const random = rest.slice(timestampLen)
-    const expected = (parseInt(timestamp, 36) + parseInt(random, 36)) % 36
-    return checksum === expected.toString(36).toUpperCase()
+    // Validate checksum
+    const expectedChecksum = (parseInt(timestamp, 36) + parseInt(random, 36)) % 36
+    return checksum === expectedChecksum.toString(36).toUpperCase()
   } catch {
     return false
   }
