@@ -1,6 +1,11 @@
 .header {
   background: #7f0d15;
   color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+  background: rgba(127, 13, 21, 0.95);
 }
 
 .inner {
@@ -47,6 +52,36 @@
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.cart {
+  position: relative;
+  color: #fff;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.cart:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ctaBtn {
+  background: #ffd27a;
+  color: #5b1a1a;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ctaBtn:hover {
+  background: #ffe8a3;
+  transform: translateY(-1px);
 }
 
 .search {

@@ -1,6 +1,9 @@
 'use client';
 import Link from 'next/link';
+import { CartBadge } from '@/components/CartBadge';
 import styles from './MainNav.module.css';
+
+const FEATURE_STICKY = process.env.NEXT_PUBLIC_FEATURE_STICKY_HEADER === 'true';
 
 export default function MainNav() {
   return (
@@ -15,7 +18,12 @@ export default function MainNav() {
         </nav>
         <div className={styles.tools}>
           <input className={styles.search} placeholder="Поиск…" />
-          <Link className={styles.btn} href="/account">Войти</Link>
+          {FEATURE_STICKY && <CartBadge className={styles.cart} />}
+          {FEATURE_STICKY ? (
+            <Link className={styles.ctaBtn} href="/catalog">К покупкам</Link>
+          ) : (
+            <Link className={styles.btn} href="/account">Войти</Link>
+          )}
         </div>
       </div>
       <div className={styles.separator}/>
