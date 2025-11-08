@@ -3,14 +3,27 @@ import Image from 'next/image'
 import { prisma } from '@/lib/db/prisma'
 import { formatPrice } from '@/lib/utils/format'
 import { chancesForProduct, getChancesLabel } from '@/lib/chances'
+import { sortProducts } from '@/lib/utils/sortProducts'
+import { SortDropdown } from '@/components/SortDropdown'
 
-export default async function CatalogPage() {
+const FEATURE_SORT = process.env.NEXT_PUBLIC_FEATURE_SORT_FILTER === 'true'
+
+export default async function CatalogPage({
+  searchParams,
+}: {
+  searchParams: { sort?: string }
+}) {
   // Fetch all active products
-  const products = await prisma.product.findMany({
+  let products = await prisma.product.findMany({
     where: { isActive: true },
     include: { variants: { take: 1, orderBy: { sortOrder: 'asc' } } },
     orderBy: { createdAt: 'desc' },
   })
+
+  // Apply sorting if feature enabled
+  if (FEATURE_SORT && searchParams.sort) {
+    products = sortProducts(products, searchParams.sort)
+  }
 
   // Group by category
   const clothingProducts = products.filter((p) => p.category === 'CLOTHING')
@@ -48,7 +61,10 @@ export default async function CatalogPage() {
 
       {/* Page content */}
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-serif font-bold mb-8">Каталог товаров</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-serif font-bold">Каталог товаров</h1>
+          {FEATURE_SORT && <SortDropdown />}
+        </div>
 
         {/* Clothing Section */}
         <section className="mb-16">
