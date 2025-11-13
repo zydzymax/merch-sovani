@@ -1,11 +1,11 @@
 .header {
-  background: #7f0d15;
-  color: #fff;
+  background: #15151e;
+  color: #fafafa;
   position: sticky;
   top: 0;
   z-index: 50;
   backdrop-filter: blur(8px);
-  background: rgba(127, 13, 21, 0.95);
+  background: rgba(21, 21, 30, 0.95);
 }
 
 .inner {
@@ -69,8 +69,8 @@
 }
 
 .ctaBtn {
-  background: #ffd27a;
-  color: #5b1a1a;
+  background: #0087FE;
+  color: #fafafa;
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 700;
@@ -80,7 +80,7 @@
 }
 
 .ctaBtn:hover {
-  background: #ffe8a3;
+  background: #0076dd;
   transform: translateY(-1px);
 }
 
@@ -100,8 +100,8 @@
 }
 
 .btn {
-  background: #ffd27a;
-  color: #5b1a1a;
+  background: #e52a27;
+  color: #fafafa;
   padding: 8px 16px;
   border-radius: 8px;
   font-weight: 700;
@@ -110,12 +110,12 @@
 }
 
 .btn:hover {
-  background: #ffe8a3;
+  background: #d01f1c;
 }
 
 .separator {
   height: 3px;
-  background: linear-gradient(90deg, #d2a44b, #f6e2a1, #d2a44b);
+  background: linear-gradient(90deg, #0087FE, #00a3ff, #0087FE);
 }
 
 @media (max-width: 860px) {

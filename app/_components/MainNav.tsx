@@ -1,32 +1,52 @@
-'use client';
-import Link from 'next/link';
-import { CartBadge } from '@/components/CartBadge';
-import styles from './MainNav.module.css';
-
-const FEATURE_STICKY = process.env.NEXT_PUBLIC_FEATURE_STICKY_HEADER === 'true';
+'use client'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function MainNav() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className={styles.header}>
-      <div className={styles.inner}>
-        <Link href="/" className={styles.logo}>SoVAni Shop</Link>
-        <nav className={styles.nav}>
-          <Link href="/">Главная</Link>
-          <Link href="/catalog">Каталог</Link>
-          <Link href="/draws">Розыгрыши</Link>
-          <Link href="/promo">Акция</Link>
+    <header style={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+      transition: 'all 0.3s ease',
+      ...(scrolled ? {
+        backdropFilter: 'blur(8px)',
+        background: 'rgba(15,15,18,.85)',
+        borderBottom: '1px solid var(--ring)',
+      } : {
+        background: 'transparent',
+      })
+    }}>
+      <div className="container" style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingBlock: '20px',
+      }}>
+        <Link href="/" className="font-display" style={{
+          fontSize: '20px',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+        }}>
+          SoVAni
+        </Link>
+
+        <nav style={{ display: 'flex', gap: '32px' }}>
+          <Link href="/catalog" className="font-display nav-link">Каталог</Link>
+          <Link href="/draws" className="font-display nav-link">Призы</Link>
+          <Link href="/promo" className="font-display nav-link">Условия</Link>
         </nav>
-        <div className={styles.tools}>
-          <input className={styles.search} placeholder="Поиск…" />
-          {FEATURE_STICKY && <CartBadge className={styles.cart} />}
-          {FEATURE_STICKY ? (
-            <Link className={styles.ctaBtn} href="/catalog">К покупкам</Link>
-          ) : (
-            <Link className={styles.btn} href="/account">Войти</Link>
-          )}
-        </div>
       </div>
-      <div className={styles.separator}/>
     </header>
-  );
+  )
 }
