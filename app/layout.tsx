@@ -1,14 +1,11 @@
 import type { Metadata } from 'next'
-import { Montserrat, Unbounded, Playfair_Display, Marck_Script } from 'next/font/google'
+import { Montserrat, Unbounded } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils/cn'
 import CookieBanner from '@/components/CookieBanner'
-import MainNav from '@/app/_components/MainNav'
 
-const montserrat = Montserrat({ subsets: ['latin', 'cyrillic'], variable: '--font-montserrat' })
-const unbounded = Unbounded({ subsets: ['latin', 'cyrillic'], variable: '--font-unbounded' })
-const playfair = Playfair_Display({ subsets: ['latin', 'cyrillic'], variable: '--font-playfair' })
-const marckScript = Marck_Script({ weight: '400', subsets: ['latin', 'cyrillic'], variable: '--font-marck' })
+const montserrat = Montserrat({ subsets: ['latin', 'cyrillic'], weight: ['400','500','600'], variable: '--font-body' })
+const unbounded = Unbounded({ subsets: ['latin', 'cyrillic'], weight: ['600','700','800'], variable: '--font-display' })
 
 export const metadata: Metadata = {
   title: 'SoVAni — Стильная одежда с акцией "1 покупка = 1 шанс"',
@@ -24,7 +21,7 @@ export default function RootLayout({
   const yandexMetrikaId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID
 
   return (
-    <html lang="ru" className={cn(montserrat.variable, unbounded.variable, playfair.variable, marckScript.variable)}>
+    <html lang="ru" className={cn(montserrat.variable, unbounded.variable)}>
       <head>
         {yandexMetrikaId && (
           <>
@@ -61,10 +58,7 @@ export default function RootLayout({
         )}
       </head>
       <body className={cn(montserrat.className, 'antialiased')}>
-        <MainNav />
-        <main className="flex-1">
-          {children}
-        </main>
+        {children}
         <CookieBanner />
       </body>
     </html>
