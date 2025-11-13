@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display, Marck_Script } from 'next/font/google'
+import { Montserrat, Unbounded, Playfair_Display, Marck_Script } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils/cn'
 import CookieBanner from '@/components/CookieBanner'
-import TopRibbon from '@/app/_components/TopRibbon'
 import MainNav from '@/app/_components/MainNav'
-import BottomBar from '@/components/layout/BottomBar'
 
-const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter' })
+const montserrat = Montserrat({ subsets: ['latin', 'cyrillic'], variable: '--font-montserrat' })
+const unbounded = Unbounded({ subsets: ['latin', 'cyrillic'], variable: '--font-unbounded' })
 const playfair = Playfair_Display({ subsets: ['latin', 'cyrillic'], variable: '--font-playfair' })
 const marckScript = Marck_Script({ weight: '400', subsets: ['latin', 'cyrillic'], variable: '--font-marck' })
 
@@ -25,7 +24,7 @@ export default function RootLayout({
   const yandexMetrikaId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID
 
   return (
-    <html lang="ru" className={cn(inter.variable, playfair.variable, marckScript.variable)}>
+    <html lang="ru" className={cn(montserrat.variable, unbounded.variable, playfair.variable, marckScript.variable)}>
       <head>
         {yandexMetrikaId && (
           <>
@@ -61,13 +60,11 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className={cn(inter.className, 'antialiased flex flex-col min-h-screen')}>
-        <TopRibbon />
+      <body className={cn(montserrat.className, 'antialiased')}>
         <MainNav />
         <main className="flex-1">
           {children}
         </main>
-        <BottomBar />
         <CookieBanner />
       </body>
     </html>

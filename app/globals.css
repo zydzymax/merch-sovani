@@ -2,52 +2,250 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+/* ========================================
+   DESIGN TOKENS — тёмный лендинг по мотивам mzakriev.ru
+   ======================================== */
+:root {
+  /* Цвета — тёмный лендинг c акцентной красной кнопкой */
+  --bg: #0f0f12;          /* основной фон (очень тёмный) */
+  --surface: #17171b;     /* карточки/панели */
+  --text: #ffffff;        /* основной текст */
+  --muted: #b7b7c2;       /* вторичный текст */
+  --accent: #e52a27;      /* акцент (пилюльные CTA) */
+  --accent-hover: #ff3b35;/* hover для CTA */
+  --ring: #2a2a32;        /* бордеры/разделители */
+  --ok: #21c17a;
+  --warn: #f5a524;
+  --danger: #ff4d4f;
+
+  /* Скругления */
+  --radius-xl: 28px;      /* крупные скругления (пилюли/карточки) */
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  /* Тени */
+  --shadow-1: 0 10px 30px rgba(0,0,0,.35);
+  --shadow-2: 0 6px 18px rgba(229,42,39,.22);
+
+  /* Layout */
+  --container: 1200px;
+
+  /* Типографика */
+  --h1: 64px;
+  --h2: 44px;
+  --h3: 28px;
+  --lead: 20px;
+  --body: 16px;
+
+  /* Отступы */
+  --gap-1: 8px;
+  --gap-2: 16px;
+  --gap-3: 24px;
+  --gap-4: 32px;
+  --gap-5: 48px;
+  --gap-6: 72px;
+}
+
+/* ========================================
+   БАЗОВЫЕ СТИЛИ
+   ======================================== */
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: var(--body);
+  line-height: 1.6;
+  font-feature-settings: 'rlig' 1, 'calt' 1;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: 'Unbounded', serif;
+  letter-spacing: 0.2px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h1 { font-size: var(--h1); }
+h2 { font-size: var(--h2); }
+h3 { font-size: var(--h3); }
+
+p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   LAYOUT UTILITIES
+   ======================================== */
+.container {
+  width: min(100%, var(--container));
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+.section {
+  padding-block: var(--gap-6);
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--ring);
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 40px rgba(0,0,0,.45);
+}
+
+.footer-link {
+  font-size: 14px;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--accent);
+}
+
+.nav-link {
+  fontSize: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--accent);
+}
+
+/* ========================================
+   КНОПКИ — пилюльный стиль
+   ======================================== */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 80px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border: 0;
+  box-shadow: var(--shadow-2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: 'Unbounded', serif;
+  letter-spacing: 0.5px;
+}
+
+.btn-pill:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(229,42,39,.3);
+}
+
+.btn-pill:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--ring);
+  color: var(--text);
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  background: var(--surface);
+  border-color: var(--muted);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #fafafa;
+  color: #2b2b3b;
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+/* ========================================
+   РЕСПОНСИВ
+   ======================================== */
+@media (max-width: 1280px) {
   :root {
-    --background: 35 30% 98%; /* #FAF6F1 Light */
-    --foreground: 15 30% 15%; /* #3A2421 Dark */
-
-    --primary: 347 62% 39%; /* #9D2A43 Primary */
-    --primary-foreground: 35 30% 98%;
-
-    --secondary: 34 29% 85%; /* #E9DCCB Secondary */
-    --secondary-foreground: 15 30% 15%;
-
-    --accent: 15 35% 54%; /* #B76E5C Accent */
-    --accent-foreground: 35 30% 98%;
-
-    --muted: 34 20% 90%;
-    --muted-foreground: 15 20% 40%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 15 30% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 15 30% 15%;
-
-    --border: 34 20% 85%;
-    --input: 34 20% 85%;
-    --ring: 347 62% 39%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-
-    --radius: 0.5rem;
+    --h1: 52px;
+    --h2: 38px;
+    --h3: 24px;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
+@media (max-width: 768px) {
+  :root {
+    --h1: 40px;
+    --h2: 32px;
+    --h3: 22px;
+    --gap-6: 48px;
   }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+
+  .container {
+    padding-inline: 16px;
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@media (max-width: 480px) {
+  :root {
+    --h1: 32px;
+    --h2: 26px;
+    --h3: 20px;
+    --gap-6: 36px;
   }
+}
+
+/* ========================================
+   АНИМАЦИИ
+   ======================================== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.6s ease-out;
+}
+
+/* ========================================
+   ДОСТУПНОСТЬ
+   ======================================== */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

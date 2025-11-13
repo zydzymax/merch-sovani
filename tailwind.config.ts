@@ -51,16 +51,17 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Премиальная новогодняя палитра
+        // Современная темная палитра (стиль mzakriev.ru)
         brand: {
-          red: '#B4002D',
-          gold: '#E8C16A',
-          forest: '#1F3D2B',
-          cream: '#FAF3E7',
-          dark: '#281A12',
+          dark: '#15151e',        // Основной темный фон
+          'dark-card': '#2b2b3b', // Фон карточек
+          blue: '#0087FE',        // Акцентный синий
+          red: '#e52a27',         // Акцентный красный (для кнопок)
+          light: '#fafafa',       // Светлый текст
+          muted: '#8a8a9e',       // Приглушенный текст
         },
         // Алиасы для обратной совместимости
-        'christmas-red': '#B4002D',
+        'christmas-red': '#e52a27',
         'christmas-green': '#1F3D2B',
         'christmas-gold': '#E8C16A',
       },
@@ -70,8 +71,9 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
+        heading: ['var(--font-unbounded)', 'Unbounded', 'sans-serif'],
+        sans: ['var(--font-montserrat)', 'Montserrat', 'sans-serif'],
         serif: ['var(--font-playfair)', 'Playfair Display', 'serif'],
-        sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
         script: ['var(--font-marck)', 'Marck Script', 'cursive'],
       },
       keyframes: {
