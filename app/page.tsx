@@ -1,138 +1,112 @@
-import Link from 'next/link'
 import { prisma } from '@/lib/db/prisma'
-import HeroBanner from '@/app/_components/HeroBanner'
-import { ThreeStockings } from '@/components/xmas/ThreeStockings'
-import { PromoSanta } from '@/components/xmas/PromoSanta'
-import { OnePurchaseBanner } from '@/components/xmas/OnePurchaseBanner'
-import { FeaturedProductsGrid } from '@/components/xmas/FeaturedProductsGrid'
-import { XmasFooterBanner } from '@/components/xmas/XmasFooterBanner'
+import { formatPrice } from '@/lib/utils/format'
+import Hero from '@/app/_components/Hero'
+import ProductCard from '@/app/_components/ProductCard'
+import FooterNew from '@/app/_components/FooterNew'
+import Link from 'next/link'
 
 export default async function HomePage() {
   const featuredProducts = await prisma.product.findMany({
     where: { isFeatured: true, isActive: true },
     include: { variants: { take: 1, orderBy: { sortOrder: 'asc' } } },
+    take: 6,
   })
 
   return (
-    <div className="min-h-screen bg-brand-cream">
-      {/* Hero Banner */}
-      <HeroBanner />
+    <>
+      {/* Hero Section */}
+      <Hero
+        title="Стильная одежда с акцией &quot;1 покупка = 1 шанс&quot;"
+        subtitle="Покупай одежду и участвуй в розыгрыше iPhone 17 Pro Max, Apple Watch Ultra и других крутых призов"
+        ctaPrimary={{ text: 'Смотреть каталог', href: '/catalog' }}
+        ctaSecondary={{ text: 'Узнать об акции', href: '/promo' }}
+      />
 
-      {/* Three Stockings with Prizes */}
-      <ThreeStockings />
+      {/* Featured Products */}
+      <section className="section">
+        <div className="container">
+          <h2 className="font-display" style={{
+            fontSize: 'var(--h2)',
+            textAlign: 'center',
+            marginBottom: 'var(--gap-5)',
+          }}>
+            Наши товары
+          </h2>
 
-      {/* Promo Santa Section */}
-      <PromoSanta />
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: 'var(--gap-3)',
+          }}>
+            {featuredProducts.map((product) => {
+              const variant = product.variants[0]
+              const price = variant?.price ? formatPrice(variant.price) : '0 ₽'
 
-      {/* One Purchase Banner */}
-      <OnePurchaseBanner />
-
-      {/* Featured Products - 4 column grid */}
-      <section id="catalog" className="py-14 bg-gradient-to-b from-white to-brand-cream/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-brand-dark mb-4">
-              Хиты продаж
-            </h2>
-            <p className="text-xl text-brand-dark/70">
-              Стильные подарки к Новому году
-            </p>
+              return (
+                <ProductCard
+                  key={product.id}
+                  name={product.name}
+                  price={price}
+                  description={product.description || undefined}
+                  imageUrl={product.images[0] || '/placeholder.png'}
+                  href={`/product/${product.slug}`}
+                  badge="🎁 +1 шанс"
+                />
+              )
+            })}
           </div>
-          <FeaturedProductsGrid products={featuredProducts} />
-          <div className="text-center mt-12">
-            <Link
-              href="/catalog"
-              className="inline-block px-10 py-4 border-3 border-brand-forest text-brand-forest rounded-full hover:bg-brand-forest hover:text-brand-cream transition-all font-bold text-lg hover:scale-105 shadow-lg"
-            >
+
+          <div style={{ textAlign: 'center', marginTop: 'var(--gap-5)' }}>
+            <Link href="/catalog" className="btn-pill">
               Смотреть весь каталог
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer Greeting Banner */}
-      <XmasFooterBanner />
-
-      {/* Footer */}
-      <footer className="bg-brand-dark text-brand-cream py-16 border-t-4 border-brand-gold">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 mb-12">
-            <div>
-              <h3 className="font-serif font-bold text-2xl mb-4 text-brand-gold">
-                SoVAni
-              </h3>
-              <p className="text-sm text-brand-cream/80 leading-relaxed">
-                Премиальная одежда с новогодним настроением.
-                Участвуй в розыгрышах и выигрывай крутые призы!
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 text-brand-gold">Покупателям</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/catalog" className="text-brand-cream/80 hover:text-brand-gold transition-colors">
-                    Каталог товаров
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/promo" className="text-brand-cream/80 hover:text-brand-gold transition-colors">
-                    Новогодняя акция
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/draws" className="text-brand-cream/80 hover:text-brand-gold transition-colors">
-                    Розыгрыши призов
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/account" className="text-brand-cream/80 hover:text-brand-gold transition-colors">
-                    Личный кабинет
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 text-brand-gold">Документы</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/legal/privacy" className="text-brand-cream/80 hover:text-brand-gold transition-colors">
-                    Политика конфиденциальности
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/legal/offer" className="text-brand-cream/80 hover:text-brand-gold transition-colors">
-                    Публичная оферта
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/legal/promo-rules" className="text-brand-cream/80 hover:text-brand-gold transition-colors">
-                    Правила розыгрыша
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 text-brand-gold">Контакты</h4>
-              <p className="text-sm text-brand-cream/80">Email: hello@sovani.ru</p>
-              <p className="text-sm text-brand-cream/80 mt-2">Тел: +7 (999) 123-45-67</p>
-              <div className="mt-6 flex gap-4 text-2xl">
-                <span className="hover:scale-110 transition-transform cursor-pointer">📱</span>
-                <span className="hover:scale-110 transition-transform cursor-pointer">💌</span>
-                <span className="hover:scale-110 transition-transform cursor-pointer">🎁</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-brand-cream/20 pt-8 text-center">
-            <p className="text-sm text-brand-cream/70">
-              © 2025 SoVAni. Все права защищены.
+      {/* Promo Section */}
+      <section className="section" style={{
+        background: 'radial-gradient(circle at 70% 50%, rgba(229,42,39,0.12), transparent 60%)',
+      }}>
+        <div className="container">
+          <div className="card" style={{
+            padding: 'var(--gap-5)',
+            textAlign: 'center',
+            maxWidth: '800px',
+            marginInline: 'auto',
+          }}>
+            <p style={{
+              fontSize: '14px',
+              color: 'var(--muted)',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              marginBottom: 'var(--gap-2)',
+              fontFamily: 'var(--font-display)',
+            }}>
+              Главный приз
             </p>
-            <p className="text-xs text-brand-cream/50 mt-2">
-              С Новым Годом! Пусть удача всегда будет на твоей стороне ✨
+            <h2 className="font-display" style={{
+              fontSize: 'var(--h2)',
+              marginBottom: 'var(--gap-2)',
+            }}>
+              iPhone 17 Pro Max
+            </h2>
+            <p style={{
+              fontSize: 'var(--lead)',
+              color: 'var(--muted)',
+              marginBottom: 'var(--gap-4)',
+            }}>
+              И еще множество других призов: Apple Watch Ultra, XREAL Air 2 Ultra и многое другое
             </p>
+            <Link href="/draws" className="btn-pill">
+              Узнать подробнее
+            </Link>
           </div>
         </div>
-      </footer>
-    </div>
+      </section>
+
+      {/* Footer */}
+      <FooterNew />
+    </>
   )
 }
