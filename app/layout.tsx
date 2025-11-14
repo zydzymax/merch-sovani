@@ -29,6 +29,40 @@ export default function RootLayout({
   return (
     <html lang="ru" className={cn(montserrat.variable, unbounded.variable)}>
       <head>
+        {/* Theme initialization script - runs before hydration to prevent FOUC */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                try {
+                  var t = localStorage.getItem('theme');
+                  if (!t) { t = 'legacy'; }
+                  if (t && typeof document !== 'undefined') {
+                    document.documentElement.style.colorScheme = 'dark';
+                    // Apply theme class immediately
+                    var applyTheme = function() {
+                      var body = document.body || document.getElementsByTagName('body')[0];
+                      if (body) {
+                        body.classList.remove('legacy', 'theme-dark-electric', 'theme-blue-coral');
+                        body.classList.add(t);
+                      }
+                    };
+                    // Try to apply immediately
+                    if (document.body) {
+                      applyTheme();
+                    }
+                    // Also apply on DOMContentLoaded as fallback
+                    if (document.readyState === 'loading') {
+                      document.addEventListener('DOMContentLoaded', applyTheme);
+                    } else {
+                      applyTheme();
+                    }
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
         {yandexMetrikaId && (
           <>
             <script
