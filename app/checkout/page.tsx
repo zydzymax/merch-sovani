@@ -324,17 +324,13 @@ export default function CheckoutPage() {
                     className="mt-1 w-5 h-5 text-primary flex-shrink-0"
                   />
                   <span className="text-sm text-gray-700">
-                    Я согласен(на) с{' '}
-                    <Link href="/legal/privacy" className="text-blue-600 hover:underline font-medium" target="_blank">
-                      Политикой обработки персональных данных
+                    Я даю согласие Оператору площадки (ИП Zakriev Maksharip Ziavdinovich, ИНН 1234567890) на обработку моих персональных данных для оформления заказа, участия в стимулирующей акции (включая формирование и публикацию списка победителей в обезличенном виде) и получения уведомлений. Подробнее:{' '}
+                    <Link href="/docs/privacy" className="text-blue-600 hover:underline font-medium" target="_blank">
+                      Политика конфиденциальности
                     </Link>
                     ,{' '}
-                    <Link href="/legal/consent" className="text-blue-600 hover:underline font-medium" target="_blank">
-                      Согласием на обработку ПДн
-                    </Link>
-                    {' '}и{' '}
-                    <Link href="/legal/offer" className="text-blue-600 hover:underline font-medium" target="_blank">
-                      Публичной офертой
+                    <Link href="/docs/offer" className="text-blue-600 hover:underline font-medium" target="_blank">
+                      Публичная оферта
                     </Link>
                     . <span className="text-red-500">*</span>
                   </span>
@@ -356,11 +352,10 @@ export default function CheckoutPage() {
                       />
                       <span className="text-sm text-gray-700">
                         Я ознакомлен(а) с{' '}
-                        <Link href="/legal/promo-rules" className="text-blue-600 hover:underline font-medium" target="_blank">
-                          Правилами розыгрыша
+                        <Link href="/docs/rules" className="text-blue-600 hover:underline font-medium" target="_blank">
+                          Правилами стимулирующей акции
                         </Link>
-                        {' '}и понимаю, что при участии в акции{' '}
-                        <strong>право на возврат товара утрачивается</strong>, а также что с призов свыше 4 000 ₽ удерживается НДФЛ 35%.
+                        {' '}и понимаю, что при возврате брелока аннулируются шансы участия в розыгрыше, а также что с призов удерживается НДФЛ 35% (уплачивается Организатором).
                         {' '}<span className="text-red-500">*</span>
                       </span>
                     </label>
