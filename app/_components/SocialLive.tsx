@@ -19,19 +19,16 @@ export default function SocialLive(){
             Розыгрыш каждую неделю в прямом эфире
           </div>
           <p className="lead" style={{marginTop:12,fontSize:'18px'}}>
-            Следи за результатами, смотри эфиры и участвуй в конкурсах в наших соцсетях:
+            Следи за результатами розыгрышей и прямыми эфирами в Instagram*:
           </p>
           <div style={{display:'flex',gap:12,marginTop:20,flexWrap:'wrap'}}>
-            <a className="btn btn-ghost" href="https://t.me/sovani_official" target="_blank" rel="noopener noreferrer">
-              Telegram
-            </a>
-            <a className="btn btn-ghost" href="https://youtube.com/@sovani" target="_blank" rel="noopener noreferrer">
-              YouTube
-            </a>
-            <a className="btn btn-ghost" href="https://vk.com/sovani" target="_blank" rel="noopener noreferrer">
-              VK
+            <a className="btn btn-primary" href="https://instagram.com/sovani.official" target="_blank" rel="noopener noreferrer">
+              Instagram*
             </a>
           </div>
+          <p className="lead" style={{marginTop:16,fontSize:'12px',opacity:0.7}}>
+            * Instagram принадлежит Meta Platforms Inc., признанной экстремистской организацией в РФ. Деятельность запрещена на территории РФ.
+          </p>
         </div>
       </div>
     </section>
