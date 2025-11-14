@@ -7,7 +7,7 @@ export default function Steps(){
           <div className="tile" style={{padding:32}}>
             <h3 className="font-display" style={{fontSize:'28px'}}>Как выиграть?</h3>
             <p className="lead" style={{marginTop:12,fontSize:'18px'}}>
-              Купи брелок SOVANI за 999 ₽ и автоматически участвуй в розыгрыше. Чем больше брелков — тем выше шанс!
+              Купи брелок за 999 ₽ и автоматически участвуй в розыгрыше. Чем больше брелков — тем выше шанс!
             </p>
             <a className="btn btn-primary" style={{marginTop:20}} href="#keychain">Купить брелок</a>
           </div>
