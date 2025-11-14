@@ -8,15 +8,15 @@ export default function Navbar(){
           <Image
             src="/images/лого SoVAni.png"
             alt="SOVANI"
-            width={120}
-            height={40}
-            style={{height:32,width:'auto'}}
+            width={160}
+            height={53}
+            style={{height:48,width:'auto'}}
           />
         </a>
-        <nav style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-          <a className="btn-ghost btn" href="/catalog">Каталог</a>
-          <a className="btn-ghost btn" href="/draws">Призы</a>
-          <a className="btn-ghost btn" href="/promo">Условия</a>
+        <nav style={{display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}}>
+          <a className="btn-ghost btn" style={{fontSize:'13px',padding:'12px 18px'}} href="/catalog">Каталог</a>
+          <a className="btn-ghost btn" style={{fontSize:'13px',padding:'12px 18px'}} href="/draws">Призы</a>
+          <a className="btn-ghost btn" style={{fontSize:'13px',padding:'12px 18px'}} href="/promo">Условия</a>
         </nav>
       </div>
     </header>

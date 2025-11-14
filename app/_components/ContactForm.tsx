@@ -10,8 +10,8 @@ export default function ContactForm(){
   return(
     <section aria-label="Остались вопросы?" className="safe-bottom" style={{background:'var(--accent)',padding:'56px 0',color:'#fff'}}>
       <div className="container">
-        <div style={{display:'flex',alignItems:'center',gap:20,marginBottom:20,flexWrap:'wrap'}}>
-          <h2 className="font-display" style={{textTransform:'uppercase',fontSize:'36px',margin:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:20,marginBottom:20,flexWrap:'wrap',justifyContent:'center'}}>
+          <h2 className="font-display contact-form-title" style={{textTransform:'uppercase',fontSize:'36px',margin:0,textAlign:'center'}}>
             Остались вопросы?
           </h2>
           <Image
@@ -20,9 +20,10 @@ export default function ContactForm(){
             width={128}
             height={128}
             style={{width:96,height:96}}
+            className="contact-badge"
           />
         </div>
-        <form onSubmit={handleSubmit} style={{display:'grid',gap:14,maxWidth:720}}>
+        <form onSubmit={handleSubmit} style={{display:'grid',gap:14,maxWidth:'100%',width:'100%'}} className="contact-form">
           <input
             type="text"
             placeholder="Ваше имя"

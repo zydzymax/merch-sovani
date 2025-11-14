@@ -8,17 +8,17 @@ export default function BigFooter(){
           <Image
             src="/images/лого SoVAni.png"
             alt="SOVANI"
-            width={160}
-            height={53}
-            style={{height:40,width:'auto'}}
+            width={200}
+            height={66}
+            style={{height:56,width:'auto'}}
           />
         </div>
         <div style={{
           display:'grid',
-          gap:32,
-          gridTemplateColumns:'2fr 1fr 1fr',
+          gap:24,
+          gridTemplateColumns:'1fr',
           marginBottom:24
-        }}>
+        }} className="footer-grid">
           <div className="lead" style={{fontSize:16}}>
             Премиальная одежда и честные розыгрыши. Покупай стильные вещи и выигрывай суперпризы!
           </div>

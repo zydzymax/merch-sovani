@@ -263,3 +263,37 @@
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* Footer responsive grid */
+.footer-grid {
+  grid-template-columns: 2fr 1fr 1fr !important;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .nav-inner {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .nav-inner nav {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contact-form-title {
+    font-size: 28px !important;
+  }
+
+  .contact-form {
+    max-width: 100% !important;
+  }
+
+  .contact-badge {
+    width: 72px !important;
+    height: 72px !important;
+  }
+}
