@@ -8,7 +8,7 @@ export default function ContactForm(){
   }
 
   return(
-    <section aria-label="Остались вопросы?" style={{background:'var(--accent)',padding:'56px 0',color:'#fff'}}>
+    <section aria-label="Остались вопросы?" className="safe-bottom" style={{background:'var(--accent)',padding:'56px 0',color:'#fff'}}>
       <div className="container">
         <div style={{display:'flex',alignItems:'center',gap:20,marginBottom:20,flexWrap:'wrap'}}>
           <h2 className="font-display" style={{textTransform:'uppercase',fontSize:'36px',margin:0}}>

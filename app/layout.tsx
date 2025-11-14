@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   title: 'SoVAni — Стильная одежда с акцией "1 покупка = 1 шанс"',
   description:
     'Интернет-магазин модной одежды. Участвуйте в акции "1 покупка = 1 шанс" и выигрывайте iPhone 17 Pro, Apple Watch Ultra и XREAL Air 2 Ultra!',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    viewportFit: 'cover',
+  },
 }
 
 export default function RootLayout({

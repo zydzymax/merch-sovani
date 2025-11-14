@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 export default function BigFooter(){
   return(
-    <footer className="section">
+    <footer className="section safe-bottom">
       <div className="container tile" style={{padding:36}}>
         <div style={{marginBottom:20}}>
           <Image

@@ -50,6 +50,7 @@
     color: #ffffff !important;
     margin: 0;
     padding: 0;
+    padding-top: 72px; /* Prevent navbar overlap */
     height: 100%;
     font-family: var(--font-body, 'Montserrat'), system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
     line-height: 1.55;
@@ -256,4 +257,9 @@
 *:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* Safe area for mobile devices (iOS notch/home indicator) */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
