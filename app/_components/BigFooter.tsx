@@ -26,18 +26,38 @@ export default function BigFooter(){
             <div style={{fontWeight:700,marginBottom:12,fontSize:16}}>Документы</div>
             <ul style={{listStyle:'none',padding:0,margin:0,display:'grid',gap:8}}>
               <li>
-                <a className="btn-link" href="/legal/offer" style={{fontSize:14}}>
+                <a className="btn-link" href="/docs/user-agreement" style={{fontSize:14}}>
+                  Пользовательское соглашение
+                </a>
+              </li>
+              <li>
+                <a className="btn-link" href="/docs/offer" style={{fontSize:14}}>
                   Публичная оферта
                 </a>
               </li>
               <li>
-                <a className="btn-link" href="/legal/privacy" style={{fontSize:14}}>
+                <a className="btn-link" href="/docs/privacy" style={{fontSize:14}}>
                   Политика конфиденциальности
                 </a>
               </li>
               <li>
-                <a className="btn-link" href="/legal/promo-rules" style={{fontSize:14}}>
-                  Правила розыгрыша
+                <a className="btn-link" href="/docs/cookies" style={{fontSize:14}}>
+                  Политика cookies
+                </a>
+              </li>
+              <li>
+                <a className="btn-link" href="/docs/rules" style={{fontSize:14}}>
+                  Правила акции
+                </a>
+              </li>
+              <li>
+                <a className="btn-link" href="/winners" style={{fontSize:14}}>
+                  Победители
+                </a>
+              </li>
+              <li>
+                <a className="btn-link" href="/legal" style={{fontSize:14}}>
+                  Реквизиты
                 </a>
               </li>
             </ul>
@@ -53,13 +73,22 @@ export default function BigFooter(){
         <div
           className="lead"
           style={{
-            opacity:.7,
             paddingTop:20,
             borderTop:'1px solid var(--ring)',
-            fontSize:13
+            fontSize:13,
+            display:'grid',
+            gap:12
           }}
         >
-          © 2025 SoVAni. Все права защищены. ИНН 1234567890, ОГРНИП 1234567890123
+          <div style={{opacity:.7}}>
+            © 2025 SoVAni. Все права защищены.
+          </div>
+          <div style={{opacity:.65,fontSize:12}}>
+            <strong>Оператор площадки (Агент):</strong> ИП Zakriev Maksharip Ziavdinovich, ИНН 1234567890, ОГРНИП 1234567890123
+          </div>
+          <div style={{opacity:.65,fontSize:12}}>
+            <strong>Организатор акции:</strong> [ОРГАНИЗАТОР_НАЗВАНИЕ], ИНН [ОРГАНИЗАТОР_ИНН], ОГРН [ОРГАНИЗАТОР_ОГРН]
+          </div>
         </div>
       </div>
     </footer>
