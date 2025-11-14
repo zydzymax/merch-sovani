@@ -3,7 +3,7 @@ import Image from 'next/image'
 export default function HeroSection(){
   return (
     <section className="relative mx-auto max-w-[1280px] px-4 md:px-10 py-8 md:py-16">
-      <div className="relative rounded-[32px] md:rounded-[40px] bg-[#14151b] shadow-[0_20px_60px_rgba(0,0,0,.35)] overflow-hidden">
+      <div className="relative rounded-[32px] md:rounded-[40px] theme-card overflow-hidden">
         <div style={{position:'relative',width:'100%',aspectRatio:'16/9',minHeight:320}}>
           <Image
             src="/images/hero сцена.png"
