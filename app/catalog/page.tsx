@@ -47,8 +47,8 @@ export default async function CatalogPage({
               {clothingProducts.map((product) => {
                 const variant = product.variants[0]
                 const price = variant?.price ? formatPrice(variant.price) : '0 ₽'
-                const chances = chancesForProduct({ id: product.id, slug: product.slug, name: product.name })
-                const chancesLabel = getChancesLabel(chances)
+                const isKeychain = product.slug === 'keychain' || product.name.toLowerCase().includes('брелок')
+                const badge = isKeychain ? '🎁 1 брелок = 1 шанс на iPhone' : undefined
 
                 return (
                   <ProductCard
@@ -58,7 +58,7 @@ export default async function CatalogPage({
                     description={product.description || undefined}
                     imageUrl={product.images[0] || '/placeholder.png'}
                     href={`/product/${product.slug}`}
-                    badge={`🎁 ${chancesLabel}`}
+                    badge={badge}
                   />
                 )
               })}
@@ -80,8 +80,8 @@ export default async function CatalogPage({
               {supplementsProducts.map((product) => {
                 const variant = product.variants[0]
                 const price = variant?.price ? formatPrice(variant.price) : '0 ₽'
-                const chances = chancesForProduct({ id: product.id, slug: product.slug, name: product.name })
-                const chancesLabel = getChancesLabel(chances)
+                const isKeychain = product.slug === 'keychain' || product.name.toLowerCase().includes('брелок')
+                const badge = isKeychain ? '🎁 1 брелок = 1 шанс на iPhone' : undefined
 
                 return (
                   <ProductCard
@@ -91,7 +91,7 @@ export default async function CatalogPage({
                     description={product.description || undefined}
                     imageUrl={product.images[0] || '/placeholder.png'}
                     href={`/product/${product.slug}`}
-                    badge={`🎁 ${chancesLabel}`}
+                    badge={badge}
                   />
                 )
               })}
