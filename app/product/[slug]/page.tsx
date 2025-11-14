@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db/prisma'
 import { formatPrice } from '@/lib/utils/format'
 import AddToCartButton from '@/components/AddToCartButton'
-import { chancesForProduct, getChancesLabel } from '@/lib/chances'
+import Navbar from '@/app/_components/Navbar'
+import BigFooter from '@/app/_components/BigFooter'
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const product = await prisma.product.findUnique({
@@ -24,86 +25,59 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   const defaultVariant = product.variants[0]
   const hasDiscount = defaultVariant?.compareAt && defaultVariant.compareAt > defaultVariant.price
-  
-  // Calculate chances
-  const chances = chancesForProduct({ id: product.id, slug: product.slug, name: product.name })
-  const chancesLabel = getChancesLabel(chances)
+
+  // Only show raffle badge for keychain products
+  const isKeychain = product.slug === 'keychain' || product.name.toLowerCase().includes('брелок')
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-serif font-bold text-primary">
-              SoVAni
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/catalog" className="hover:text-primary transition-colors">
-                Каталог
-              </Link>
-              <Link href="/promo" className="hover:text-primary transition-colors">
-                Акция
-              </Link>
-              <Link href="/draws" className="hover:text-primary transition-colors">
-                Розыгрыши
-              </Link>
-              <Link href="/cart" className="hover:text-primary transition-colors">
-                Корзина
-              </Link>
-              <Link
-                href="/account"
-                className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
-              >
-                Войти
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen" style={{background:'var(--bg)',color:'var(--text)'}}>
+      <Navbar />
 
       {/* Product Detail */}
-      <div className="container mx-auto px-4 py-12">
-        {/* Breadcrumbs */}
-        <div className="mb-8 text-sm text-gray-600">
-          <Link href="/" className="hover:text-primary">
-            Главная
-          </Link>
-          {' / '}
-          <Link href="/catalog" className="hover:text-primary">
-            Каталог
-          </Link>
-          {' / '}
-          <span className="text-gray-900">{product.name}</span>
-        </div>
+      <section className="section">
+        <div className="container">
+          {/* Breadcrumbs */}
+          <div className="lead" style={{marginBottom:32,fontSize:'14px'}}>
+            <Link href="/" style={{color:'var(--muted)'}}>
+              Главная
+            </Link>
+            {' / '}
+            <Link href="/catalog" style={{color:'var(--muted)'}}>
+              Каталог
+            </Link>
+            {' / '}
+            <span style={{color:'var(--text)'}}>{product.name}</span>
+          </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid grid-2" style={{gap:48}}>
           {/* Images */}
-          <div className="space-y-4">
-            <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100">
+          <div style={{display:'grid',gap:16}}>
+            <div style={{position:'relative',aspectRatio:'3/4',borderRadius:20,overflow:'hidden',background:'var(--surface)'}}>
               {product.images[0] ? (
                 <Image
                   src={product.images[0]}
                   alt={product.name}
                   fill
-                  className="object-cover"
+                  style={{objectFit:'cover'}}
                   priority
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-gray-400">
+                <div style={{display:'flex',height:'100%',alignItems:'center',justifyContent:'center',color:'var(--muted)'}}>
                   No Image
                 </div>
               )}
-              
-              {/* Chances Badge */}
-              <div className="absolute top-4 left-4 bg-brand-red text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg flex items-center gap-2 z-10">
-                <span>🎁</span>
-                <span>{chancesLabel}</span>
-              </div>
-              
+
+              {/* Chances Badge - Only for keychain */}
+              {isKeychain && (
+                <div style={{position:'absolute',top:16,left:16,background:'var(--accent)',color:'#fff',padding:'8px 16px',borderRadius:'999px',fontSize:'14px',fontWeight:700,boxShadow:'0 4px 12px rgba(0,0,0,0.3)',display:'flex',alignItems:'center',gap:8,zIndex:10}}>
+                  <span>🎁</span>
+                  <span>1 брелок = 1 шанс на iPhone</span>
+                </div>
+              )}
+
               {hasDiscount && (
-                <div className="absolute right-4 top-4 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white">
+                <div style={{position:'absolute',right:16,top:16,borderRadius:'999px',background:'#dc2626',padding:'8px 16px',fontSize:'14px',fontWeight:700,color:'#fff'}}>
                   -{Math.round(((defaultVariant.compareAt! - defaultVariant.price) / defaultVariant.compareAt!) * 100)}%
                 </div>
               )}
@@ -111,14 +85,14 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
             {/* Additional images */}
             {product.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-4">
+              <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:16}}>
                 {product.images.slice(1, 5).map((image, idx) => (
-                  <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                  <div key={idx} style={{position:'relative',aspectRatio:'1',borderRadius:14,overflow:'hidden',background:'var(--surface)'}}>
                     <Image
                       src={image}
                       alt={`${product.name} ${idx + 2}`}
                       fill
-                      className="object-cover"
+                      style={{objectFit:'cover'}}
                       sizes="25vw"
                     />
                   </div>
@@ -129,44 +103,44 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
           {/* Product Info */}
           <div>
-            <h1 className="text-4xl font-serif font-bold mb-4">{product.name}</h1>
+            <h1 className="font-display" style={{fontSize:'40px',marginBottom:16}}>{product.name}</h1>
 
             {/* Price */}
-            <div className="flex items-baseline gap-4 mb-6">
-              <span className="text-4xl font-bold text-primary">
+            <div style={{display:'flex',alignItems:'baseline',gap:16,marginBottom:24}}>
+              <span className="font-display" style={{fontSize:'40px',color:'var(--accent)'}}>
                 {formatPrice(defaultVariant.price)}
               </span>
               {hasDiscount && (
-                <span className="text-2xl text-gray-500 line-through">
+                <span className="lead" style={{fontSize:'24px',textDecoration:'line-through',color:'var(--muted)'}}>
                   {formatPrice(defaultVariant.compareAt!)}
                 </span>
               )}
             </div>
 
             {/* Category */}
-            <div className="mb-6">
-              <span className="inline-block bg-gray-100 px-4 py-2 rounded-full text-sm font-medium text-gray-700">
+            <div style={{marginBottom:24}}>
+              <span style={{display:'inline-block',background:'var(--surface-2)',padding:'8px 16px',borderRadius:'999px',fontSize:'14px',fontWeight:600,border:'1px solid var(--ring)'}}>
                 {product.category === 'CLOTHING' ? 'Одежда' : 'БАДы'}
               </span>
             </div>
 
             {/* Description */}
             {product.description && (
-              <div className="mb-8">
-                <h2 className="text-xl font-bold mb-3">Описание</h2>
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+              <div style={{marginBottom:32}}>
+                <h2 className="font-display" style={{fontSize:'20px',marginBottom:12}}>Описание</h2>
+                <p className="lead" style={{fontSize:'16px',lineHeight:1.6}}>{product.description}</p>
               </div>
             )}
 
             {/* Features */}
             {product.features && typeof product.features === 'object' && (
-              <div className="mb-8">
-                <h2 className="text-xl font-bold mb-3">Характеристики</h2>
-                <dl className="space-y-2">
+              <div style={{marginBottom:32}}>
+                <h2 className="font-display" style={{fontSize:'20px',marginBottom:12}}>Характеристики</h2>
+                <dl style={{display:'grid',gap:8}}>
                   {Object.entries(product.features as Record<string, any>).map(([key, value]) => (
-                    <div key={key} className="flex gap-2">
-                      <dt className="text-gray-600 capitalize">{key}:</dt>
-                      <dd className="font-medium">{String(value)}</dd>
+                    <div key={key} style={{display:'flex',gap:8}}>
+                      <dt className="lead" style={{fontSize:'14px',textTransform:'capitalize'}}>{key}:</dt>
+                      <dd style={{fontWeight:600,fontSize:'14px'}}>{String(value)}</dd>
                     </div>
                   ))}
                 </dl>
@@ -175,18 +149,18 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
             {/* Variants */}
             {product.variants.length > 1 && (
-              <div className="mb-8">
-                <h2 className="text-xl font-bold mb-3">Варианты</h2>
-                <div className="space-y-2">
+              <div style={{marginBottom:32}}>
+                <h2 className="font-display" style={{fontSize:'20px',marginBottom:12}}>Варианты</h2>
+                <div style={{display:'grid',gap:8}}>
                   {product.variants.map((variant) => (
-                    <div key={variant.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={variant.id} className="tile" style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:16}}>
                       <div>
-                        <p className="font-medium">{variant.name || `${variant.size} ${variant.color}`.trim()}</p>
-                        <p className="text-sm text-gray-600">
+                        <p style={{fontWeight:600,fontSize:'14px'}}>{variant.name || `${variant.size} ${variant.color}`.trim()}</p>
+                        <p className="lead" style={{fontSize:'13px'}}>
                           В наличии: {variant.inventory?.quantity || 0} шт.
                         </p>
                       </div>
-                      <p className="text-lg font-bold text-primary">
+                      <p className="font-display" style={{fontSize:'18px',color:'var(--accent)'}}>
                         {formatPrice(variant.price)}
                       </p>
                     </div>
@@ -196,48 +170,45 @@ export default async function ProductPage({ params }: { params: { slug: string }
             )}
 
             {/* Add to Cart */}
-            <div className="space-y-4">
+            <div style={{display:'grid',gap:16}}>
               <AddToCartButton variantId={defaultVariant.id} productName={product.name} />
 
               <Link
                 href="/catalog"
-                className="block w-full text-center px-8 py-4 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                className="btn btn-ghost"
+                style={{width:'100%',textAlign:'center',padding:'18px 32px',fontSize:'16px'}}
               >
                 Продолжить покупки
               </Link>
             </div>
 
-            {/* Promo Info */}
-            <div className="mt-8 bg-brand-red/10 border-2 border-brand-red/30 rounded-xl p-6">
-              <div className="flex items-start gap-3 mb-3">
-                <span className="text-3xl">🎁</span>
-                <div>
-                  <h3 className="font-bold text-xl text-brand-dark mb-1">
-                    Эта покупка = {chancesLabel} на призы!
-                  </h3>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    Оформив заказ с этим товаром, вы получаете <strong>{chancesLabel}</strong> на выигрыш iPhone 17 Pro, Apple Watch Ultra и XREAL Air 2 Ultra на общую сумму до 240 000 ₽!
+            {/* Promo Info - Only for keychain */}
+            {isKeychain && (
+              <div className="tile" style={{marginTop:32,background:'rgba(255,43,43,0.1)',border:'2px solid rgba(255,43,43,0.3)',padding:24}}>
+                <div style={{display:'flex',alignItems:'flex-start',gap:12,marginBottom:12}}>
+                  <span style={{fontSize:'32px'}}>🎁</span>
+                  <div>
+                    <h3 className="font-display" style={{fontSize:'20px',marginBottom:4}}>
+                      Эта покупка = 1 шанс на iPhone!
+                    </h3>
+                    <p className="lead" style={{fontSize:'14px',lineHeight:1.6}}>
+                      Оформив заказ с этим брелоком, вы получаете <strong>1 шанс</strong> на выигрыш iPhone 17 Pro Max в еженедельном розыгрыше!
+                    </p>
+                  </div>
+                </div>
+                <div style={{marginTop:16,paddingTop:16,borderTop:'1px solid rgba(255,43,43,0.2)'}}>
+                  <p className="lead" style={{fontSize:'12px'}}>
+                    💡 <strong>Розыгрыш:</strong> Каждую неделю 1 iPhone 17 Pro Max • Всего 5 призов за 5 недель акции
                   </p>
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-t border-brand-red/20">
-                <p className="text-xs text-gray-600">
-                  💡 <strong>Правила акции:</strong> Пижама = 3 шанса • Футболка = 2 шанса • Остальные товары = 1 шанс
-                </p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
-      </div>
+        </div>
+      </section>
 
-      {/* Footer */}
-      <footer className="bg-foreground text-background py-12 mt-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center text-sm opacity-80">
-            © 2025 SoVAni. Все права защищены.
-          </div>
-        </div>
-      </footer>
+      <BigFooter />
     </div>
   )
 }
