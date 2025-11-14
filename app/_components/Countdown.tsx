@@ -1,5 +1,6 @@
 'use client'
 import {useEffect,useState} from 'react'
+import Image from 'next/image'
 
 function Capsule({v,label}:{v:number;label:string}){
   return(
@@ -31,8 +32,15 @@ export default function Countdown({target}:{target:string}){
   },[target])
 
   return(
-    <section aria-label="Обратный отсчёт" style={{background:'var(--accent)',color:'#fff',padding:'56px 0'}}>
-      <div className="container" style={{textAlign:'center'}}>
+    <section aria-label="Обратный отсчёт" style={{position:'relative',color:'#fff',padding:'56px 0',minHeight:360,overflow:'hidden'}}>
+      <Image
+        src="/images/Фон для блока-таймера.png"
+        alt="Фон таймера обратного отсчёта"
+        fill
+        sizes="100vw"
+        style={{objectFit:'cover',zIndex:0}}
+      />
+      <div className="container" style={{position:'relative',zIndex:1,textAlign:'center'}}>
         <div className="font-display" style={{fontSize:'32px',marginBottom:24}}>До следующего розыгрыша</div>
         <div style={{
           display:'grid',
