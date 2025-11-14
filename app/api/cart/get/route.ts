@@ -1,11 +1,11 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server'
-import { getOrCreateSession } from '@/lib/cart/getOrCreateSession'
+import { getSession } from '@/lib/cart/getSession'
 
 export async function GET() {
   try {
-    const session = await getOrCreateSession()
-    const cartItems = session.cart || []
+    const session = await getSession()
+    const cartItems = session?.cart || []
 
     // Calculate subtotal
     const subtotal = cartItems.reduce(
