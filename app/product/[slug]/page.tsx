@@ -29,6 +29,20 @@ export default async function ProductPage({ params }: { params: { slug: string }
   // Only show raffle badge for keychain products
   const isKeychain = product.slug === 'keychain' || product.name.toLowerCase().includes('брелок')
 
+  // Premium keychain gallery images
+  const keychainGallery = isKeychain ? [
+    { src: '/images/Товар — основной кадр (галерея 1).png', w: 2000, h: 2667, alt: 'Брелок-смартфон на металлической цепочке — студийный кадр' },
+    { src: '/images/макро брелок.png', w: 1500, h: 1500, alt: 'Макро брелока: блок камер и звено цепочки' },
+    { src: '/images/ChatGPT Image 14 нояб. 2025 г., 15_48_13.png', w: 1920, h: 1080, alt: 'Дополнительный ракурс брелока — премиальная сцена' },
+  ] : []
+
+  const displayImages = isKeychain ? keychainGallery : product.images.slice(0, 3).map((img, i) => ({
+    src: img,
+    w: 1000,
+    h: 1333,
+    alt: `${product.name} — кадр ${i + 1}`
+  }))
+
   return (
     <div className="min-h-screen" style={{background:'var(--bg)',color:'var(--text)'}}>
       <Navbar />
@@ -50,56 +64,96 @@ export default async function ProductPage({ params }: { params: { slug: string }
           </div>
 
           <div className="grid grid-2" style={{gap:48}}>
-          {/* Images */}
-          <div style={{display:'grid',gap:16}}>
-            <div style={{position:'relative',aspectRatio:'3/4',borderRadius:20,overflow:'hidden',background:'var(--surface)'}}>
-              {product.images[0] ? (
+          {/* Images Gallery */}
+          {isKeychain && displayImages.length > 0 ? (
+            <div style={{display:'grid',gap:16}}>
+              {/* Main image */}
+              <div className="rounded-[20px] md:rounded-[24px] overflow-hidden bg-[#14151b] shadow-[0_12px_36px_rgba(0,0,0,.28)]" style={{position:'relative'}}>
                 <Image
-                  src={product.images[0]}
-                  alt={product.name}
-                  fill
-                  style={{objectFit:'cover'}}
+                  src={displayImages[0].src}
+                  alt={displayImages[0].alt}
+                  width={displayImages[0].w}
+                  height={displayImages[0].h}
                   priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 600px"
+                  style={{width:'100%',height:'auto'}}
+                  className="select-none"
                 />
-              ) : (
-                <div style={{display:'flex',height:'100%',alignItems:'center',justifyContent:'center',color:'var(--muted)'}}>
-                  No Image
+                {/* Badge with icon - Only for keychain */}
+                <div style={{position:'absolute',top:16,left:16,display:'flex',alignItems:'center',gap:8,background:'rgba(20,21,27,0.95)',backdropFilter:'blur(8px)',padding:'10px 16px',borderRadius:'999px',boxShadow:'0 4px 16px rgba(0,0,0,0.4)',zIndex:10}}>
+                  <Image
+                    src="/images/Бейдж UI.png"
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                    className="shrink-0"
+                  />
+                  <span style={{fontSize:'14px',fontWeight:700,color:'#fff',whiteSpace:'nowrap'}}>
+                    1 брелок = 1 шанс на iPhone
+                  </span>
                 </div>
-              )}
-
-              {/* Chances Badge - Only for keychain */}
-              {isKeychain && (
-                <div style={{position:'absolute',top:16,left:16,background:'var(--accent)',color:'#fff',padding:'8px 16px',borderRadius:'999px',fontSize:'14px',fontWeight:700,boxShadow:'0 4px 12px rgba(0,0,0,0.3)',display:'flex',alignItems:'center',gap:8,zIndex:10}}>
-                  <span>🎁</span>
-                  <span>1 брелок = 1 шанс на iPhone</span>
-                </div>
-              )}
-
-              {hasDiscount && (
-                <div style={{position:'absolute',right:16,top:16,borderRadius:'999px',background:'#dc2626',padding:'8px 16px',fontSize:'14px',fontWeight:700,color:'#fff'}}>
-                  -{Math.round(((defaultVariant.compareAt! - defaultVariant.price) / defaultVariant.compareAt!) * 100)}%
+              </div>
+              {/* Additional 2 images in grid */}
+              {displayImages.length > 1 && (
+                <div style={{display:'grid',gridTemplateColumns:'repeat(2, 1fr)',gap:16}}>
+                  {displayImages.slice(1).map((img) => (
+                    <div key={img.src} className="rounded-[16px] md:rounded-[20px] overflow-hidden bg-[#14151b] shadow-[0_8px_24px_rgba(0,0,0,.25)]">
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        width={img.w}
+                        height={img.h}
+                        sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 300px"
+                        style={{width:'100%',height:'auto'}}
+                        className="select-none"
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
-
-            {/* Additional images */}
-            {product.images.length > 1 && (
-              <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:16}}>
-                {product.images.slice(1, 5).map((image, idx) => (
-                  <div key={idx} style={{position:'relative',aspectRatio:'1',borderRadius:14,overflow:'hidden',background:'var(--surface)'}}>
-                    <Image
-                      src={image}
-                      alt={`${product.name} ${idx + 2}`}
-                      fill
-                      style={{objectFit:'cover'}}
-                      sizes="25vw"
-                    />
+          ) : (
+            // Default product images (non-keychain)
+            <div style={{display:'grid',gap:16}}>
+              <div style={{position:'relative',aspectRatio:'3/4',borderRadius:20,overflow:'hidden',background:'var(--surface)'}}>
+                {product.images[0] ? (
+                  <Image
+                    src={product.images[0]}
+                    alt={product.name}
+                    fill
+                    style={{objectFit:'cover'}}
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                ) : (
+                  <div style={{display:'flex',height:'100%',alignItems:'center',justifyContent:'center',color:'var(--muted)'}}>
+                    No Image
                   </div>
-                ))}
+                )}
+                {hasDiscount && (
+                  <div style={{position:'absolute',right:16,top:16,borderRadius:'999px',background:'#dc2626',padding:'8px 16px',fontSize:'14px',fontWeight:700,color:'#fff'}}>
+                    -{Math.round(((defaultVariant.compareAt! - defaultVariant.price) / defaultVariant.compareAt!) * 100)}%
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+              {product.images.length > 1 && (
+                <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:16}}>
+                  {product.images.slice(1, 5).map((image, idx) => (
+                    <div key={idx} style={{position:'relative',aspectRatio:'1',borderRadius:14,overflow:'hidden',background:'var(--surface)'}}>
+                      <Image
+                        src={image}
+                        alt={`${product.name} ${idx + 2}`}
+                        fill
+                        style={{objectFit:'cover'}}
+                        sizes="25vw"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Product Info */}
           <div>
