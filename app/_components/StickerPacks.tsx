@@ -21,7 +21,7 @@ export default function StickerPacks(){
               />
             </div>
             <h3 className="font-display" style={{marginTop:20,fontSize:'28px',textAlign:'center'}}>Брелок</h3>
-            <div style={{marginTop:12,fontWeight:700,fontSize:'32px',textAlign:'center',color:'var(--accent)'}}>999 ₽</div>
+            <div style={{marginTop:12,fontWeight:700,fontSize:'32px',textAlign:'center',color:'var(--accent)'}}>1 999 ₽</div>
             <div className="lead" style={{marginTop:8,fontSize:'18px',textAlign:'center'}}>🎁 1 брелок = 1 шанс на iPhone</div>
             <div style={{display:'flex',flexDirection:'column',gap:12,marginTop:24}}>
               <a className="btn btn-primary" style={{fontSize:'16px',padding:'18px 32px'}} href="/catalog">Купить брелок</a>
