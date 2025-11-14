@@ -12,10 +12,11 @@ export default function StickerPacks(){
           <article className="tile" style={{padding:32,maxWidth:480,width:'100%'}}>
             <div style={{position:'relative',width:'100%',aspectRatio:'1/1',borderRadius:20,overflow:'hidden',background:'var(--surface)'}}>
               <Image
-                src="/images/products/keychain.jpg"
-                alt="Брелок"
-                width={480}
-                height={480}
+                src="/images/брелок.png"
+                alt="Брелок для участия в розыгрыше"
+                width={800}
+                height={800}
+                sizes="(max-width:768px) 100vw, 480px"
                 style={{objectFit:'cover',width:'100%',height:'100%'}}
               />
             </div>
