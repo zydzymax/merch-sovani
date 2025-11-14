@@ -117,6 +117,23 @@ export default async function ProductPage({ params }: { params: { slug: string }
               )}
             </div>
 
+            {/* Legal Notice - Only for keychain */}
+            {isKeychain && (
+              <div style={{marginBottom:24,padding:16,background:'var(--surface)',borderRadius:12,borderLeft:'4px solid var(--accent)'}}>
+                <p className="lead" style={{fontSize:'13px',lineHeight:1.6,opacity:0.9}}>
+                  <strong>Покупка брелока = 1 шанс участия в еженедельном розыгрыше.</strong>
+                  {' '}Правила:{' '}
+                  <Link href="/docs/rules" style={{color:'var(--accent)',textDecoration:'underline'}}>
+                    /docs/rules
+                  </Link>
+                  <br/>
+                  <span style={{opacity:0.8,fontSize:'12px'}}>
+                    Продавец: Организатор акции. Оператор площадки = Агент по приёму оплаты.
+                  </span>
+                </p>
+              </div>
+            )}
+
             {/* Category */}
             <div style={{marginBottom:24}}>
               <span style={{display:'inline-block',background:'var(--surface-2)',padding:'8px 16px',borderRadius:'999px',fontSize:'14px',fontWeight:600,border:'1px solid var(--ring)'}}>
