@@ -25,17 +25,16 @@ export default function ThemeToggle() {
     <button
       onClick={() => apply(id)}
       className={
-        'px-3 py-1.5 rounded-full text-xs font-semibold transition ' +
-        (theme === id ? 'btn-cta' : 'pill-outline theme-muted hover:theme-brand')
+        'px-4 py-2 rounded-full text-sm font-bold transition-all ' +
+        (theme === id ? 'btn-cta shadow-lg' : 'pill-outline theme-muted hover:theme-brand hover:scale-105')
       }
-      style={{ marginRight: 8 }}
     >
       {label}
     </button>
   )
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 flex-wrap">
       <Btn id="legacy" label="LEGACY" />
       <Btn id="theme-dark-electric" label="DARK+BLUE" />
       <Btn id="theme-blue-coral" label="BLUE+CORAL" />
