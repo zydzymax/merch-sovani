@@ -35,6 +35,7 @@ export default function ThemeToggle() {
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
+      <span className="text-xs font-semibold uppercase tracking-wide opacity-70 mr-1">Тема:</span>
       <Btn id="legacy" label="LEGACY" />
       <Btn id="theme-dark-electric" label="DARK+BLUE" />
       <Btn id="theme-blue-coral" label="BLUE+CORAL" />
