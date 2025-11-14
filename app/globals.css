@@ -43,6 +43,54 @@
     --gap-6: 72px;
   }
 
+  /* ==========================
+     THEME TOKENS (semantic layer, non-destructive)
+     ========================== */
+  :root {
+    /* LEGACY theme defaults (preserve current look) */
+    --theme-bg: var(--bg);
+    --theme-card: var(--card-bg);
+    --theme-text: var(--text);
+    --theme-muted: var(--muted);
+    --theme-primary: var(--accent);
+    --theme-primary-1: var(--accent);
+    --theme-primary-2: var(--accent-hover);
+    --theme-brand: #ffffff;
+    --theme-border: var(--ring);
+    --theme-capsule-shadow: var(--shadow-strong);
+    --theme-card-shadow: var(--shadow-card);
+  }
+
+  /* Theme 2: DARK + ELECTRIC BLUE */
+  body.theme-dark-electric {
+    --theme-bg: #0F0F12;
+    --theme-card: #14151B;
+    --theme-text: #D9E2EE;
+    --theme-muted: #93A1B5;
+    --theme-primary: #FF2B2B;      /* CTA stays red for conversion */
+    --theme-primary-1: #0073F0;
+    --theme-primary-2: #00A1FF;
+    --theme-brand: #0087FE;        /* brand/links/badges */
+    --theme-border: #222733;
+    --theme-capsule-shadow: 0 20px 60px rgba(0, 115, 240, 0.15);
+    --theme-card-shadow: 0 16px 48px rgba(0, 115, 240, 0.12);
+  }
+
+  /* Theme 3: BLUE CORAL */
+  body.theme-blue-coral {
+    --theme-bg: #0A1120;           /* navy, easy on eyes */
+    --theme-card: #0F1A2A;
+    --theme-text: #EAF1FF;
+    --theme-muted: #B9C7DB;
+    --theme-primary: #FF3E80;      /* coral CTA */
+    --theme-primary-1: #006CF2;    /* blue glow/borders */
+    --theme-primary-2: #00A1FF;
+    --theme-brand: #0087FE;
+    --theme-border: #24334A;
+    --theme-capsule-shadow: 0 20px 60px rgba(0, 108, 242, 0.2);
+    --theme-card-shadow: 0 16px 48px rgba(255, 62, 128, 0.08);
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -318,4 +366,39 @@
   overflow: hidden;
   background: var(--card-bg);
   box-shadow: var(--shadow-strong);
+}
+
+/* Theme utility classes (non-breaking) */
+.theme-surface {
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+.theme-card {
+  background: var(--theme-card);
+  color: var(--theme-text);
+  box-shadow: var(--theme-card-shadow);
+}
+
+.theme-border {
+  border-color: var(--theme-border) !important;
+}
+
+.theme-brand {
+  color: var(--theme-brand);
+}
+
+.theme-muted {
+  color: var(--theme-muted);
+}
+
+.btn-cta {
+  background: var(--theme-primary);
+  color: #fff;
+}
+
+.pill-outline {
+  border: 1px solid color-mix(in oklab, var(--theme-text) 12%, transparent);
+  background: color-mix(in oklab, var(--theme-card) 85%, transparent);
+  color: var(--theme-text);
 }
