@@ -15,8 +15,16 @@
     --ring: #2f313b;
     --container: 1200px;
 
-    --radius: 16px;
+    /* Premium design tokens */
+    --card-bg: #14151b;
+    --radius-xl: 32px;
     --radius-lg: 28px;
+    --radius-md: 20px;
+    --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.35);
+    --shadow-card: 0 16px 48px rgba(0, 0, 0, 0.30);
+    --shadow-subtle: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+    --radius: 16px;
     --radius-xxl: 36px;
     --pill: 999px;
     --shadow-1: 0 10px 30px rgba(0, 0, 0, 0.35);
@@ -296,4 +304,18 @@
     width: 72px !important;
     height: 72px !important;
   }
+}
+
+/* Premium utility classes */
+.card-elev {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.capsule {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-strong);
 }
