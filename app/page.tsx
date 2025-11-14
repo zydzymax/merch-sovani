@@ -2,6 +2,7 @@ import Navbar from './_components/Navbar'
 import HeroSection from './_components/HeroSection'
 import StickerPacks from './_components/StickerPacks'
 import GrandPrize from './_components/GrandPrize'
+import WeeklyGiveaways from './_components/WeeklyGiveaways'
 import Countdown from './_components/Countdown'
 import Steps from './_components/Steps'
 import SocialLive from './_components/SocialLive'
@@ -15,6 +16,7 @@ export default function Home() {
       <HeroSection/>
       <StickerPacks/>
       <GrandPrize/>
+      <WeeklyGiveaways/>
       <Countdown target="2026-01-10T18:00:00+03:00"/>
       <Steps/>
       <SocialLive/>
