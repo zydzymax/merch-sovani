@@ -12,15 +12,15 @@ export default function GrandPrize(){
           alignItems:'center'
         }}>
           <div>
-            <div className="font-display" style={{fontSize:'38px',lineHeight:1.1}}>28 призовых мест</div>
+            <div className="font-display" style={{fontSize:'38px',lineHeight:1.1}}>5 iPhone 17 Pro Max</div>
             <p className="lead" style={{marginTop:12,fontSize:'18px'}}>
-              iPhone 17 Pro Max, Apple Watch Ultra, XREAL Air 2 Ultra и другие призы от партнёров
+              Каждую неделю разыгрываем 1 iPhone 17 Pro Max среди всех участников. Успей купить брелок!
             </p>
-            <a className="btn btn-primary" style={{marginTop:20}} href="/draws">Смотреть все призы</a>
+            <a className="btn btn-primary" style={{marginTop:20}} href="/draws">Смотреть победителей</a>
           </div>
           <div style={{position:'relative',width:'100%',aspectRatio:'16/10',borderRadius:20,overflow:'hidden',background:'var(--surface)'}}>
             <Image
-              src="/images/prizes/main-prize.jpg"
+              src="/images/prizes/iphone.jpg"
               alt="Главный приз iPhone 17 Pro Max"
               width={720}
               height={480}

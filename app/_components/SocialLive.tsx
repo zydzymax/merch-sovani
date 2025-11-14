@@ -3,10 +3,10 @@ export default function SocialLive(){
     <section className="section">
       <div className="container tile" style={{padding:32}}>
         <div className="font-display" style={{fontSize:32,lineHeight:1.2}}>
-          Следи за розыгрышем — 10.01.2026, прямой эфир
+          Розыгрыш каждую неделю в прямом эфире
         </div>
         <p className="lead" style={{marginTop:12,fontSize:'18px'}}>
-          Больше контента и новостей о розыгрыше в наших соцсетях:
+          Следи за результатами, смотри эфиры и участвуй в конкурсах в наших соцсетях:
         </p>
         <div style={{display:'flex',gap:12,marginTop:20,flexWrap:'wrap'}}>
           <a className="btn btn-ghost" href="https://t.me/sovani_official" target="_blank" rel="noopener noreferrer">

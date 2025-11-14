@@ -52,8 +52,8 @@
 }
 
 .cta {
-  background: #ffd27a;
-  color: #5b1a1a;
+  background: #e52a27;
+  color: #fafafa;
   padding: 14px 28px;
   border-radius: 10px;
   font-weight: 800;
@@ -65,7 +65,7 @@
 }
 
 .cta:hover {
-  background: #ffe8a3;
+  background: #d01f1c;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }

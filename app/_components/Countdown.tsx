@@ -33,7 +33,7 @@ export default function Countdown({target}:{target:string}){
   return(
     <section aria-label="Обратный отсчёт" style={{background:'var(--accent)',color:'#fff',padding:'56px 0'}}>
       <div className="container" style={{textAlign:'center'}}>
-        <div className="font-display" style={{fontSize:'32px',marginBottom:24}}>До конца акции осталось</div>
+        <div className="font-display" style={{fontSize:'32px',marginBottom:24}}>До следующего розыгрыша</div>
         <div style={{
           display:'grid',
           gridTemplateColumns:'repeat(4,1fr)',
