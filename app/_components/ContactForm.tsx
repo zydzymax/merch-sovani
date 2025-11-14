@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 
 export default function ContactForm(){
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -9,9 +10,18 @@ export default function ContactForm(){
   return(
     <section aria-label="Остались вопросы?" style={{background:'var(--accent)',padding:'56px 0',color:'#fff'}}>
       <div className="container">
-        <h2 className="font-display" style={{textTransform:'uppercase',fontSize:'36px',marginBottom:20}}>
-          Остались вопросы?
-        </h2>
+        <div style={{display:'flex',alignItems:'center',gap:20,marginBottom:20,flexWrap:'wrap'}}>
+          <h2 className="font-display" style={{textTransform:'uppercase',fontSize:'36px',margin:0}}>
+            Остались вопросы?
+          </h2>
+          <Image
+            src="/images/Бейдж «Гарантированная регистрация участия».png"
+            alt="Гарантированная регистрация участия"
+            width={128}
+            height={128}
+            style={{width:96,height:96}}
+          />
+        </div>
         <form onSubmit={handleSubmit} style={{display:'grid',gap:14,maxWidth:720}}>
           <input
             type="text"
