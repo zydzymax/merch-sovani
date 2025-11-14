@@ -1,8 +1,18 @@
+import Image from 'next/image'
+
 export default function BigFooter(){
   return(
     <footer className="section">
       <div className="container tile" style={{padding:36}}>
-        <div className="font-display" style={{fontSize:28,marginBottom:20}}>SOVANI</div>
+        <div style={{marginBottom:20}}>
+          <Image
+            src="/images/лого SoVAni.png"
+            alt="SOVANI"
+            width={160}
+            height={53}
+            style={{height:40,width:'auto'}}
+          />
+        </div>
         <div style={{
           display:'grid',
           gap:32,
