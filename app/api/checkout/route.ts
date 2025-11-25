@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { getOrCreateSession } from '@/lib/cart/getOrCreateSession'
+import { calculateOrderFraudScore } from '@/lib/antifraud/calculateFraudScore'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,11 +16,41 @@ export async function POST(request: NextRequest) {
       address,
       postalCode,
       participatesInPromo = false,
+      deviceFingerprint, // Client should send this
     } = body
 
     // Validate required fields
     if (!email || !phone || !fullName || !region || !city || !address || !postalCode) {
       return NextResponse.json({ error: 'Все поля обязательны для заполнения' }, { status: 400 })
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Некорректный формат email' }, { status: 400 })
+    }
+
+    // Russian phone format validation (+7XXXXXXXXXX)
+    const phoneRegex = /^\+?7[0-9]{10}$/
+    if (!phoneRegex.test(phone.replace(/[\s\-()]/g, ''))) {
+      return NextResponse.json({ error: 'Некорректный формат телефона. Используйте формат +7XXXXXXXXXX' }, { status: 400 })
+    }
+
+    // Length validations
+    if (fullName.length > 200) {
+      return NextResponse.json({ error: 'ФИО слишком длинное (макс. 200 символов)' }, { status: 400 })
+    }
+    if (address.length > 500) {
+      return NextResponse.json({ error: 'Адрес слишком длинный (макс. 500 символов)' }, { status: 400 })
+    }
+    if (postalCode.length > 20) {
+      return NextResponse.json({ error: 'Индекс слишком длинный (макс. 20 символов)' }, { status: 400 })
+    }
+
+    // SQL injection prevention - basic sanitization
+    const dangerousChars = /<script|javascript:|onerror=|onclick=/i
+    if (dangerousChars.test(fullName) || dangerousChars.test(address)) {
+      return NextResponse.json({ error: 'Недопустимые символы в данных' }, { status: 400 })
     }
 
     // Get session and cart
@@ -28,6 +59,33 @@ export async function POST(request: NextRequest) {
 
     if (cartItems.length === 0) {
       return NextResponse.json({ error: 'Корзина пуста' }, { status: 400 })
+    }
+
+    // Get IP address from request
+    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0] ||
+                      request.headers.get('x-real-ip') ||
+                      request.ip ||
+                      'unknown'
+
+    // Calculate fraud score
+    const fraudCheck = await calculateOrderFraudScore({
+      userId: session.userId || undefined,
+      email,
+      phone,
+      ipAddress,
+      deviceFingerprint: deviceFingerprint || undefined,
+      shippingAddress: address,
+      shippingPostalCode: postalCode,
+    })
+
+    // Block high-risk orders (fraud score >= 80)
+    if (fraudCheck.fraudScore >= 80) {
+      console.warn(`⚠️ High-risk order blocked (score: ${fraudCheck.fraudScore})`)
+      console.warn(`   Flags: ${fraudCheck.fraudFlags.join(', ')}`)
+
+      return NextResponse.json({
+        error: 'Заказ не может быть обработан. Пожалуйста, свяжитесь с поддержкой.',
+      }, { status: 403 })
     }
 
     // Calculate totals
@@ -63,6 +121,11 @@ export async function POST(request: NextRequest) {
           total,
           participatesInPromo,
           hasReturnRight: !participatesInPromo, // If participates, no return
+          // Antifraud fields
+          ipAddress,
+          deviceFingerprint,
+          fraudScore: fraudCheck.fraudScore,
+          fraudFlags: fraudCheck.fraudFlags,
           items: {
             create: cartItems.map((item) => ({
               variantId: item.variantId,
@@ -72,6 +135,13 @@ export async function POST(request: NextRequest) {
           },
         },
       })
+
+      // Log suspicious orders
+      if (fraudCheck.isHighRisk) {
+        console.warn(`⚠️ High-risk order created: ${orderNumber}`)
+        console.warn(`   Score: ${fraudCheck.fraudScore}/100`)
+        console.warn(`   Flags: ${fraudCheck.fraudFlags.join(', ')}`)
+      }
 
       // Clear cart
       await tx.cartItem.deleteMany({

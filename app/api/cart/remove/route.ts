@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { getOrCreateSession } from '@/lib/cart/getOrCreateSession'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +11,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'itemId обязателен' }, { status: 400 })
     }
 
-    // Delete cart item
+    // Get current session to verify ownership
+    const session = await getOrCreateSession({ readOnly: true })
+
+    if (!session.id) {
+      return NextResponse.json({ error: 'Сессия не найдена' }, { status: 401 })
+    }
+
+    // Verify the item belongs to this session (IDOR protection)
+    const cartItem = await prisma.cartItem.findUnique({
+      where: { id: itemId },
+      include: { session: true }
+    })
+
+    if (!cartItem) {
+      return NextResponse.json({ error: 'Товар не найден' }, { status: 404 })
+    }
+
+    if (cartItem.sessionId !== session.id) {
+      return NextResponse.json({ error: 'Доступ запрещен' }, { status: 403 })
+    }
+
+    // Delete cart item (now verified to belong to user)
     await prisma.cartItem.delete({
       where: { id: itemId },
     })

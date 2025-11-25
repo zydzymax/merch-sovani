@@ -3,11 +3,36 @@ import { prisma } from '@/lib/db/prisma'
 import bcrypt from 'bcryptjs'
 import { SignJWT } from 'jose'
 import { cookies } from 'next/headers'
+import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rateLimit'
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key-change-in-production')
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable must be defined')
+}
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET)
 
 export async function POST(request: NextRequest) {
   try {
+    // Get IP address for rate limiting
+    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0] ||
+                      request.headers.get('x-real-ip') ||
+                      request.ip ||
+                      'unknown'
+
+    // Rate limit: 5 login attempts per 15 minutes per IP
+    const rateLimit = checkRateLimit(ipAddress, {
+      maxRequests: 5,
+      windowSeconds: 15 * 60,
+    })
+
+    const headers = getRateLimitHeaders(rateLimit)
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: 'Слишком много попыток входа. Попробуйте позже.' },
+        { status: 429, headers }
+      )
+    }
+
     const body = await request.json()
     const { email, password } = body
 
@@ -64,7 +89,7 @@ export async function POST(request: NextRequest) {
         name: user.name,
         role: user.role,
       },
-    })
+    }, { headers })
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json(

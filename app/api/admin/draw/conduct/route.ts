@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { conductDraw, conductMultiPrizeDraw } from '@/lib/utils/drawRandomizer'
+import { requireAdmin } from '@/lib/auth/requireAdmin'
 
 /**
  * API для проведения розыгрыша
@@ -7,18 +8,16 @@ import { conductDraw, conductMultiPrizeDraw } from '@/lib/utils/drawRandomizer'
  */
 export async function POST(request: NextRequest) {
   try {
+    // Require admin authentication
+    const { error } = await requireAdmin()
+    if (error) return error
+
     const body = await request.json()
     const { drawId, numberOfWinners, multiPrize } = body
 
     if (!drawId) {
       return NextResponse.json({ error: 'Draw ID required' }, { status: 400 })
     }
-
-    // TODO: Добавить проверку прав администратора
-    // const user = await getUser()
-    // if (user?.role !== 'ADMIN') {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
-    // }
 
     let result
 
