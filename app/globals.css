@@ -435,8 +435,7 @@
 
 /* Document pages styling */
 .doc-content {
-  background: #ffffff;
-  color: #000000;
+  /* Removed fixed colors - inherit from theme */
 }
 
 .doc-content h1,
@@ -448,5 +447,5 @@
 .doc-content p,
 .doc-content li,
 .doc-content strong {
-  color: #000000 !important;
+  /* Removed fixed colors - inherit from theme */
 }

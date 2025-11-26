@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
+import { jwtVerify } from 'jose'
+
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || '')
+
+async function getTokenFromRequest(request: NextRequest) {
+  try {
+    const token = request.cookies.get('auth_token')?.value
+    if (!token) return null
+
+    const verified = await jwtVerify(token, JWT_SECRET)
+    return verified.payload
+  } catch {
+    return null
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next()
@@ -19,7 +33,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Get user session token
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+  const token = await getTokenFromRequest(request)
 
   // If user is a SELLER, restrict access to only /seller/* routes
   if (token && token.role === 'SELLER') {
