@@ -1,15 +1,18 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import Navbar from '@/app/_components/Navbar'
+import BigFooter from '@/app/_components/BigFooter'
 
 export default async function PromoPage() {
   return (
     <div className="min-h-screen" style={{background:'var(--bg)',color:'var(--text)'}}>
+      <Navbar />
       {/* Hero Banner */}
       <section className="section">
         <div className="container">
           <div className="tile" style={{padding:0,overflow:'hidden'}}>
             <Image
-              src="/images/5 айфонов.png"
+              src="/images/5 айфонов.webp"
               alt="5 iPhone 17 Pro Max - главные призы розыгрыша"
               width={1200}
               height={600}
@@ -24,7 +27,7 @@ export default async function PromoPage() {
             </h1>
             <p className="lead" style={{fontSize:'20px',maxWidth:800,marginInline:'auto'}}>
               Покупай брелок за 1 999 ₽ и выигрывай iPhone 17 Pro Max.
-              Каждую неделю — новый победитель!
+              Один победитель получит главный приз!
             </p>
           </div>
         </div>
@@ -34,17 +37,25 @@ export default async function PromoPage() {
       <section className="section">
         <div className="container">
           <h2 className="font-display" style={{fontSize:'40px',marginBottom:32,textAlign:'center'}}>
-            Призовой фонд
+            Главный приз
           </h2>
-          <div className="tile" style={{padding:0,overflow:'hidden'}}>
-            <Image
-              src="/images/Сетка «Еженедельные розыгрыши — 5 недель».png"
-              alt="График еженедельных розыгрышей на 5 недель"
-              width={1200}
-              height={600}
-              sizes="(max-width:768px) 100vw, 1200px"
-              style={{width:'100%',height:'auto',borderRadius:28}}
-            />
+          <div className="tile" style={{padding:40,textAlign:'center'}}>
+            <div style={{maxWidth:500,margin:'0 auto'}}>
+              <Image
+                src="/images/орнаж.png"
+                alt="iPhone 17 Pro Max - главный приз"
+                width={400}
+                height={400}
+                sizes="(max-width:768px) 100vw, 400px"
+                style={{width:'100%',height:'auto',objectFit:'contain'}}
+              />
+              <h3 className="font-display" style={{fontSize:'32px',marginTop:24,color:'var(--accent)'}}>
+                iPhone 17 Pro Max
+              </h3>
+              <p className="lead" style={{fontSize:'18px',marginTop:12}}>
+                Один победитель получит новейший смартфон Apple
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -60,7 +71,7 @@ export default async function PromoPage() {
             <div className="tile" style={{padding:32}}>
               <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:16}}>
                 <Image
-                  src="/images/Иконка «Электронный чек : подтверждение».png"
+                  src="/images/Иконка «Электронный чек : подтверждение».webp"
                   alt="Электронный чек подтверждения"
                   width={64}
                   height={64}
@@ -97,15 +108,15 @@ export default async function PromoPage() {
               <div style={{display:'grid',gap:12}}>
                 <p className="lead" style={{fontSize:'16px',marginBottom:8}}>
                   <strong>Период акции:</strong><br/>
-                  1 декабря 2025 — 5 января 2026
+                  Даты будут объявлены дополнительно
                 </p>
                 <p className="lead" style={{fontSize:'16px',marginBottom:8}}>
-                  <strong>Розыгрыши:</strong><br/>
-                  Каждую неделю в прямом эфире на YouTube, Telegram и VK
+                  <strong>Розыгрыш:</strong><br/>
+                  Результаты в канале Instagram*
                 </p>
                 <p className="lead" style={{fontSize:'16px'}}>
-                  <strong>Всего призов:</strong><br/>
-                  5 смартфонов iPhone 17 Pro Max
+                  <strong>Главный приз:</strong><br/>
+                  1 смартфон iPhone 17 Pro Max
                 </p>
               </div>
             </div>
@@ -115,20 +126,20 @@ export default async function PromoPage() {
                 🎁 Определение победителей
               </h3>
               <p className="lead" style={{fontSize:'16px',marginBottom:12}}>
-                Розыгрыш проводится с использованием генератора случайных чисел в прямом эфире.
+                Розыгрыш проводится с использованием генератора случайных чисел. Результаты публикуются в Instagram*.
               </p>
               <p className="lead" style={{fontSize:'16px',marginBottom:12}}>
                 Победители уведомляются по электронной почте и телефону в течение 24 часов.
               </p>
               <p className="lead" style={{fontSize:'16px'}}>
-                Каждый участник может выиграть только один раз за всю акцию.
+                Розыгрыш проводится честно и прозрачно среди всех участников.
               </p>
             </div>
 
             <div className="tile" style={{padding:32}}>
               <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:16}}>
                 <Image
-                  src="/images/Бейдж «Гарантированная регистрация участия».png"
+                  src="/images/Бейдж «Гарантированная регистрация участия».webp"
                   alt="Гарантированная регистрация участия"
                   width={64}
                   height={64}
@@ -145,7 +156,7 @@ export default async function PromoPage() {
                 </li>
                 <li style={{display:'flex',gap:12}}>
                   <span style={{color:'var(--accent)',flexShrink:0}}>✓</span>
-                  <span>Прозрачный розыгрыш в прямом эфире</span>
+                  <span>Прозрачный розыгрыш с публикацией результатов</span>
                 </li>
                 <li style={{display:'flex',gap:12}}>
                   <span style={{color:'var(--accent)',flexShrink:0}}>✓</span>
@@ -183,7 +194,7 @@ export default async function PromoPage() {
                 Когда я узнаю результаты?
               </summary>
               <p className="lead" style={{marginTop:12,fontSize:'16px',color:'var(--muted)'}}>
-                Розыгрыши проходят каждую неделю в прямом эфире. Следи за объявлениями в наших соц. сетях.
+                Результаты розыгрыша будут опубликованы в Instagram*. Следи за обновлениями в нашем канале.
               </p>
             </details>
 
@@ -236,6 +247,8 @@ export default async function PromoPage() {
           </div>
         </div>
       </section>
+
+      <BigFooter />
     </div>
   )
 }

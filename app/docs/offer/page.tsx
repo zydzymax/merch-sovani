@@ -13,7 +13,7 @@ export default function OfferPage() {
             Публичная оферта
           </h1>
 
-          <div className="tile" style={{padding:40}}>
+          <div className="tile doc-content" style={{padding:40}}>
             <div style={{display:'grid',gap:32}}>
               <section>
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>1. Стороны и предмет договора</h2>
@@ -34,7 +34,7 @@ export default function OfferPage() {
                     <li>Брелоки (участие в стимулирующей акции);</li>
                     <li>Прочие товары согласно каталогу на Сайте.</li>
                   </ul>
-                  <p><strong>Особенности брелока:</strong> Покупка брелока = 1 шанс участия в еженедельном розыгрыше iPhone 17 Pro Max. Подробнее в <Link href="/docs/rules" style={{color:'var(--accent)'}}>Правилах акции</Link>.</p>
+                  <p><strong>Особенности брелока:</strong> Покупка брелока = 1 шанс участия в розыгрыше iPhone 17 Pro Max. Только брелок участвует в акции. Подробнее в <Link href="/docs/rules" style={{color:'var(--accent)'}}>Правилах акции</Link>.</p>
                 </div>
               </section>
 

@@ -31,9 +31,9 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   // Premium keychain gallery images
   const keychainGallery = isKeychain ? [
-    { src: '/images/Товар — основной кадр (галерея 1).png', w: 2000, h: 2667, alt: 'Брелок-смартфон на металлической цепочке — студийный кадр' },
-    { src: '/images/макро брелок.png', w: 1500, h: 1500, alt: 'Макро брелока: блок камер и звено цепочки' },
-    { src: '/images/ChatGPT Image 14 нояб. 2025 г., 15_48_13.png', w: 1920, h: 1080, alt: 'Дополнительный ракурс брелока — премиальная сцена' },
+    { src: '/images/Товар — основной кадр (галерея 1).webp', w: 2000, h: 2667, alt: 'Брелок-смартфон на металлической цепочке — студийный кадр' },
+    { src: '/images/макро брелок.webp', w: 1500, h: 1500, alt: 'Макро брелока: блок камер и звено цепочки' },
+    { src: '/images/ChatGPT Image 14 нояб. 2025 г., 15_48_13.webp', w: 1920, h: 1080, alt: 'Дополнительный ракурс брелока — премиальная сцена' },
   ] : []
 
   const displayImages = isKeychain ? keychainGallery : product.images.slice(0, 3).map((img, i) => ({
@@ -82,7 +82,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
                 {/* Badge with icon - Only for keychain */}
                 <div style={{position:'absolute',top:16,left:16,display:'flex',alignItems:'center',gap:8,background:'rgba(20,21,27,0.95)',backdropFilter:'blur(8px)',padding:'10px 16px',borderRadius:'999px',boxShadow:'0 4px 16px rgba(0,0,0,0.4)',zIndex:10}}>
                   <Image
-                    src="/images/Бейдж UI.png"
+                    src="/images/Бейдж UI.webp"
                     alt=""
                     width={24}
                     height={24}
@@ -269,7 +269,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
                 </div>
                 <div style={{marginTop:16,paddingTop:16,borderTop:'1px solid rgba(255,43,43,0.2)'}}>
                   <p className="lead" style={{fontSize:'12px'}}>
-                    💡 <strong>Розыгрыш:</strong> Каждую неделю 1 iPhone 17 Pro Max • Всего 5 призов за 5 недель акции
+                    💡 <strong>Розыгрыш:</strong> 1 главный приз iPhone 17 Pro Max • Чем больше брелоков, тем выше шансы
                   </p>
                 </div>
               </div>

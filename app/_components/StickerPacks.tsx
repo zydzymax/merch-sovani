@@ -12,7 +12,7 @@ export default function StickerPacks(){
           <article className="tile" style={{padding:32,maxWidth:480,width:'100%'}}>
             <div style={{position:'relative',width:'100%',aspectRatio:'1/1',borderRadius:20,overflow:'hidden',background:'var(--surface)'}}>
               <Image
-                src="/images/брелок.png"
+                src="/images/Товар — основной кадр (галерея 1).webp"
                 alt="Брелок для участия в розыгрыше"
                 width={800}
                 height={800}
@@ -21,7 +21,7 @@ export default function StickerPacks(){
               />
             </div>
             <h3 className="font-display" style={{marginTop:20,fontSize:'28px',textAlign:'center'}}>Брелок</h3>
-            <div style={{marginTop:12,fontWeight:700,fontSize:'32px',textAlign:'center',color:'var(--accent)'}}>1 999 ₽</div>
+            <div style={{marginTop:12,fontWeight:700,fontSize:'32px',textAlign:'center',color:'var(--accent)'}}>2 000 ₽</div>
             <div className="lead" style={{marginTop:8,fontSize:'18px',textAlign:'center'}}>🎁 1 брелок = 1 шанс на iPhone</div>
             <div style={{display:'flex',flexDirection:'column',gap:12,marginTop:24}}>
               <a className="btn btn-primary" style={{fontSize:'16px',padding:'18px 32px'}} href="/catalog">Купить брелок</a>

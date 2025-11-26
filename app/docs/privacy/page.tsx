@@ -13,7 +13,7 @@ export default function PrivacyPage() {
             Политика конфиденциальности
           </h1>
 
-          <div className="tile" style={{padding:40}}>
+          <div className="tile doc-content" style={{padding:40}}>
             <div style={{display:'grid',gap:32}}>
               <section>
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>1. Оператор персональных данных</h2>

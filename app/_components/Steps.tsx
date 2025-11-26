@@ -8,7 +8,7 @@ export default function Steps(){
 
         <div style={{marginBottom:40}}>
           <Image
-            src="/images/Баннер «Как это работает».png"
+            src="/images/Баннер «Как это работает».webp"
             alt="Как это работает: пошаговая инструкция участия в розыгрыше"
             width={1200}
             height={400}
@@ -21,7 +21,7 @@ export default function Steps(){
           <div className="tile" style={{padding:32}}>
             <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:16}}>
               <Image
-                src="/images/Иконка «Электронный чек : подтверждение».png"
+                src="/images/Иконка «Электронный чек : подтверждение».webp"
                 alt="Электронный чек подтверждения"
                 width={64}
                 height={64}
@@ -35,9 +35,9 @@ export default function Steps(){
             <a className="btn btn-primary" style={{marginTop:20}} href="#keychain">Купить брелок</a>
           </div>
           <div className="tile" style={{padding:32}}>
-            <h3 className="font-display" style={{fontSize:'28px'}}>Еженедельные розыгрыши</h3>
+            <h3 className="font-display" style={{fontSize:'28px'}}>Розыгрыш главного приза</h3>
             <p className="lead" style={{marginTop:12,fontSize:'18px'}}>
-              Каждую неделю разыгрываем 1 iPhone 17 Pro Max в прямом эфире. Всего 5 призов за 5 недель акции!
+              Разыгрываем 1 iPhone 17 Pro Max среди всех участников. Чем больше брелоков, тем выше шанс на победу!
             </p>
           </div>
         </div>

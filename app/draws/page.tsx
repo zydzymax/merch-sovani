@@ -22,86 +22,55 @@ export default async function DrawsPage() {
       {/* Page content */}
       <section className="section">
         <div className="container">
-          <h1 className="font-display" style={{fontSize:'48px',marginBottom:32}}>Розыгрыши призов</h1>
+          <h1 className="font-display" style={{fontSize:'48px',marginBottom:32,textAlign:'center'}}>Розыгрыши призов</h1>
 
-          {/* Active Draw */}
-          {activeDraw && (
-            <div style={{marginBottom:64}}>
-              <h2 className="font-display" style={{fontSize:'36px',marginBottom:24}}>Текущий розыгрыш</h2>
-              <div className="tile" style={{padding:40}}>
-              <div className="grid grid-2" style={{gap:32}}>
-                <div>
-                  <div style={{display:'inline-block',background:'#22c55e',color:'#fff',padding:'8px 16px',borderRadius:'999px',fontSize:'14px',fontWeight:700,marginBottom:16}}>
-                    🔴 Активен
-                  </div>
-                  <h3 className="font-display" style={{fontSize:'32px',marginBottom:16}}>{activeDraw.name}</h3>
-                  <p className="lead" style={{fontSize:'18px',marginBottom:24}}>{activeDraw.description}</p>
-
-                  <div style={{background:'var(--surface)',borderRadius:20,padding:24,marginBottom:24,border:'1px solid var(--ring)'}}>
-                    <div style={{display:'flex',alignItems:'center',gap:16}}>
-                      <div style={{fontSize:'40px'}}>📅</div>
-                      <div>
-                        <p className="lead" style={{fontSize:'14px'}}>До окончания</p>
-                        <p className="font-display" style={{fontSize:'28px',color:'var(--accent)'}}>
-                          {Math.max(
-                            0,
-                            Math.ceil(
-                              (new Date(activeDraw.endsAt).getTime() - Date.now()) /
-                                (1000 * 60 * 60 * 24)
-                            )
-                          )}{' '}
-                          дней
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {activeDraw.prize && (
-                    <div style={{background:'var(--surface)',borderRadius:20,padding:24,border:'1px solid var(--ring)'}}>
-                      <h4 className="font-display" style={{fontSize:'20px',marginBottom:8}}>Главный приз</h4>
-                      <p className="font-display" style={{fontSize:'24px',color:'var(--accent)',marginBottom:8}}>
-                        {activeDraw.prize.name}
-                      </p>
-                      {activeDraw.prize.value && (
-                        <p className="lead" style={{fontSize:'14px'}}>
-                          Стоимость:{' '}
-                          <span style={{fontWeight:700,color:'var(--text)'}}>
-                            {(activeDraw.prize.value / 100).toLocaleString('ru-RU')} ₽
-                          </span>
-                        </p>
-                      )}
-                    </div>
-                  )}
+          {/* Main Prize Info */}
+          <div className="tile" style={{padding:40,marginBottom:64}}>
+            <div className="grid grid-2" style={{gap:40}}>
+              <div>
+                <h2 className="font-display" style={{fontSize:'36px',marginBottom:16,color:'var(--accent)'}}>
+                  Главный приз
+                </h2>
+                <h3 className="font-display" style={{fontSize:'32px',marginBottom:24}}>
+                  iPhone 17 Pro Max
+                </h3>
+                <p className="lead" style={{fontSize:'18px',marginBottom:24,lineHeight:1.6}}>
+                  Разыгрываем один новый iPhone 17 Pro Max среди всех участников акции.
+                  Один победитель получит главный приз!
+                </p>
+                <div style={{background:'var(--surface)',borderRadius:20,padding:24,marginBottom:24}}>
+                  <h4 className="font-display" style={{fontSize:'20px',marginBottom:16}}>Условия участия:</h4>
+                  <ul style={{display:'grid',gap:12,fontSize:'16px',lineHeight:1.6}}>
+                    <li>✓ Купите брелок в нашем магазине</li>
+                    <li>✓ Каждый брелок = 1 шанс на выигрыш</li>
+                    <li>✓ Чем больше брелоков, тем выше шансы</li>
+                    <li>✓ Победитель определяется случайным образом</li>
+                  </ul>
                 </div>
-
-                <div>
-                  {activeDraw.prize?.image && (
-                    <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl">
-                      <Image
-                        src={activeDraw.prize.image}
-                        alt={activeDraw.prize.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div style={{marginTop:32,textAlign:'center'}}>
-                <Link href="/catalog" className="btn btn-primary" style={{fontSize:'16px',padding:'18px 36px'}}>
-                  Участвовать сейчас
+                <Link href="/catalog" className="btn btn-primary" style={{fontSize:'16px',padding:'18px 36px',display:'inline-block'}}>
+                  Купить брелок и участвовать
                 </Link>
               </div>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <div style={{position:'relative',width:'100%',maxWidth:400}}>
+                  <Image
+                    src="/images/орнаж.png"
+                    alt="iPhone 17 Pro Max"
+                    width={400}
+                    height={400}
+                    style={{width:'100%',height:'auto',objectFit:'contain'}}
+                    priority
+                  />
+                </div>
+              </div>
             </div>
-            </div>
-          )}
+          </div>
+
 
           {/* Upcoming Draws */}
           {upcomingDraws.length > 0 && (
             <div style={{marginBottom:64}}>
-              <h2 className="font-display" style={{fontSize:'36px',marginBottom:24}}>
+              <h2 className="font-display" style={{fontSize:'36px',marginBottom:24,textAlign:'center'}}>
                 Предстоящие розыгрыши
               </h2>
               <div className="grid grid-2" style={{gap:24}}>
@@ -127,7 +96,7 @@ export default async function DrawsPage() {
           {/* Completed Draws */}
           {completedDraws.length > 0 && (
             <div>
-              <h2 className="font-display" style={{fontSize:'36px',marginBottom:24}}>
+              <h2 className="font-display" style={{fontSize:'36px',marginBottom:24,textAlign:'center'}}>
                 Завершённые розыгрыши
               </h2>
               <div style={{display:'grid',gap:16}}>

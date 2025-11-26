@@ -6,7 +6,7 @@ export default function SocialLive(){
       <div className="container">
         <div className="tile" style={{padding:0,overflow:'hidden'}}>
           <Image
-            src="/images/Соц-превью «Прямой эфир».png"
+            src="/images/Соц-превью «Прямой эфир».webp"
             alt="Прямые эфиры розыгрышей в социальных сетях"
             width={1200}
             height={600}
@@ -16,10 +16,10 @@ export default function SocialLive(){
         </div>
         <div className="tile" style={{padding:32,marginTop:24}}>
           <div className="font-display" style={{fontSize:32,lineHeight:1.2}}>
-            Розыгрыш каждую неделю в прямом эфире
+            Результаты розыгрыша в Instagram*
           </div>
           <p className="lead" style={{marginTop:12,fontSize:'18px'}}>
-            Следи за результатами розыгрышей и прямыми эфирами в Instagram*:
+            Следи за результатами розыгрыша в нашем канале Instagram*:
           </p>
           <div style={{display:'flex',gap:12,marginTop:20,flexWrap:'wrap'}}>
             <a className="btn btn-primary" href="https://instagram.com/sovani.official" target="_blank" rel="noopener noreferrer">

@@ -5,8 +5,8 @@ import Image from 'next/image'
 function Capsule({v,label}:{v:number;label:string}){
   return(
     <div style={{textAlign:'center'}}>
-      <div className="font-display" style={{fontSize:48,lineHeight:1}}>{String(v).padStart(2,'0')}</div>
-      <div style={{opacity:.9,fontSize:14}}>{label}</div>
+      <div className="font-display countdown-value" style={{fontSize:48,lineHeight:1}}>{String(v).padStart(2,'0')}</div>
+      <div className="countdown-label" style={{opacity:.9,fontSize:14}}>{label}</div>
     </div>
   )
 }
@@ -34,15 +34,15 @@ export default function Countdown({target}:{target:string}){
   return(
     <section aria-label="Обратный отсчёт" style={{position:'relative',color:'#fff',padding:'56px 0',minHeight:360,overflow:'hidden'}}>
       <Image
-        src="/images/Фон для блока-таймера.png"
+        src="/images/Фон для блока-таймера.webp"
         alt="Фон таймера обратного отсчёта"
         fill
         sizes="100vw"
         style={{objectFit:'cover',zIndex:0}}
       />
       <div className="container" style={{position:'relative',zIndex:1,textAlign:'center'}}>
-        <div className="font-display" style={{fontSize:'32px',marginBottom:24}}>До следующего розыгрыша</div>
-        <div style={{
+        <div className="font-display countdown-title" style={{fontSize:'32px',marginBottom:24}}>До следующего розыгрыша</div>
+        <div className="countdown-grid" style={{
           display:'grid',
           gridTemplateColumns:'repeat(4,1fr)',
           gap:24,

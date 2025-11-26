@@ -16,6 +16,7 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
   })
+  const [agreedToPolicy, setAgreedToPolicy] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -29,6 +30,12 @@ export default function RegisterPage() {
     setLoading(true)
 
     // Validation
+    if (!agreedToPolicy) {
+      setError('Необходимо согласиться с политикой обработки персональных данных')
+      setLoading(false)
+      return
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Пароли не совпадают')
       setLoading(false)
@@ -236,11 +243,53 @@ export default function RegisterPage() {
                 />
               </div>
 
+              <div style={{ marginTop: 10 }}>
+                <label style={{ display: 'flex', alignItems: 'start', cursor: 'pointer', gap: 12 }}>
+                  <input
+                    type="checkbox"
+                    checked={agreedToPolicy}
+                    onChange={(e) => setAgreedToPolicy(e.target.checked)}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      marginTop: 2,
+                      cursor: 'pointer',
+                      accentColor: 'var(--accent)',
+                    }}
+                  />
+                  <span style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--text)' }}>
+                    Я согласен(а) с{' '}
+                    <Link
+                      href="/docs/privacy"
+                      target="_blank"
+                      style={{ color: 'var(--accent)', textDecoration: 'underline' }}
+                    >
+                      политикой обработки персональных данных
+                    </Link>
+                    {' '}и{' '}
+                    <Link
+                      href="/docs/user-agreement"
+                      target="_blank"
+                      style={{ color: 'var(--accent)', textDecoration: 'underline' }}
+                    >
+                      пользовательским соглашением
+                    </Link>
+                    {' '}*
+                  </span>
+                </label>
+              </div>
+
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !agreedToPolicy}
                 className="btn btn-primary"
-                style={{ marginTop: 8, padding: '14px 24px', fontSize: 16 }}
+                style={{
+                  marginTop: 8,
+                  padding: '14px 24px',
+                  fontSize: 16,
+                  opacity: (!agreedToPolicy && !loading) ? 0.5 : 1,
+                  cursor: (!agreedToPolicy && !loading) ? 'not-allowed' : 'pointer',
+                }}
               >
                 {loading ? 'Регистрация...' : 'Зарегистрироваться'}
               </button>

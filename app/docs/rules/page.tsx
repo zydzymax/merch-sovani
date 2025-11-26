@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/app/_components/Navbar'
 import BigFooter from '@/app/_components/BigFooter'
 
@@ -7,13 +8,32 @@ export default function RulesPage() {
     <div className="min-h-screen" style={{background:'var(--bg)',color:'var(--text)'}}>
       <Navbar />
 
+      {/* Header Image */}
+      <section className="relative mx-auto max-w-[1280px] px-6 md:px-10 py-8 md:py-12">
+        <div className="relative overflow-hidden rounded-[28px] md:rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,.35)]">
+          <div className="relative w-full h-[240px] md:h-[320px]">
+            <Image
+              src="/images/hero.webp"
+              alt="Правила акции"
+              fill
+              sizes="(max-width: 1280px) 90vw, 1280px"
+              className="object-cover object-center"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/30" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <h1 className="font-display text-white text-2xl sm:text-3xl md:text-4xl text-center px-4">
+                Правила акции «Выиграй iPhone 17 Pro Max»
+              </h1>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="section">
         <div className="container" style={{maxWidth:900}}>
-          <h1 className="font-display" style={{fontSize:'40px',marginBottom:32}}>
-            Правила стимулирующей акции «5 недель — 5 смартфонов»
-          </h1>
 
-          <div className="tile" style={{padding:40}}>
+          <div className="tile doc-content" style={{padding:40}}>
             <div style={{display:'grid',gap:32}}>
               <section>
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>1. Организатор и технический оператор</h2>
@@ -27,16 +47,9 @@ export default function RulesPage() {
               <section>
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>2. Период проведения акции</h2>
                 <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
-                  <p><strong>Период акции:</strong> 1 декабря 2025 г. — 5 января 2026 г. (5 недель).</p>
-                  <p><strong>Розыгрыши:</strong> проводятся еженедельно в прямом эфире на платформах YouTube, Telegram, VK.</p>
-                  <p><strong>График розыгрышей:</strong></p>
-                  <ul style={{paddingLeft:24}}>
-                    <li>Неделя 1: [ДАТА_НЕДЕЛИ_1]</li>
-                    <li>Неделя 2: [ДАТА_НЕДЕЛИ_2]</li>
-                    <li>Неделя 3: [ДАТА_НЕДЕЛИ_3]</li>
-                    <li>Неделя 4: [ДАТА_НЕДЕЛИ_4]</li>
-                    <li>Неделя 5: [ДАТА_НЕДЕЛИ_5]</li>
-                  </ul>
+                  <p><strong>Период акции:</strong> Даты будут объявлены дополнительно.</p>
+                  <p><strong>Розыгрыш:</strong> результаты публикуются в канале Instagram*.</p>
+                  <p><strong>Главный приз:</strong> 1 смартфон iPhone 17 Pro Max.</p>
                 </div>
               </section>
 
@@ -47,11 +60,11 @@ export default function RulesPage() {
                   <p><strong>Как участвовать:</strong></p>
                   <ul style={{paddingLeft:24}}>
                     <li>Приобрести брелок стоимостью 1 999 ₽ на сайте justbusiness.lol;</li>
-                    <li>1 брелок = 1 шанс участия в еженедельном розыгрыше;</li>
+                    <li>1 брелок = 1 шанс участия в розыгрыше;</li>
                     <li>Шанс активируется после статуса заказа «оплачен»;</li>
                     <li>Участник может приобрести неограниченное количество брелоков для увеличения шансов.</li>
                   </ul>
-                  <p><strong>Важно:</strong> Шансы действуют только на текущую неделю. Если участник не выиграл, шансы переносятся на следующую неделю до окончания акции.</p>
+                  <p><strong>Важно:</strong> Чем больше брелоков вы приобретаете, тем выше ваш шанс на победу. В акции участвует только брелок.</p>
                 </div>
               </section>
 
@@ -95,7 +108,7 @@ export default function RulesPage() {
               <section>
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>6. Призы</h2>
                 <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
-                  <p><strong>Главные призы:</strong> 5 смартфонов iPhone 17 Pro Max (1 приз в неделю).</p>
+                  <p><strong>Главный приз:</strong> 1 смартфон iPhone 17 Pro Max.</p>
                   <p><strong>Вручение:</strong></p>
                   <ul style={{paddingLeft:24}}>
                     <li>Организатор связывается с победителем в течение 24 часов;</li>
@@ -103,7 +116,7 @@ export default function RulesPage() {
                     <li>Приз доставляется бесплатно в течение 14 дней;</li>
                     <li>Замена приза на денежный эквивалент не предусмотрена.</li>
                   </ul>
-                  <p><strong>Ограничения:</strong> один участник может выиграть только один раз за весь период акции.</p>
+                  <p><strong>Товары участвующие в акции:</strong> Только брелок дает шансы на участие в розыгрыше. Другие товары (футболка, пижама) в акции не участвуют.</p>
                 </div>
               </section>
 

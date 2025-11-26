@@ -288,6 +288,23 @@
   .grid-4 {
     grid-template-columns: 1fr;
   }
+
+  .countdown-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  .countdown-value {
+    font-size: 36px !important;
+  }
+
+  .countdown-label {
+    font-size: 12px !important;
+  }
+
+  .countdown-title {
+    font-size: 24px !important;
+  }
 }
 
 .navbar {
@@ -333,11 +350,24 @@
   .nav-inner {
     flex-wrap: wrap;
     gap: 12px;
+    height: auto;
+    min-height: 72px;
+    padding-block: 12px;
   }
 
   .nav-inner nav {
     width: 100%;
     justify-content: center;
+  }
+
+  .nav-inner .btn {
+    font-size: 12px !important;
+    padding: 10px 14px !important;
+  }
+
+  .navbar-logo {
+    height: 64px !important;
+    max-height: 64px !important;
   }
 
   .contact-form-title {
@@ -401,4 +431,22 @@
   border: 1px solid color-mix(in oklab, var(--theme-text) 12%, transparent);
   background: color-mix(in oklab, var(--theme-card) 85%, transparent);
   color: var(--theme-text);
+}
+
+/* Document pages styling */
+.doc-content {
+  background: #ffffff;
+  color: #000000;
+}
+
+.doc-content h1,
+.doc-content h2,
+.doc-content h3,
+.doc-content h4,
+.doc-content h5,
+.doc-content h6,
+.doc-content p,
+.doc-content li,
+.doc-content strong {
+  color: #000000 !important;
 }

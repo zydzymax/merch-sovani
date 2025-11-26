@@ -13,7 +13,7 @@ export default function UserAgreement() {
             Пользовательское соглашение
           </h1>
 
-          <div className="tile" style={{padding:40}}>
+          <div className="tile doc-content" style={{padding:40}}>
             <nav style={{marginBottom:32,padding:20,background:'var(--surface)',borderRadius:16}}>
               <h3 style={{fontSize:'16px',fontWeight:700,marginBottom:12}}>Содержание:</h3>
               <ul style={{listStyle:'none',padding:0,margin:0,display:'grid',gap:8}}>

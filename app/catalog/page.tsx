@@ -4,6 +4,8 @@ import { chancesForProduct, getChancesLabel } from '@/lib/chances'
 import { sortProducts } from '@/lib/utils/sortProducts'
 import { SortDropdown } from '@/components/SortDropdown'
 import ProductCard from '@/app/_components/ProductCard'
+import Navbar from '@/app/_components/Navbar'
+import BigFooter from '@/app/_components/BigFooter'
 
 const FEATURE_SORT = process.env.NEXT_PUBLIC_FEATURE_SORT_FILTER === 'true'
 
@@ -26,17 +28,19 @@ export default async function CatalogPage({
   const supplementsProducts = products.filter((p) => p.category === 'SUPPLEMENTS')
 
   return (
-    <section className="section">
+    <div className="min-h-screen" style={{background:'var(--bg)',color:'var(--text)'}}>
+      <Navbar />
+      <section className="section">
       <div className="container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--gap-5)' }}>
-          <h1 className="font-display" style={{ fontSize: 'var(--h2)' }}>Каталог товаров</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--gap-5)', flexWrap: 'wrap', gap: 16 }}>
+          <h1 className="font-display" style={{ fontSize: 'var(--h2)', textAlign: 'center', flex: '1 1 100%' }}>Каталог товаров</h1>
           {FEATURE_SORT && <SortDropdown />}
         </div>
 
         {/* Clothing */}
         {clothingProducts.length > 0 && (
           <div style={{ marginBottom: 'var(--gap-6)' }}>
-            <h2 className="font-display" style={{ fontSize: 'var(--h3)', marginBottom: 'var(--gap-4)' }}>
+            <h2 className="font-display" style={{ fontSize: 'var(--h3)', marginBottom: 'var(--gap-4)', textAlign: 'center' }}>
               Одежда
             </h2>
             <div style={{
@@ -69,7 +73,7 @@ export default async function CatalogPage({
         {/* Supplements */}
         {supplementsProducts.length > 0 && (
           <div>
-            <h2 className="font-display" style={{ fontSize: 'var(--h3)', marginBottom: 'var(--gap-4)' }}>
+            <h2 className="font-display" style={{ fontSize: 'var(--h3)', marginBottom: 'var(--gap-4)', textAlign: 'center' }}>
               БАДы
             </h2>
             <div style={{
@@ -100,5 +104,7 @@ export default async function CatalogPage({
         )}
       </div>
     </section>
+      <BigFooter />
+    </div>
   )
 }

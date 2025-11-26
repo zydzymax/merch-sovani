@@ -48,8 +48,8 @@ export default function WinnersPage() {
 
       <section className="section">
         <div className="container" style={{maxWidth:900}}>
-          <h1 className="font-display" style={{fontSize:'40px',marginBottom:32}}>
-            Победители розыгрыша «5 недель — 5 смартфонов»
+          <h1 className="font-display" style={{fontSize:'40px',marginBottom:32,textAlign:'center'}}>
+            Победители розыгрыша «Выиграй iPhone 17 Pro Max»
           </h1>
 
           <div className="tile" style={{padding:40,marginBottom:32}}>

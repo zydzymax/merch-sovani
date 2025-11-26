@@ -2,7 +2,8 @@ import { getLegalDoc } from '@/lib/legal/getLegalDoc'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import Navbar from '@/app/_components/Navbar'
+import BigFooter from '@/app/_components/BigFooter'
 
 interface LegalDocPageProps {
   docKey: string
@@ -14,35 +15,36 @@ export default async function LegalDocPage({ docKey, title }: LegalDocPageProps)
 
   if (!doc) {
     return (
-      <div className="container mx-auto max-w-4xl py-12 px-4">
-        <h1 className="text-3xl font-bold mb-4">Документ не найден</h1>
-        <p className="text-gray-600">Запрашиваемый документ не найден на сервере.</p>
-        <Link href="/" className="text-blue-600 hover:underline mt-4 inline-block">
-          ← На главную
-        </Link>
+      <div className="min-h-screen" style={{background:'var(--bg)',color:'var(--text)'}}>
+        <Navbar />
+        <div className="container mx-auto max-w-4xl py-12 px-4">
+          <h1 className="text-3xl font-bold mb-4">Документ не найден</h1>
+          <p style={{color:'var(--muted)'}}>Запрашиваемый документ не найден на сервере.</p>
+          <Link href="/" style={{color:'var(--accent)'}} className="hover:underline mt-4 inline-block">
+            ← На главную
+          </Link>
+        </div>
+        <BigFooter />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto max-w-4xl py-6 px-4">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            На главную
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-        </div>
-      </div>
+    <div className="min-h-screen" style={{background:'var(--bg)',color:'var(--text)'}}>
+      <Navbar />
 
       {/* Content */}
       <div className="container mx-auto max-w-4xl py-12 px-4">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 mb-6"
+          style={{color:'var(--muted)'}}
+        >
+          ← На главную
+        </Link>
+        <h1 className="font-display" style={{fontSize:'40px',marginBottom:32}}>{title}</h1>
+
+        <div className="tile doc-content" style={{padding:40,borderRadius:28}}>
           <div className="prose prose-lg max-w-none">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {doc.content}
@@ -50,8 +52,8 @@ export default async function LegalDocPage({ docKey, title }: LegalDocPageProps)
           </div>
 
           {/* Document meta */}
-          <div className="mt-12 pt-6 border-t border-gray-200">
-            <div className="flex flex-wrap gap-6 text-sm text-gray-500">
+          <div className="mt-12 pt-6" style={{borderTop:'1px solid var(--ring)'}}>
+            <div className="flex flex-wrap gap-6 text-sm" style={{color:'#000'}}>
               <div>
                 <span className="font-semibold">Версия:</span> {doc.version}
               </div>
@@ -67,36 +69,38 @@ export default async function LegalDocPage({ docKey, title }: LegalDocPageProps)
           </div>
 
           {/* Navigation links */}
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-semibold mb-3">Другие документы</h3>
+          <div className="mt-8 p-4 rounded-lg" style={{background:'var(--surface)',color:'#000'}}>
+            <h3 className="font-semibold mb-3" style={{color:'#000'}}>Другие документы</h3>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
               <li>
                 <Link
                   href="/legal/privacy"
-                  className="text-blue-600 hover:underline"
+                  className="hover:underline"
+                  style={{color:'var(--accent)'}}
                 >
                   Политика обработки ПДн
                 </Link>
               </li>
               <li>
-                <Link href="/legal/offer" className="text-blue-600 hover:underline">
+                <Link href="/legal/offer" className="hover:underline" style={{color:'var(--accent)'}}>
                   Публичная оферта
                 </Link>
               </li>
               <li>
-                <Link href="/legal/cookies" className="text-blue-600 hover:underline">
+                <Link href="/legal/cookies" className="hover:underline" style={{color:'var(--accent)'}}>
                   Политика cookie
                 </Link>
               </li>
               <li>
-                <Link href="/legal/consent" className="text-blue-600 hover:underline">
+                <Link href="/legal/consent" className="hover:underline" style={{color:'var(--accent)'}}>
                   Согласие на обработку ПДн
                 </Link>
               </li>
               <li>
                 <Link
                   href="/legal/promo-rules"
-                  className="text-blue-600 hover:underline"
+                  className="hover:underline"
+                  style={{color:'var(--accent)'}}
                 >
                   Правила розыгрыша
                 </Link>
@@ -105,6 +109,8 @@ export default async function LegalDocPage({ docKey, title }: LegalDocPageProps)
           </div>
         </div>
       </div>
+
+      <BigFooter />
     </div>
   )
 }

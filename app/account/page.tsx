@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Navbar from '@/app/_components/Navbar'
+import BigFooter from '@/app/_components/BigFooter'
 
 export default function AccountPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login')
@@ -99,14 +101,7 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/" className="text-2xl font-serif font-bold text-primary">
-            SoVAni
-          </Link>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Auth Forms */}
       <div className="container mx-auto px-4 py-12">
@@ -289,6 +284,8 @@ export default function AccountPage() {
           </div>
         </div>
       </div>
+
+      <BigFooter />
     </div>
   )
 }

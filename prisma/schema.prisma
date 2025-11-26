@@ -13,6 +13,7 @@ datasource db {
 enum UserRole {
   CUSTOMER
   ADMIN
+  SELLER
 }
 
 enum OrderStatus {
@@ -60,41 +61,112 @@ enum ProductCategory {
 // ==================== USERS & AUTH ====================
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String?
-  name      String?
-  phone     String?
-  role      UserRole @default(CUSTOMER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?   // legacy
+  passwordHash  String?   // NextAuth bcrypt hash
+  emailVerified DateTime?
+  name          String?
+  phone         String?
+  role          UserRole  @default(CUSTOMER)
+  referralCode  String?   @unique // for referral system
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
-  addresses       Address[]
-  orders          Order[]
-  entries         Entry[]
-  referralLinks   ReferralLink[]
-  sessions        Session[]
+  // Seller fields (для продавцов на маркетплейсе)
+  companyName      String?   // ИП/ООО
+  inn              String?   // ИНН
+  ogrn             String?   // ОГРН/ОГРНИП
+  legalAddress     String?   // Юридический адрес
+  bankAccount      String?   // Расчетный счет
+  bankName         String?   // Название банка
+  bankBik          String?   // БИК банка
+  bankCorAccount   String?   // Корр. счет
+  offerAcceptedAt  DateTime? // Дата принятия оферты
+
+  addresses        Address[]
+  orders           Order[]
+  entries          Entry[]
+  referralLinks    ReferralLink[]
+  sessions         Session[]
+  accounts         Account[]  // NextAuth
+  referralsFrom    Referral[] @relation("UserReferralsFrom")
+  referralsTo      Referral[] @relation("UserReferralsTo")
+  sellerProducts   Product[] @relation("SellerProducts")
+  payouts          Payout[]
 
   @@index([email])
+  @@index([referralCode])
+  @@index([role])
   @@map("users")
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  userId    String?
-  sessionId String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String    @id @default(cuid())
+  userId       String?
+  sessionToken String?   @unique // NextAuth
+  sessionId    String?   @unique // legacy
+  expiresAt    DateTime?
+  expires      DateTime? // NextAuth
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   cart CartItem[]
 
+  @@index([sessionToken])
   @@index([sessionId])
   @@index([userId])
   @@map("sessions")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Referral {
+  id                   String   @id @default(cuid())
+  referrerId           String
+  referredId           String
+  firstPurchaseCounted Boolean  @default(false)
+
+  // Antifraud fields
+  fraudChecked         Boolean  @default(false)
+  fraudScore           Int      @default(0) // 0-100, higher = more suspicious
+  fraudReason          String? // "self_referral", "same_ip", "same_device", etc.
+  isValid              Boolean  @default(true)
+
+  createdAt            DateTime @default(now())
+
+  referrer User @relation("UserReferralsFrom", fields: [referrerId], references: [id], onDelete: Cascade)
+  referred User @relation("UserReferralsTo", fields: [referredId], references: [id], onDelete: Cascade)
+
+  @@unique([referrerId, referredId])
+  @@index([referrerId])
+  @@index([referredId])
+  @@index([isValid])
+  @@map("referrals")
 }
 
 model Address {
@@ -133,15 +205,32 @@ model Product {
   seoDesc     String?
   isActive    Boolean         @default(true)
   isFeatured  Boolean         @default(false)
+
+  // Marketplace-like product details
+  material    String?         // Материал изготовления
+  brand       String?         // Бренд
+  country     String?         // Страна производства
+  care        String?         @db.Text // Уход за товаром
+  composition String?         @db.Text // Состав
+
+  // Seller information
+  sellerId      String?         // ID селлера (владельца товара)
+  sellerName    String?         // ИП или ООО
+  sellerInn     String?         // ИНН продавца
+  sellerOgrn    String?         // ОГРН/ОГРНИП
+  sellerAddress String?         // Юридический адрес
+
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   deletedAt   DateTime?
 
   variants Variant[]
+  seller   User?     @relation("SellerProducts", fields: [sellerId], references: [id])
 
   @@index([slug])
   @@index([category])
   @@index([isActive])
+  @@index([sellerId])
   @@map("products")
 }
 
@@ -158,6 +247,13 @@ model Variant {
   attributes  Json? // дополнительные атрибуты
   sortOrder   Int      @default(0)
   isActive    Boolean  @default(true)
+
+  // Shipping dimensions (for CDEK and other carriers)
+  weight      Int?     // вес в граммах
+  length      Int?     // длина в см
+  width       Int?     // ширина в см
+  height      Int?     // высота в см
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -233,6 +329,15 @@ model Order {
   participatesInPromo  Boolean     @default(false)
   hasReturnRight       Boolean     @default(true)
   entryCode            String?     @unique
+
+  // Referral tracking
+  countedForReferral   Boolean     @default(false)
+
+  // Antifraud fields
+  ipAddress            String?
+  deviceFingerprint    String?
+  fraudScore           Int         @default(0) // 0-100, higher = more suspicious
+  fraudFlags           Json? // array of fraud indicators
 
   // Metadata
   notes                String?     @db.Text
@@ -352,16 +457,22 @@ model Draw {
 }
 
 model Entry {
-  id         String   @id @default(cuid())
-  uniqueCode String   @unique
-  userId     String?
-  orderId    String?
-  drawId     String?
-  weight     Int      @default(1) // вес шанса
-  source     String? // "order", "referral"
-  metadata   Json?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String    @id @default(cuid())
+  uniqueCode      String    @unique
+  userId          String?
+  orderId         String?
+  drawId          String?
+  weight          Int       @default(1) // вес шанса
+  source          String? // "order", "referral"
+  metadata        Json?
+
+  // Antifraud fields
+  isActive        Boolean   @default(true) // false if annulled due to refund/fraud
+  annulledAt      DateTime? // when was annulled
+  annulledReason  String? // "refund", "return", "fraud", "duplicate"
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   order  Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
@@ -370,6 +481,7 @@ model Entry {
   @@index([uniqueCode])
   @@index([userId])
   @@index([drawId])
+  @@index([isActive])
   @@map("entries")
 }
 
@@ -410,13 +522,16 @@ model ReferralHit {
 // ==================== SETTINGS & AUDIT ====================
 
 model Setting {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?  // Описание настройки
+  category    String?  // Категория (cdek, site, payment, etc.)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([key])
+  @@index([category])
   @@map("settings")
 }
 
@@ -468,4 +583,34 @@ model Consent {
   @@index([docKey, docVersion])
   @@index([createdAt])
   @@map("consents")
+}
+// ==================== SELLER PAYOUTS ====================
+
+enum PayoutStatus {
+  PENDING    // Ожидает обработки
+  PROCESSING // В обработке
+  COMPLETED  // Выплачено
+  REJECTED   // Отклонено
+}
+
+model Payout {
+  id              String        @id @default(cuid())
+  sellerId        String
+  amount          Int           // Сумма в копейках
+  status          PayoutStatus  @default(PENDING)
+  bankAccount     String        // Счет на момент запроса
+  bankName        String
+  bankBik         String
+  rejectReason    String?       // Причина отказа
+  processedAt     DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  seller User @relation(fields: [sellerId], references: [id])
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("payouts")
 }

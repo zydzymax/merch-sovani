@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import Navbar from '@/app/_components/Navbar'
+import BigFooter from '@/app/_components/BigFooter'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -29,6 +31,12 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  // Check if cart contains promo items (keychain)
+  const hasPromoItem = cartItems.some((item: any) =>
+    item.product?.slug === 'keychain' ||
+    item.product?.name?.toLowerCase().includes('брелок')
+  )
+
   // Load cart data
   useEffect(() => {
     fetch('/api/cart/get')
@@ -36,6 +44,15 @@ export default function CheckoutPage() {
       .then((data) => {
         setCartItems(data.items || [])
         setSubtotal(data.subtotal || 0)
+
+        // Auto-enable promo participation if cart has keychain
+        const hasKeychain = (data.items || []).some((item: any) =>
+          item.product?.slug === 'keychain' ||
+          item.product?.name?.toLowerCase().includes('брелок')
+        )
+        if (hasKeychain) {
+          setFormData(prev => ({ ...prev, participatesInPromo: true }))
+        }
       })
       .catch((err) => console.error('Load cart error:', err))
   }, [])
@@ -71,8 +88,14 @@ export default function CheckoutPage() {
       newErrors.consent = 'Необходимо согласие на обработку персональных данных'
     }
 
-    if (formData.participatesInPromo && !consents.promoRules) {
-      newErrors.promoConsent = 'Необходимо согласие с правилами розыгрыша'
+    // Promo rules consent is mandatory for promo items (keychain)
+    const hasKeychain = cartItems.some((item: any) =>
+      item.product?.slug === 'keychain' ||
+      item.product?.name?.toLowerCase().includes('брелок')
+    )
+
+    if ((formData.participatesInPromo || hasKeychain) && !consents.promoRules) {
+      newErrors.promoConsent = 'Необходимо согласие с правилами участия в акции'
     }
 
     setErrors(newErrors)
@@ -121,18 +144,11 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/" className="text-2xl font-serif font-bold text-primary">
-            SoVAni
-          </Link>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Checkout Form */}
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-serif font-bold mb-8">Оформление заказа</h1>
+        <h1 className="text-4xl font-serif font-bold mb-8 text-center">Оформление заказа</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Form */}
@@ -140,7 +156,7 @@ export default function CheckoutPage() {
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-8 space-y-6">
               {/* Contact Info */}
               <div>
-                <h2 className="text-2xl font-bold mb-4">Контактные данные</h2>
+                <h2 className="text-2xl font-bold mb-4 text-center">Контактные данные</h2>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -180,7 +196,7 @@ export default function CheckoutPage() {
 
               {/* Shipping Address */}
               <div>
-                <h2 className="text-2xl font-bold mb-4">Адрес доставки (Почта РФ)</h2>
+                <h2 className="text-2xl font-bold mb-4 text-center">Адрес доставки (Почта РФ)</h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -282,35 +298,64 @@ export default function CheckoutPage() {
 
               {/* Promo Participation */}
               <div className="border-t pt-6">
-                <h2 className="text-2xl font-bold mb-4">Участие в акции</h2>
-                <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-6">
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.participatesInPromo}
-                      onChange={(e) =>
-                        setFormData({ ...formData, participatesInPromo: e.target.checked })
-                      }
-                      className="mt-1 w-5 h-5 text-primary"
-                    />
-                    <div>
-                      <p className="font-semibold mb-2">
-                        Хочу участвовать в акции «1 покупка = 1 шанс»
-                      </p>
-                      <p className="text-sm text-gray-700 mb-2">
-                        После оплаты вы получите уникальный код участия в розыгрыше призов на сумму до 240 000 ₽
-                      </p>
-                      <p className="text-sm text-red-700 font-medium">
-                        ⚠️ Внимание: При участии в акции возврат товара надлежащего качества становится невозможным
-                      </p>
+                <h2 className="text-2xl font-bold mb-4 text-center">Участие в акции</h2>
+                <div className={`rounded-lg p-6 border-2 ${hasPromoItem ? 'bg-yellow-50 border-yellow-500' : 'bg-yellow-50 border-yellow-400'}`}>
+                  {hasPromoItem ? (
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={true}
+                        disabled
+                        className="mt-1 w-5 h-5 text-primary opacity-50"
+                      />
+                      <div>
+                        <p className="font-bold mb-2 text-lg">
+                          ✓ Обязательное участие в акции
+                        </p>
+                        <p className="text-sm text-gray-700 mb-2">
+                          Брелок является акционным товаром. При покупке вы автоматически участвуете в розыгрыше призов на сумму до 240 000 ₽
+                        </p>
+                        <p className="text-sm text-red-700 font-medium mb-2">
+                          ⚠️ Важно: Для акционных товаров возврат надлежащего качества невозможен согласно правилам акции
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Необходимо ознакомиться и согласиться с{' '}
+                          <Link href="/docs/rules" className="text-blue-600 hover:underline font-medium" target="_blank">
+                            правилами акции
+                          </Link>{' '}
+                          ниже *
+                        </p>
+                      </div>
                     </div>
-                  </label>
+                  ) : (
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.participatesInPromo}
+                        onChange={(e) =>
+                          setFormData({ ...formData, participatesInPromo: e.target.checked })
+                        }
+                        className="mt-1 w-5 h-5 text-primary"
+                      />
+                      <div>
+                        <p className="font-semibold mb-2">
+                          Хочу участвовать в акции «1 покупка = 1 шанс»
+                        </p>
+                        <p className="text-sm text-gray-700 mb-2">
+                          После оплаты вы получите уникальный код участия в розыгрыше призов на сумму до 240 000 ₽
+                        </p>
+                        <p className="text-sm text-red-700 font-medium">
+                          ⚠️ Внимание: При участии в акции возврат товара надлежащего качества становится невозможным
+                        </p>
+                      </div>
+                    </label>
+                  )}
                 </div>
               </div>
 
               {/* Legal Consent Checkboxes */}
               <div className="border-t pt-6 space-y-4">
-                <h2 className="text-2xl font-bold mb-4">Согласие на обработку данных</h2>
+                <h2 className="text-2xl font-bold mb-4 text-center">Согласие на обработку данных</h2>
                 
                 {/* Privacy and Offer Consent - Always required */}
                 <label className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer ${
@@ -337,8 +382,8 @@ export default function CheckoutPage() {
                 </label>
                 {errors.consent && <p className="text-red-500 text-sm">{errors.consent}</p>}
 
-                {/* Promo Rules Consent - Only if participating */}
-                {formData.participatesInPromo && (
+                {/* Promo Rules Consent - Required if participating or buying promo items */}
+                {(formData.participatesInPromo || hasPromoItem) && (
                   <>
                     <label className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer ${
                       errors.promoConsent ? 'border-red-500 bg-red-50' : 'border-yellow-200 bg-yellow-50'
@@ -427,6 +472,8 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      <BigFooter />
     </div>
   )
 }

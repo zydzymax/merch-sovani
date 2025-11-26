@@ -15,7 +15,6 @@ export default function Home() {
       <Navbar/>
       <HeroSection/>
       <StickerPacks/>
-      <GrandPrize/>
       <WeeklyGiveaways/>
       <Countdown target="2026-01-10T18:00:00+03:00"/>
       <Steps/>
