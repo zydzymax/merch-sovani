@@ -1,3 +1,4 @@
+import { logger } from '@/lib/utils/logger'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { annulEntriesForOrder } from '@/lib/antifraud/annulEntries'
@@ -74,8 +75,8 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    console.log(`✅ Order ${order.orderNumber} refunded successfully`)
-    console.log(`   Entries annulled: ${result.entriesAnnulled}`)
+    logger.info(`✅ Order ${order.orderNumber} refunded successfully`)
+    logger.info(`   Entries annulled: ${result.entriesAnnulled}`)
 
     return NextResponse.json({
       success: true,
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
       data: result,
     })
   } catch (error) {
-    console.error('Refund error:', error)
+    logger.error('Refund error:', error)
     return NextResponse.json({ error: 'Failed to process refund' }, { status: 500 })
   }
 }
@@ -129,7 +130,7 @@ export async function GET(request: NextRequest) {
       entriesCount: order.entries.length,
     })
   } catch (error) {
-    console.error('Check refund error:', error)
+    logger.error('Check refund error:', error)
     return NextResponse.json({ error: 'Failed to check refund status' }, { status: 500 })
   }
 }

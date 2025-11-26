@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db/prisma'
 import bcrypt from 'bcrypt'
 import { cookies } from 'next/headers'
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rateLimit'
+import { logger } from '@/lib/utils/logger'
 
 function generateReferralCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -130,7 +131,7 @@ export async function POST(request: NextRequest) {
       },
     }, { headers })
   } catch (error) {
-    console.error('Registration error:', error)
+    logger.error('Registration failed', error)
     return NextResponse.json(
       { error: 'Ошибка регистрации' },
       { status: 500 }

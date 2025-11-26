@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/utils/logger'
 import { prisma } from '@/lib/db/prisma'
 import bcrypt from 'bcryptjs'
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rateLimit'
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest) {
       sellerId: seller.id,
     }, { headers })
   } catch (error) {
-    console.error('Error registering seller:', error)
+    logger.error('Error registering seller:', error)
     return NextResponse.json(
       { error: 'Внутренняя ошибка сервера' },
       { status: 500 }

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/utils/logger'
 import { NextRequest, NextResponse } from 'next/server'
 import { conductDraw, conductMultiPrizeDraw } from '@/lib/utils/drawRandomizer'
 import { requireAdmin } from '@/lib/auth/requireAdmin'
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
       result,
     })
   } catch (error) {
-    console.error('Draw conduct error:', error)
+    logger.error('Draw conduct error:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }

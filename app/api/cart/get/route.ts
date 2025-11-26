@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/cart/getSession'
+import { logger } from '@/lib/utils/logger'
 
 export async function GET() {
   try {
@@ -18,7 +19,7 @@ export async function GET() {
       subtotal,
     })
   } catch (error) {
-    console.error('Get cart error:', error)
+    logger.error('Get cart failed', error)
     return NextResponse.json({ error: 'Ошибка получения корзины' }, { status: 500 })
   }
 }

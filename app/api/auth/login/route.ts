@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import { SignJWT } from 'jose'
 import { cookies } from 'next/headers'
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rateLimit'
+import { logger } from '@/lib/utils/logger'
 
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable must be defined')
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
       },
     }, { headers })
   } catch (error) {
-    console.error('Login error:', error)
+    logger.error('Login failed', error)
     return NextResponse.json(
       { error: 'Ошибка входа' },
       { status: 500 }

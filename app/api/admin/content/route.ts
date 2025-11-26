@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { logger } from '@/lib/utils/logger'
 
 export async function GET() {
   // Require admin authentication
@@ -19,7 +20,7 @@ export async function GET() {
 
     return NextResponse.json(contentObj)
   } catch (error) {
-    console.error('Get content error:', error)
+    logger.error('Get content error:', error)
     return NextResponse.json({ error: 'Failed to fetch content' }, { status: 500 })
   }
 }
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: 'Content saved' })
   } catch (error) {
-    console.error('Save content error:', error)
+    logger.error('Save content error:', error)
     return NextResponse.json({ error: 'Failed to save content' }, { status: 500 })
   }
 }

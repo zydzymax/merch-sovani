@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/utils/logger'
 import { prisma } from '@/lib/db/prisma'
 import { requireAdmin } from '@/lib/auth/requireAdmin'
 
@@ -20,7 +21,7 @@ export async function GET() {
 
     return NextResponse.json(products)
   } catch (error) {
-    console.error('Failed to fetch products:', error)
+    logger.error('Failed to fetch products:', error)
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
   }
 }
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(product, { status: 201 })
   } catch (error) {
-    console.error('Failed to create product:', error)
+    logger.error('Failed to create product:', error)
     return NextResponse.json({ error: 'Failed to create product' }, { status: 500 })
   }
 }

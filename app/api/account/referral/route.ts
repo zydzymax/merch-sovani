@@ -1,86 +1,66 @@
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from 'next/server'
-import { getUser } from '@/lib/auth/getUser'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth/authOptions'
 import { prisma } from '@/lib/db/prisma'
+import { logger } from '@/lib/utils/logger'
 
-// Generate unique 8-character code (letters and numbers)
-function generateReferralCode(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let code = ''
-  for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return code
-}
-
-// GET - Get user's referral link (or create if doesn't exist)
+// GET - Get user's referral stats
 export async function GET(request: NextRequest) {
   try {
-    const user = await getUser()
+    const session = await getServerSession(authOptions)
 
-    if (!user) {
+    if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    // Check if user already has a referral link
-    let referralLink = await prisma.referralLink.findFirst({
-      where: {
-        ownerId: user.id,
-        isActive: true,
-      },
-      include: {
-        hits: true,
+    // Get user with referral code
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        referralCode: true,
+        referralsFrom: {
+          include: {
+            referred: {
+              select: {
+                name: true,
+                email: true,
+                createdAt: true,
+              },
+            },
+          },
+        },
       },
     })
 
-    // If not, create one
-    if (!referralLink) {
-      let code = generateReferralCode()
-      let isUnique = false
-
-      // Ensure code is unique
-      while (!isUnique) {
-        const existing = await prisma.referralLink.findUnique({
-          where: { code },
-        })
-        if (!existing) {
-          isUnique = true
-        } else {
-          code = generateReferralCode()
-        }
-      }
-
-      referralLink = await prisma.referralLink.create({
-        data: {
-          code,
-          ownerId: user.id,
-        },
-        include: {
-          hits: true,
-        },
-      })
+    if (!user || !user.referralCode) {
+      return NextResponse.json(
+        { error: 'User not found or no referral code' },
+        { status: 404 }
+      )
     }
 
-    // Calculate statistics
-    const totalHits = referralLink.hits.length
-    const convertedOrders = referralLink.hits.filter(
-      (hit) => hit.convertedOrderId !== null
-    ).length
+    // Count referrals
+    const referralsCount = user.referralsFrom.length
+
+    // Build referral URL
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://shop.justbusiness.lol'
+    const referralUrl = `${baseUrl}?ref=${user.referralCode}`
 
     return NextResponse.json({
-      code: referralLink.code,
-      url: `https://sovani.shop/ref/${referralLink.code}`,
-      stats: {
-        clicks: totalHits,
-        orders: convertedOrders,
-      },
-      createdAt: referralLink.createdAt,
+      referralCode: user.referralCode,
+      referralUrl,
+      referralsCount,
+      referrals: user.referralsFrom.map(r => ({
+        name: r.referred.name,
+        joinedAt: r.createdAt,
+      })),
     })
   } catch (error) {
-    console.error('Error getting referral link:', error)
+    logger.error('Error getting referral stats:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

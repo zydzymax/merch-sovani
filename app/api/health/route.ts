@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { logger } from '@/lib/utils/logger'
 
 /**
  * Health check endpoint for monitoring
@@ -36,7 +37,7 @@ export async function GET() {
     }, { status: 200 })
 
   } catch (error) {
-    console.error('Health check failed:', error)
+    logger.error('Health check failed', error)
 
     return NextResponse.json({
       status: 'unhealthy',

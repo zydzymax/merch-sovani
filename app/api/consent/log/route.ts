@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { logConsent } from '@/lib/legal/getLegalDoc'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Consent log error:', error)
+    logger.error('Consent log error:', error)
     return NextResponse.json({ error: 'Failed to log consent' }, { status: 500 })
   }
 }

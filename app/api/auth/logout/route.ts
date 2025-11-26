@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST() {
   try {
@@ -12,7 +13,7 @@ export async function POST() {
       message: 'Вы успешно вышли из системы',
     })
   } catch (error) {
-    console.error('Logout error:', error)
+    logger.error('Logout error:', error)
     return NextResponse.json(
       { error: 'Ошибка выхода' },
       { status: 500 }

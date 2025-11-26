@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db/prisma'
 import { getOrCreateSession } from '@/lib/cart/getOrCreateSession'
 import { calculateOrderFraudScore } from '@/lib/antifraud/calculateFraudScore'
 import { validateEmail } from '@/lib/utils/emailValidation'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -81,8 +82,12 @@ export async function POST(request: NextRequest) {
 
     // Block high-risk orders (fraud score >= 80)
     if (fraudCheck.fraudScore >= 80) {
-      console.warn(`⚠️ High-risk order blocked (score: ${fraudCheck.fraudScore})`)
-      console.warn(`   Flags: ${fraudCheck.fraudFlags.join(', ')}`)
+      logger.warn('High-risk order blocked', {
+        fraudScore: fraudCheck.fraudScore,
+        fraudFlags: fraudCheck.fraudFlags,
+        email,
+        ipAddress
+      })
 
       return NextResponse.json({
         error: 'Заказ не может быть обработан. Пожалуйста, свяжитесь с поддержкой.',
@@ -139,9 +144,13 @@ export async function POST(request: NextRequest) {
 
       // Log suspicious orders
       if (fraudCheck.isHighRisk) {
-        console.warn(`⚠️ High-risk order created: ${orderNumber}`)
-        console.warn(`   Score: ${fraudCheck.fraudScore}/100`)
-        console.warn(`   Flags: ${fraudCheck.fraudFlags.join(', ')}`)
+        logger.warn('High-risk order created', {
+          orderNumber,
+          fraudScore: fraudCheck.fraudScore,
+          fraudFlags: fraudCheck.fraudFlags,
+          email,
+          ipAddress
+        })
       }
 
       // Clear cart
@@ -173,7 +182,7 @@ export async function POST(request: NextRequest) {
       paymentUrl,
     })
   } catch (error) {
-    console.error('Checkout error:', error)
+    logger.error('Checkout failed', error)
     return NextResponse.json({ error: 'Ошибка оформления заказа' }, { status: 500 })
   }
 }
