@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { getOrCreateSession } from '@/lib/cart/getOrCreateSession'
 import { calculateOrderFraudScore } from '@/lib/antifraud/calculateFraudScore'
+import { validateEmail } from '@/lib/utils/emailValidation'
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,10 +25,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Все поля обязательны для заполнения' }, { status: 400 })
     }
 
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: 'Некорректный формат email' }, { status: 400 })
+    // Email validation with disposable detection
+    const emailValidation = validateEmail(email, { allowDisposable: false })
+    if (!emailValidation.valid) {
+      return NextResponse.json({ error: emailValidation.error }, { status: 400 })
     }
 
     // Russian phone format validation (+7XXXXXXXXXX)
