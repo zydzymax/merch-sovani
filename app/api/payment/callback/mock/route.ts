@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { generateUniqueEntryCode } from '@/lib/utils/generateUniqueEntryCode'
+import { logger } from '@/lib/utils/logger'
 
 /**
  * Mock payment webhook
  * В реальной интеграции это будет YooKassa callback
  */
 export async function POST(request: NextRequest) {
+  let body: any
   try {
-    const body = await request.json()
+    body = await request.json()
     const { paymentId, status } = body
 
     if (!paymentId) {
@@ -33,7 +35,11 @@ export async function POST(request: NextRequest) {
 
     // IDEMPOTENCY: Check if payment was already processed
     if (status === 'succeeded' && payment.status === 'SUCCEEDED') {
-      console.log(`ℹ️ Payment ${paymentId} already processed (idempotency check)`)
+      logger.payment('idempotency_check', {
+        paymentId,
+        orderNumber: payment.order.orderNumber,
+        status: 'already_processed'
+      })
       return NextResponse.json({
         success: true,
         message: 'Payment already processed',
@@ -42,7 +48,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (status === 'failed' && payment.status === 'FAILED') {
-      console.log(`ℹ️ Payment ${paymentId} already marked as failed (idempotency check)`)
+      logger.payment('idempotency_check', {
+        paymentId,
+        orderNumber: payment.order.orderNumber,
+        status: 'already_failed'
+      })
       return NextResponse.json({
         success: true,
         message: 'Payment already failed',
@@ -66,7 +76,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Payment callback error:', error)
+    logger.error('Payment callback processing failed', error, {
+      paymentId: body?.paymentId,
+      status: body?.status
+    })
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -153,8 +166,13 @@ async function handleSuccessfulPayment(orderId: string) {
         },
       })
 
-      // TODO: Отправить email с кодом участия
-      // await sendPromoParticipationEmail(order.email, entryCode)
+      // EMAIL NOTIFICATION: Entry code for promo participation
+      // Implementation required:
+      // 1. Set up email service (nodemailer, sendgrid, or AWS SES)
+      // 2. Create HTML email template with entry code
+      // 3. Add email queue for reliability (e.g., Bull or BullMQ)
+      // 4. Implement sendPromoParticipationEmail(order.email, entryCode, order)
+      // Example: await emailService.sendPromoEmail({ to: order.email, entryCode, orderNumber })
       console.log(`✅ Entry code generated for order ${order.orderNumber}`)
       console.log(`   Format: TTTTTTTT-RRRR-C (Timestamp-Random-Checksum)`)
 
@@ -264,8 +282,14 @@ async function handleSuccessfulPayment(orderId: string) {
       console.log(`ℹ️ Order ${order.orderNumber} does NOT participate in promo. Return right preserved.`)
     }
 
-    // TODO: Отправить email подтверждения заказа
-    // await sendOrderConfirmationEmail(order.email, order)
+    // EMAIL NOTIFICATION: Order confirmation
+    // Implementation required:
+    // 1. Set up email service (nodemailer, sendgrid, or AWS SES)
+    // 2. Create HTML email template for order confirmation
+    // 3. Include order details, payment info, and delivery tracking
+    // 4. Add email queue for reliability
+    // 5. Implement sendOrderConfirmationEmail(order.email, order)
+    // Example: await emailService.sendOrderConfirmation({ to: order.email, order, items })
   })
 
   console.log(`✅ Payment processed successfully for order ${order.orderNumber}`)
