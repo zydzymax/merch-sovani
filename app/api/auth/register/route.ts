@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import { cookies } from 'next/headers'
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rateLimit'
 import { logger } from '@/lib/utils/logger'
+import { sendRegistrationEmail } from '@/lib/email'
 
 function generateReferralCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -119,6 +120,20 @@ export async function POST(request: NextRequest) {
       // Clear referral cookie
       cookieStore.delete('ref')
     }
+
+    // Send welcome email (async, don't wait)
+    const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://mzakriev.ru'
+    const referralLink = `${baseUrl}/?ref=${user.referralCode}`
+
+    sendRegistrationEmail({
+      name: user.name || 'Пользователь',
+      email: user.email,
+      referralCode: user.referralCode || '',
+      referralLink,
+    }).catch((err) => {
+      // Don't fail registration if email fails
+      logger.error('Failed to send welcome email', err, { userId: user.id })
+    })
 
     return NextResponse.json({
       success: true,

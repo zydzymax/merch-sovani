@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { generateUniqueEntryCode } from '@/lib/utils/generateUniqueEntryCode'
 import { logger } from '@/lib/utils/logger'
+import { sendOrderConfirmationEmail } from '@/lib/email'
 
 /**
  * Mock payment webhook
@@ -279,18 +280,70 @@ async function handleSuccessfulPayment(orderId: string) {
       }
     } else {
       // Если НЕ участвует в акции — право на возврат сохраняется
-      console.log(`ℹ️ Order ${order.orderNumber} does NOT participate in promo. Return right preserved.`)
+      logger.info('Order does not participate in promo', {
+        orderNumber: order.orderNumber,
+        hasReturnRight: true,
+      })
     }
-
-    // EMAIL NOTIFICATION: Order confirmation
-    // Implementation required:
-    // 1. Set up email service (nodemailer, sendgrid, or AWS SES)
-    // 2. Create HTML email template for order confirmation
-    // 3. Include order details, payment info, and delivery tracking
-    // 4. Add email queue for reliability
-    // 5. Implement sendOrderConfirmationEmail(order.email, order)
-    // Example: await emailService.sendOrderConfirmation({ to: order.email, order, items })
   })
 
-  console.log(`✅ Payment processed successfully for order ${order.orderNumber}`)
+  // EMAIL NOTIFICATION: Send order confirmation
+  // Get order items for email
+  const orderWithItems = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      items: {
+        include: {
+          variant: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (orderWithItems && orderWithItems.email) {
+    // Prepare email data
+    const emailData = {
+      orderNumber: orderWithItems.orderNumber,
+      name: orderWithItems.shippingFullName || 'Покупатель',
+      email: orderWithItems.email,
+      total: orderWithItems.total,
+      subtotal: orderWithItems.subtotal,
+      shippingCost: orderWithItems.shippingCost,
+      items: orderWithItems.items.map((item) => ({
+        name: item.variant.product.name,
+        variant: item.variant.name || 'Стандарт',
+        quantity: item.quantity,
+        price: item.priceAtPurchase,
+      })),
+      shippingAddress: {
+        fullName: orderWithItems.shippingFullName || '',
+        address: orderWithItems.shippingAddress || '',
+        city: orderWithItems.shippingCity || '',
+        region: orderWithItems.shippingRegion || '',
+        postalCode: orderWithItems.shippingPostalCode || '',
+      },
+      participatesInPromo: orderWithItems.participatesInPromo,
+      entryCode: orderWithItems.entryCode || undefined,
+      // Fiscal receipt (mock for now)
+      fiscalReceipt: undefined, // Will be replaced with real data when integrated with fiscal system
+    }
+
+    // Send order confirmation email (async, don't block)
+    sendOrderConfirmationEmail(emailData).catch((err) => {
+      logger.error('Failed to send order confirmation email', err, {
+        orderId: orderWithItems.id,
+        orderNumber: orderWithItems.orderNumber,
+      })
+    })
+  }
+
+  logger.info('Payment processed successfully', {
+    orderNumber: order.orderNumber,
+    orderId: order.id,
+    participatesInPromo: order.participatesInPromo,
+  })
 }
