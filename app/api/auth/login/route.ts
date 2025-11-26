@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       where: { email: email.toLowerCase() },
     })
 
-    if (!user || !user.password) {
+    if (!user || !user.passwordHash) {
       return NextResponse.json(
         { error: 'Неверный email или пароль' },
         { status: 401 }
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check password
-    const passwordValid = await bcrypt.compare(password, user.password)
+    const passwordValid = await bcrypt.compare(password, user.passwordHash)
 
     if (!passwordValid) {
       return NextResponse.json(

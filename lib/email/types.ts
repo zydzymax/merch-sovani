@@ -23,6 +23,7 @@ export interface EmailAttachment {
 export interface RegistrationEmailData {
   name: string
   email: string
+  password?: string
   referralCode: string
   referralLink: string
 }

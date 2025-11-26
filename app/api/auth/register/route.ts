@@ -5,6 +5,12 @@ import { cookies } from 'next/headers'
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rateLimit'
 import { logger } from '@/lib/utils/logger'
 import { sendRegistrationEmail } from '@/lib/email'
+import { SignJWT } from 'jose'
+
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable must be defined')
+}
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET)
 
 function generateReferralCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -121,13 +127,29 @@ export async function POST(request: NextRequest) {
       cookieStore.delete('ref')
     }
 
-    // Send welcome email (async, don't wait)
+    // Create JWT token for auto-login
+    const token = await new SignJWT({ userId: user.id, email: user.email, role: user.role })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('7d')
+      .sign(JWT_SECRET)
+
+    // Set auth cookie
+    cookieStore.set('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
+    })
+
+    // Send welcome email with credentials (async, don't wait)
     const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://mzakriev.ru'
     const referralLink = `${baseUrl}/?ref=${user.referralCode}`
 
     sendRegistrationEmail({
       name: user.name || 'Пользователь',
       email: user.email,
+      password: password, // Send plaintext password in welcome email
       referralCode: user.referralCode || '',
       referralLink,
     }).catch((err) => {

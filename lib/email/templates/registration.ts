@@ -119,6 +119,15 @@ export function renderRegistrationEmail(data: RegistrationEmailData): string {
 
       <p>Спасибо за регистрацию в <strong>SoVAni</strong> — магазине стильной одежды и аксессуаров с еженедельными розыгрышами призов!</p>
 
+      ${data.password ? `
+      <div class="highlight-box" style="background: rgba(52, 211, 153, 0.1); border-color: rgba(52, 211, 153, 0.3);">
+        <p style="margin: 0 0 10px 0; color: #ffffff; font-weight: 600;">Ваши данные для входа:</p>
+        <p style="color: #cccccc; margin: 5px 0;"><strong>Email:</strong> ${data.email}</p>
+        <p style="color: #cccccc; margin: 5px 0;"><strong>Пароль:</strong> <span style="font-family: 'Courier New', monospace; color: #34d399;">${data.password}</span></p>
+        <p style="margin: 15px 0 0 0; font-size: 14px; color: #999;">Сохраните эти данные в безопасном месте</p>
+      </div>
+      ` : ''}
+
       <div class="features">
         <div class="feature">
           <div class="feature-icon">✨</div>
@@ -186,6 +195,14 @@ export function renderRegistrationEmailText(data: RegistrationEmailData): string
 Добро пожаловать в SoVAni, ${data.name}!
 
 Спасибо за регистрацию в нашем магазине стильной одежды и аксессуаров с еженедельными розыгрышами призов!
+
+${data.password ? `
+Ваши данные для входа:
+Email: ${data.email}
+Пароль: ${data.password}
+
+Сохраните эти данные в безопасном месте!
+` : ''}
 
 Ваш реферальный код: ${data.referralCode}
 
