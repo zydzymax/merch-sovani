@@ -120,7 +120,7 @@ export default function PrivacyPage() {
               <section>
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>9. Текст согласия на обработку ПДн</h2>
                 <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
-                  <div style={{padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)'}}>
+                  <div style={{padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)',color:'#fff'}}>
                     <p style={{fontStyle:'italic'}}>
                       «Я даю согласие Оператору площадки (ИП Zakriev Maksharip Ziavdinovich, ИНН 1234567890) на обработку моих персональных данных для оформления заказа, участия в стимулирующей акции (включая формирование и публикацию списка победителей в обезличенном виде) и получения уведомлений. Политика конфиденциальности: <Link href="/docs/privacy" style={{color:'var(--accent)'}}>justbusiness.lol/docs/privacy</Link>.»
                     </p>
@@ -131,7 +131,7 @@ export default function PrivacyPage() {
                 </div>
               </section>
 
-              <div style={{marginTop:40,padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)'}}>
+              <div style={{marginTop:40,padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)',color:'#fff'}}>
                 <p className="lead" style={{fontSize:'14px',opacity:0.9}}>
                   Дата последнего обновления: 14 ноября 2025 г.
                 </p>

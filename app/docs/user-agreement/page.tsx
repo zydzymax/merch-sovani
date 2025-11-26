@@ -14,7 +14,7 @@ export default function UserAgreement() {
           </h1>
 
           <div className="tile doc-content" style={{padding:40}}>
-            <nav style={{marginBottom:32,padding:20,background:'var(--surface)',borderRadius:16}}>
+            <nav style={{marginBottom:32,padding:20,background:'var(--surface)',borderRadius:16,color:'#fff'}}>
               <h3 style={{fontSize:'16px',fontWeight:700,marginBottom:12}}>Содержание:</h3>
               <ul style={{listStyle:'none',padding:0,margin:0,display:'grid',gap:8}}>
                 <li><a href="#terms" style={{color:'var(--accent)'}}>1. Термины и определения</a></li>
@@ -170,7 +170,7 @@ export default function UserAgreement() {
                 </div>
               </section>
 
-              <div style={{marginTop:40,padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)'}}>
+              <div style={{marginTop:40,padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)',color:'#fff'}}>
                 <p className="lead" style={{fontSize:'14px',opacity:0.9}}>
                   Дата последнего обновления: 14 ноября 2025 г.
                 </p>

@@ -4,7 +4,7 @@ export default function StickerPacks(){
   return(
     <section id="keychain" className="section">
       <div className="container">
-        <h2 className="font-display">Участвуй в розыгрыше</h2>
+        <h2 className="font-display" style={{textAlign:'center'}}>Участвуй в розыгрыше</h2>
         <p className="lead" style={{marginTop:8,textAlign:'center',maxWidth:640,marginInline:'auto'}}>
           Купи брелок и автоматически участвуй в розыгрыше iPhone 17 Pro Max. Чем больше брелков — тем выше шанс!
         </p>

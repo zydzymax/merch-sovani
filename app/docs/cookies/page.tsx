@@ -77,7 +77,7 @@ export default function CookiesPage() {
                 </div>
               </section>
 
-              <div style={{marginTop:40,padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)'}}>
+              <div style={{marginTop:40,padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)',color:'#fff'}}>
                 <p className="lead" style={{fontSize:'14px',opacity:0.9}}>
                   Дата последнего обновления: 14 ноября 2025 г.
                 </p>
