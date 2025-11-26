@@ -3,20 +3,22 @@ import { Montserrat, Unbounded } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils/cn'
 import CookieBanner from '@/components/CookieBanner'
+import { SessionProvider } from './_providers/SessionProvider'
 
 const montserrat = Montserrat({ subsets: ['latin', 'cyrillic'], weight: ['400','500','600'], variable: '--font-body' })
 const unbounded = Unbounded({ subsets: ['latin', 'cyrillic'], weight: ['600','700','800'], variable: '--font-display' })
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+}
+
 export const metadata: Metadata = {
-  title: 'SoVAni — Стильная одежда с акцией "1 покупка = 1 шанс"',
+  title: 'SoVAni — Стильная одежда и аксессуары',
   description:
-    'Интернет-магазин модной одежды. Участвуйте в акции "1 покупка = 1 шанс" и выигрывайте iPhone 17 Pro, Apple Watch Ultra и XREAL Air 2 Ultra!',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    viewportFit: 'cover',
-  },
+    'SoVAni — премиальная одежда и аксессуары. Футболки, пижамы и стильные значки для тех, кто ценит качество и комфорт.',
 }
 
 export default function RootLayout({
@@ -29,34 +31,26 @@ export default function RootLayout({
   return (
     <html lang="ru" className={cn(montserrat.variable, unbounded.variable)}>
       <head>
-        {/* Theme initialization script - runs before hydration to prevent FOUC */}
+        {/* Fixed legacy theme */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function(){
                 try {
-                  var t = localStorage.getItem('theme');
-                  if (!t) { t = 'legacy'; }
-                  if (t && typeof document !== 'undefined') {
-                    document.documentElement.style.colorScheme = 'dark';
-                    // Apply theme class immediately
-                    var applyTheme = function() {
-                      var body = document.body || document.getElementsByTagName('body')[0];
-                      if (body) {
-                        body.classList.remove('legacy', 'theme-dark-electric', 'theme-blue-coral');
-                        body.classList.add(t);
-                      }
-                    };
-                    // Try to apply immediately
-                    if (document.body) {
-                      applyTheme();
+                  document.documentElement.style.colorScheme = 'dark';
+                  var applyTheme = function() {
+                    var body = document.body || document.getElementsByTagName('body')[0];
+                    if (body) {
+                      body.classList.add('legacy');
                     }
-                    // Also apply on DOMContentLoaded as fallback
-                    if (document.readyState === 'loading') {
-                      document.addEventListener('DOMContentLoaded', applyTheme);
-                    } else {
-                      applyTheme();
-                    }
+                  };
+                  if (document.body) {
+                    applyTheme();
+                  }
+                  if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', applyTheme);
+                  } else {
+                    applyTheme();
                   }
                 } catch(e) {}
               })();
@@ -98,8 +92,10 @@ export default function RootLayout({
         )}
       </head>
       <body className={cn(montserrat.className, 'antialiased')}>
-        {children}
-        <CookieBanner />
+        <SessionProvider>
+          {children}
+          <CookieBanner />
+        </SessionProvider>
       </body>
     </html>
   )
