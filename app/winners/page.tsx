@@ -7,38 +7,10 @@ export default function WinnersPage() {
   const winners = [
     {
       week: 1,
-      date: '[ДАТА_НЕДЕЛИ_1]',
-      streamUrl: '[ССЫЛКА_НА_ЗАПИСЬ_ЭФИРА_1]',
+      date: '[ДАТА_РОЗЫГРЫША]',
+      streamUrl: '[ССЫЛКА_НА_ЗАПИСЬ_ЭФИРА]',
       winner: '[И. О. Ф***]',
       orderNumber: '****1234'
-    },
-    {
-      week: 2,
-      date: '[ДАТА_НЕДЕЛИ_2]',
-      streamUrl: '[ССЫЛКА_НА_ЗАПИСЬ_ЭФИРА_2]',
-      winner: '[И. О. Ф***]',
-      orderNumber: '****5678'
-    },
-    {
-      week: 3,
-      date: '[ДАТА_НЕДЕЛИ_3]',
-      streamUrl: '[ССЫЛКА_НА_ЗАПИСЬ_ЭФИРА_3]',
-      winner: '[И. О. Ф***]',
-      orderNumber: '****9012'
-    },
-    {
-      week: 4,
-      date: '[ДАТА_НЕДЕЛИ_4]',
-      streamUrl: '[ССЫЛКА_НА_ЗАПИСЬ_ЭФИРА_4]',
-      winner: '[И. О. Ф***]',
-      orderNumber: '****3456'
-    },
-    {
-      week: 5,
-      date: '[ДАТА_НЕДЕЛИ_5]',
-      streamUrl: '[ССЫЛКА_НА_ЗАПИСЬ_ЭФИРА_5]',
-      winner: '[И. О. Ф***]',
-      orderNumber: '****7890'
     }
   ]
 
@@ -71,7 +43,7 @@ export default function WinnersPage() {
               <div key={item.week} className="tile" style={{padding:32}}>
                 <div style={{display:'grid',gap:16}}>
                   <h2 className="font-display" style={{fontSize:'28px',marginBottom:8}}>
-                    Неделя {item.week}
+                    Главный розыгрыш
                   </h2>
 
                   <div style={{display:'grid',gap:12}}>
@@ -133,7 +105,7 @@ export default function WinnersPage() {
                 Как принять участие?
               </h3>
               <p className="lead" style={{fontSize:'16px',lineHeight:1.6}}>
-                Приобретите брелок на сайте <Link href="/" style={{color:'var(--accent)'}}>justbusiness.lol</Link> стоимостью 1 999 ₽. Каждый брелок = 1 шанс участия в еженедельном розыгрыше.
+                Приобретите брелок на сайте <Link href="/" style={{color:'var(--accent)'}}>sovani.info</Link> стоимостью 1 999 ₽. Каждый брелок = 1 шанс участия в розыгрыше.
               </p>
               <p className="lead" style={{fontSize:'16px',lineHeight:1.6}}>
                 Пригласите друзей по реферальной ссылке и получите дополнительный шанс после их первой покупки.
