@@ -1,16 +1,15 @@
 export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth/authOptions'
+import { getUser } from '@/lib/auth/getUser'
 import { prisma } from '@/lib/db/prisma'
 import { logger } from '@/lib/utils/logger'
 
 // GET - Get user's referral stats
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const currentUser = await getUser()
 
-    if (!session?.user?.id) {
+    if (!currentUser) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -19,7 +18,7 @@ export async function GET(request: NextRequest) {
 
     // Get user with referral code
     const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: currentUser.id },
       select: {
         referralCode: true,
         referralsFrom: {
@@ -47,10 +46,13 @@ export async function GET(request: NextRequest) {
     const referralsCount = user.referralsFrom.length
 
     // Build referral URL
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://shop.justbusiness.lol'
+    const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://www.sovani.info'
     const referralUrl = `${baseUrl}?ref=${user.referralCode}`
 
     return NextResponse.json({
+      userId: currentUser.id,
+      email: currentUser.email,
+      name: currentUser.name,
       referralCode: user.referralCode,
       referralUrl,
       referralsCount,

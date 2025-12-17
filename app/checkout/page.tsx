@@ -7,10 +7,28 @@ import Image from 'next/image'
 import Navbar from '@/app/_components/Navbar'
 import BigFooter from '@/app/_components/BigFooter'
 
+interface CartItem {
+  id: string
+  quantity: number
+  variant: {
+    price: number
+    product: {
+      name: string
+      slug: string
+      images: string[]
+    }
+  }
+}
+
+interface FormErrors {
+  [key: string]: string
+}
+
 export default function CheckoutPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [cartItems, setCartItems] = useState<any[]>([])
+  const [cartLoading, setCartLoading] = useState(true)
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [subtotal, setSubtotal] = useState(0)
 
   const [formData, setFormData] = useState({
@@ -29,12 +47,13 @@ export default function CheckoutPage() {
     promoRules: false,
   })
 
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
 
   // Check if cart contains promo items (keychain)
-  const hasPromoItem = cartItems.some((item: any) =>
-    item.product?.slug === 'keychain' ||
-    item.product?.name?.toLowerCase().includes('брелок')
+  const hasPromoItem = cartItems.some((item) =>
+    item.variant?.product?.slug === 'keychain' ||
+    item.variant?.product?.name?.toLowerCase().includes('брелок')
   )
 
   // Load cart data
@@ -46,59 +65,92 @@ export default function CheckoutPage() {
         setSubtotal(data.subtotal || 0)
 
         // Auto-enable promo participation if cart has keychain
-        const hasKeychain = (data.items || []).some((item: any) =>
-          item.product?.slug === 'keychain' ||
-          item.product?.name?.toLowerCase().includes('брелок')
+        const hasKeychain = (data.items || []).some((item: CartItem) =>
+          item.variant?.product?.slug === 'keychain' ||
+          item.variant?.product?.name?.toLowerCase().includes('брелок')
         )
         if (hasKeychain) {
           setFormData(prev => ({ ...prev, participatesInPromo: true }))
         }
       })
       .catch((err) => console.error('Load cart error:', err))
+      .finally(() => setCartLoading(false))
   }, [])
 
-  const validate = () => {
-    const newErrors: Record<string, string> = {}
-
-    if (!formData.email) newErrors.email = 'Email обязателен'
-    if (!formData.phone) newErrors.phone = 'Телефон обязателен'
-    if (!formData.fullName) newErrors.fullName = 'ФИО обязательно'
-    if (!formData.region) newErrors.region = 'Регион обязателен'
-    if (!formData.city) newErrors.city = 'Город обязателен'
-    if (!formData.address) newErrors.address = 'Адрес обязателен'
-    if (!formData.postalCode) newErrors.postalCode = 'Индекс обязателен'
-
-    // Validate email format
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Неверный формат email'
+  // Real-time field validation
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case 'email':
+        if (!value) return 'Email обязателен'
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Неверный формат email'
+        return ''
+      case 'phone':
+        if (!value) return 'Телефон обязателен'
+        if (!/^\+?[0-9\s\-\(\)]{10,}$/.test(value.replace(/\s/g, ''))) return 'Неверный формат телефона'
+        return ''
+      case 'fullName':
+        if (!value) return 'ФИО обязательно'
+        if (value.length < 3) return 'Минимум 3 символа'
+        return ''
+      case 'region':
+        if (!value) return 'Регион обязателен'
+        return ''
+      case 'city':
+        if (!value) return 'Город обязателен'
+        return ''
+      case 'address':
+        if (!value) return 'Адрес обязателен'
+        if (value.length < 5) return 'Укажите полный адрес'
+        return ''
+      case 'postalCode':
+        if (!value) return 'Индекс обязателен'
+        if (!/^\d{6}$/.test(value)) return 'Индекс должен содержать 6 цифр'
+        return ''
+      default:
+        return ''
     }
+  }
 
-    // Validate phone format
-    if (formData.phone && !/^\+?[0-9\s\-\(\)]{10,}$/.test(formData.phone)) {
-      newErrors.phone = 'Неверный формат телефона'
-    }
+  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target
+    const newValue = type === 'checkbox' ? checked : value
 
-    // Validate postal code
-    if (formData.postalCode && !/^\d{6}$/.test(formData.postalCode)) {
-      newErrors.postalCode = 'Индекс должен содержать 6 цифр'
+    setFormData(prev => ({ ...prev, [name]: newValue }))
+
+    // Real-time validation for touched fields
+    if (touched[name] && type !== 'checkbox') {
+      const error = validateField(name, value)
+      setErrors(prev => ({ ...prev, [name]: error }))
     }
+  }
+
+  const handleFieldBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setTouched(prev => ({ ...prev, [name]: true }))
+    const error = validateField(name, value)
+    setErrors(prev => ({ ...prev, [name]: error }))
+  }
+
+  const validate = (): boolean => {
+    const newErrors: FormErrors = {}
+    const fields = ['email', 'phone', 'fullName', 'region', 'city', 'address', 'postalCode']
+
+    fields.forEach(field => {
+      const error = validateField(field, formData[field as keyof typeof formData] as string)
+      if (error) newErrors[field] = error
+    })
 
     // Validate consent checkboxes
     if (!consents.privacyAndOffer) {
-      newErrors.consent = 'Необходимо согласие на обработку персональных данных'
+      newErrors.consent = 'Необходимо согласие на обработку данных'
     }
 
-    // Promo rules consent is mandatory for promo items (keychain)
-    const hasKeychain = cartItems.some((item: any) =>
-      item.product?.slug === 'keychain' ||
-      item.product?.name?.toLowerCase().includes('брелок')
-    )
-
-    if ((formData.participatesInPromo || hasKeychain) && !consents.promoRules) {
-      newErrors.promoConsent = 'Необходимо согласие с правилами участия в акции'
+    if (hasPromoItem && !consents.promoRules) {
+      newErrors.promoConsent = 'Необходимо согласие с правилами акции'
     }
 
     setErrors(newErrors)
+    setTouched(Object.fromEntries(fields.map(f => [f, true])))
     return Object.keys(newErrors).length === 0
   }
 
@@ -106,11 +158,14 @@ export default function CheckoutPage() {
     e.preventDefault()
 
     if (!validate()) {
+      // Scroll to first error
+      const firstError = document.querySelector('[data-error="true"]')
+      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
 
     if (cartItems.length === 0) {
-      alert('Корзина пуста')
+      setErrors({ general: 'Корзина пуста' })
       return
     }
 
@@ -132,7 +187,7 @@ export default function CheckoutPage() {
       // Redirect to payment page
       router.push(data.paymentUrl)
     } catch (error: any) {
-      alert(error.message)
+      setErrors({ general: error.message })
     } finally {
       setLoading(false)
     }
@@ -142,338 +197,463 @@ export default function CheckoutPage() {
     return `${(price / 100).toLocaleString('ru-RU')} ₽`
   }
 
+  // Input component with dark theme styling
+  const InputField = ({
+    name,
+    label,
+    type = 'text',
+    placeholder,
+    required = true,
+    maxLength,
+  }: {
+    name: string
+    label: string
+    type?: string
+    placeholder?: string
+    required?: boolean
+    maxLength?: number
+  }) => {
+    const hasError = touched[name] && errors[name]
+    return (
+      <div data-error={hasError ? 'true' : 'false'}>
+        <label
+          htmlFor={name}
+          style={{
+            display: 'block',
+            fontSize: 14,
+            fontWeight: 600,
+            marginBottom: 8,
+            color: 'var(--text)'
+          }}
+        >
+          {label} {required && <span style={{ color: 'var(--accent)' }}>*</span>}
+        </label>
+        <input
+          id={name}
+          name={name}
+          type={type}
+          required={required}
+          value={formData[name as keyof typeof formData] as string}
+          onChange={handleFieldChange}
+          onBlur={handleFieldBlur}
+          maxLength={maxLength}
+          placeholder={placeholder}
+          style={{
+            width: '100%',
+            padding: '14px 16px',
+            background: 'var(--surface-2)',
+            border: `1px solid ${hasError ? 'var(--accent)' : 'var(--ring)'}`,
+            borderRadius: 'var(--radius-md)',
+            color: 'var(--text)',
+            fontSize: 15,
+            transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+            outline: 'none'
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = hasError ? 'var(--accent)' : 'rgba(255,255,255,0.3)'
+            e.target.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.05)'
+          }}
+        />
+        {hasError && (
+          <p style={{ color: 'var(--accent)', fontSize: 13, marginTop: 6 }}>
+            {errors[name]}
+          </p>
+        )}
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ background: 'var(--bg)', color: 'var(--text)', minHeight: '100vh' }}>
       <Navbar />
 
-      {/* Checkout Form */}
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-serif font-bold mb-8 text-center">Оформление заказа</h1>
+      <div className="container" style={{ padding: '48px 24px' }}>
+        <h1
+          className="font-display"
+          style={{ fontSize: 'clamp(28px, 5vw, 40px)', fontWeight: 700, marginBottom: 32, textAlign: 'center' }}
+        >
+          Оформление заказа
+        </h1>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        {/* Error Banner */}
+        {errors.general && (
+          <div
+            style={{
+              padding: '16px 20px',
+              background: 'rgba(255, 43, 43, 0.1)',
+              border: '1px solid var(--accent)',
+              borderRadius: 'var(--radius-md)',
+              marginBottom: 24,
+              textAlign: 'center'
+            }}
+          >
+            <p style={{ color: 'var(--accent)', fontWeight: 600 }}>{errors.general}</p>
+          </div>
+        )}
+
+        <div
+          style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32 }}
+          className="checkout-grid"
+        >
           {/* Form */}
-          <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-8 space-y-6">
+          <div>
+            <form onSubmit={handleSubmit}>
               {/* Contact Info */}
-              <div>
-                <h2 className="text-2xl font-bold mb-4 text-center">Контактные данные</h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.email ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="your@email.com"
-                    />
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Телефон <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.phone ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="+7 (999) 123-45-67"
-                    />
-                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-                  </div>
+              <div className="tile" style={{ padding: 32, marginBottom: 24 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24, textAlign: 'center' }}>
+                  Контактные данные
+                </h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
+                  <InputField
+                    name="email"
+                    label="Email"
+                    type="email"
+                    placeholder="your@email.com"
+                  />
+                  <InputField
+                    name="phone"
+                    label="Телефон"
+                    type="tel"
+                    placeholder="+7 (999) 123-45-67"
+                  />
                 </div>
               </div>
 
               {/* Shipping Address */}
-              <div>
-                <h2 className="text-2xl font-bold mb-4 text-center">Адрес доставки (Почта РФ)</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ФИО получателя <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.fullName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="Иванов Иван Иванович"
+              <div className="tile" style={{ padding: 32, marginBottom: 24 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24, textAlign: 'center' }}>
+                  Адрес доставки (Почта РФ)
+                </h2>
+                <div style={{ display: 'grid', gap: 20 }}>
+                  <InputField
+                    name="fullName"
+                    label="ФИО получателя"
+                    placeholder="Иванов Иван Иванович"
+                  />
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20 }}>
+                    <InputField
+                      name="region"
+                      label="Регион/область"
+                      placeholder="Московская область"
                     />
-                    {errors.fullName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
-                    )}
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Регион/область <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.region}
-                        onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                          errors.region ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                        placeholder="Московская область"
-                      />
-                      {errors.region && (
-                        <p className="text-red-500 text-sm mt-1">{errors.region}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Город <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                          errors.city ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                        placeholder="Москва"
-                      />
-                      {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Улица, дом, квартира <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.address ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="ул. Ленина, д. 1, кв. 10"
+                    <InputField
+                      name="city"
+                      label="Город"
+                      placeholder="Москва"
                     />
-                    {errors.address && (
-                      <p className="text-red-500 text-sm mt-1">{errors.address}</p>
-                    )}
                   </div>
-
-                  <div className="md:w-1/2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Почтовый индекс <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.postalCode}
-                      onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.postalCode ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                  <InputField
+                    name="address"
+                    label="Улица, дом, квартира"
+                    placeholder="ул. Ленина, д. 1, кв. 10"
+                  />
+                  <div style={{ maxWidth: 200 }}>
+                    <InputField
+                      name="postalCode"
+                      label="Почтовый индекс"
                       placeholder="123456"
                       maxLength={6}
                     />
-                    {errors.postalCode && (
-                      <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>
-                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Promo Participation */}
-              <div className="border-t pt-6">
-                <h2 className="text-2xl font-bold mb-4 text-center">Участие в акции</h2>
-                <div className={`rounded-lg p-6 border-2 ${hasPromoItem ? 'bg-yellow-50 border-yellow-500' : 'bg-yellow-50 border-yellow-400'}`}>
-                  {hasPromoItem ? (
-                    <div className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={true}
-                        disabled
-                        className="mt-1 w-5 h-5 text-primary opacity-50"
-                      />
-                      <div>
-                        <p className="font-bold mb-2 text-lg">
-                          ✓ Обязательное участие в акции
-                        </p>
-                        <p className="text-sm text-gray-700 mb-2">
-                          Брелок является акционным товаром. При покупке вы автоматически участвуете в розыгрыше призов на сумму до 240 000 ₽
-                        </p>
-                        <p className="text-sm text-red-700 font-medium mb-2">
-                          ⚠️ Важно: Для акционных товаров возврат надлежащего качества невозможен согласно правилам акции
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Необходимо ознакомиться и согласиться с{' '}
-                          <Link href="/docs/rules" className="text-blue-600 hover:underline font-medium" target="_blank">
-                            правилами акции
-                          </Link>{' '}
-                          ниже *
-                        </p>
-                      </div>
+              {/* Promo Participation - only show if cart has keychain */}
+              {hasPromoItem && (
+              <div className="tile" style={{ padding: 32, marginBottom: 24 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24, textAlign: 'center' }}>
+                  Участие в акции
+                </h2>
+                <div
+                  style={{
+                    padding: 24,
+                    background: 'rgba(255, 193, 7, 0.1)',
+                    border: '1px solid rgba(255, 193, 7, 0.5)',
+                    borderRadius: 'var(--radius-md)'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+                    <input
+                      type="checkbox"
+                      checked={true}
+                      disabled
+                      style={{ width: 20, height: 20, marginTop: 2, opacity: 0.6 }}
+                    />
+                    <div>
+                      <p style={{ fontWeight: 700, marginBottom: 8, fontSize: 16 }}>
+                        ✓ Вы участвуете в акции
+                      </p>
+                      <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 8 }}>
+                        Брелок является акционным товаром. При покупке вы автоматически участвуете в розыгрыше iPhone 17 Pro Max!
+                      </p>
+                      <p style={{ fontSize: 14, color: 'var(--accent)', fontWeight: 600 }}>
+                        ⚠️ Важно: Для акционных товаров возврат надлежащего качества невозможен
+                      </p>
                     </div>
-                  ) : (
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.participatesInPromo}
-                        onChange={(e) =>
-                          setFormData({ ...formData, participatesInPromo: e.target.checked })
-                        }
-                        className="mt-1 w-5 h-5 text-primary"
-                      />
-                      <div>
-                        <p className="font-semibold mb-2">
-                          Хочу участвовать в акции «1 покупка = 1 шанс»
-                        </p>
-                        <p className="text-sm text-gray-700 mb-2">
-                          После оплаты вы получите уникальный код участия в розыгрыше призов на сумму до 240 000 ₽
-                        </p>
-                        <p className="text-sm text-red-700 font-medium">
-                          ⚠️ Внимание: При участии в акции возврат товара надлежащего качества становится невозможным
-                        </p>
-                      </div>
-                    </label>
-                  )}
+                  </div>
                 </div>
               </div>
+              )}
 
-              {/* Legal Consent Checkboxes */}
-              <div className="border-t pt-6 space-y-4">
-                <h2 className="text-2xl font-bold mb-4 text-center">Согласие на обработку данных</h2>
-                
-                {/* Privacy and Offer Consent - Always required */}
-                <label className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer ${
-                  errors.consent ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-gray-50'
-                }`}>
-                  <input
-                    type="checkbox"
-                    required
-                    checked={consents.privacyAndOffer}
-                    onChange={(e) => setConsents({ ...consents, privacyAndOffer: e.target.checked })}
-                    className="mt-1 w-5 h-5 text-primary flex-shrink-0"
-                  />
-                  <span className="text-sm text-gray-700">
-                    Я даю согласие Оператору площадки (ИП Zakriev Maksharip Ziavdinovich, ИНН 1234567890) на обработку моих персональных данных для оформления заказа, участия в стимулирующей акции (включая формирование и публикацию списка победителей в обезличенном виде) и получения уведомлений. Подробнее:{' '}
-                    <Link href="/docs/privacy" className="text-blue-600 hover:underline font-medium" target="_blank">
-                      Политика конфиденциальности
-                    </Link>
-                    ,{' '}
-                    <Link href="/docs/offer" className="text-blue-600 hover:underline font-medium" target="_blank">
-                      Публичная оферта
-                    </Link>
-                    . <span className="text-red-500">*</span>
-                  </span>
-                </label>
-                {errors.consent && <p className="text-red-500 text-sm">{errors.consent}</p>}
+              {/* Legal Consent */}
+              <div className="tile" style={{ padding: 32, marginBottom: 24 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24, textAlign: 'center' }}>
+                  Согласие на обработку данных
+                </h2>
+                <div style={{ display: 'grid', gap: 16 }}>
+                  {/* Privacy Consent */}
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 16,
+                      padding: 20,
+                      background: errors.consent ? 'rgba(255, 43, 43, 0.05)' : 'var(--surface-2)',
+                      border: `1px solid ${errors.consent ? 'var(--accent)' : 'var(--ring)'}`,
+                      borderRadius: 'var(--radius-md)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      required
+                      checked={consents.privacyAndOffer}
+                      onChange={(e) => {
+                        setConsents({ ...consents, privacyAndOffer: e.target.checked })
+                        if (e.target.checked) {
+                          setErrors(prev => ({ ...prev, consent: '' }))
+                        }
+                      }}
+                      style={{ width: 20, height: 20, marginTop: 2, accentColor: 'var(--accent)', flexShrink: 0 }}
+                    />
+                    <span style={{ fontSize: 14, lineHeight: 1.6 }}>
+                      Я даю согласие Оператору площадки на обработку моих персональных данных для оформления заказа и участия в акции.{' '}
+                      <Link href="/docs/privacy" target="_blank" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
+                        Политика конфиденциальности
+                      </Link>
+                      ,{' '}
+                      <Link href="/docs/offer" target="_blank" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
+                        Публичная оферта
+                      </Link>
+                      . <span style={{ color: 'var(--accent)' }}>*</span>
+                    </span>
+                  </label>
+                  {errors.consent && (
+                    <p style={{ color: 'var(--accent)', fontSize: 13 }}>{errors.consent}</p>
+                  )}
 
-                {/* Promo Rules Consent - Required if participating or buying promo items */}
-                {(formData.participatesInPromo || hasPromoItem) && (
-                  <>
-                    <label className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer ${
-                      errors.promoConsent ? 'border-red-500 bg-red-50' : 'border-yellow-200 bg-yellow-50'
-                    }`}>
-                      <input
-                        type="checkbox"
-                        required
-                        checked={consents.promoRules}
-                        onChange={(e) => setConsents({ ...consents, promoRules: e.target.checked })}
-                        className="mt-1 w-5 h-5 text-primary flex-shrink-0"
-                      />
-                      <span className="text-sm text-gray-700">
-                        Я ознакомлен(а) с{' '}
-                        <Link href="/docs/rules" className="text-blue-600 hover:underline font-medium" target="_blank">
-                          Правилами стимулирующей акции
-                        </Link>
-                        {' '}и понимаю, что при возврате брелока аннулируются шансы участия в розыгрыше, а также что с призов удерживается НДФЛ 35% (уплачивается Организатором).
-                        {' '}<span className="text-red-500">*</span>
-                      </span>
-                    </label>
-                    {errors.promoConsent && <p className="text-red-500 text-sm">{errors.promoConsent}</p>}
-                  </>
-                )}
+                  {/* Promo Rules Consent */}
+                  {hasPromoItem && (
+                    <>
+                      <label
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 16,
+                          padding: 20,
+                          background: errors.promoConsent ? 'rgba(255, 43, 43, 0.05)' : 'rgba(255, 193, 7, 0.05)',
+                          border: `1px solid ${errors.promoConsent ? 'var(--accent)' : 'rgba(255, 193, 7, 0.3)'}`,
+                          borderRadius: 'var(--radius-md)',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          required
+                          checked={consents.promoRules}
+                          onChange={(e) => {
+                            setConsents({ ...consents, promoRules: e.target.checked })
+                            if (e.target.checked) {
+                              setErrors(prev => ({ ...prev, promoConsent: '' }))
+                            }
+                          }}
+                          style={{ width: 20, height: 20, marginTop: 2, accentColor: 'var(--accent)', flexShrink: 0 }}
+                        />
+                        <span style={{ fontSize: 14, lineHeight: 1.6 }}>
+                          Я ознакомлен(а) с{' '}
+                          <Link href="/docs/rules" target="_blank" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
+                            Правилами стимулирующей акции
+                          </Link>
+                          {' '}и понимаю, что при возврате брелока аннулируются шансы участия в розыгрыше, а также что с призов удерживается НДФЛ 35%.
+                          {' '}<span style={{ color: 'var(--accent)' }}>*</span>
+                        </span>
+                      </label>
+                      {errors.promoConsent && (
+                        <p style={{ color: 'var(--accent)', fontSize: 13 }}>{errors.promoConsent}</p>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading || cartItems.length === 0}
-                className="w-full bg-primary text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn btn-primary"
+                style={{
+                  width: '100%',
+                  padding: '18px 32px',
+                  fontSize: 16,
+                  fontWeight: 700,
+                  opacity: (loading || cartItems.length === 0) ? 0.6 : 1,
+                  cursor: (loading || cartItems.length === 0) ? 'not-allowed' : 'pointer'
+                }}
               >
-                {loading ? 'Обработка...' : 'Перейти к оплате'}
+                {loading ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                    <span className="spinner" style={{
+                      width: 20,
+                      height: 20,
+                      border: '2px solid rgba(255,255,255,0.3)',
+                      borderTopColor: '#fff',
+                      borderRadius: '50%',
+                      animation: 'spin 0.8s linear infinite'
+                    }} />
+                    Обработка...
+                  </span>
+                ) : (
+                  'Перейти к оплате'
+                )}
               </button>
             </form>
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
-              <h2 className="text-2xl font-bold mb-6">Ваш заказ</h2>
+          <div>
+            <div className="tile checkout-summary" style={{ padding: 32, position: 'sticky', top: 100 }}>
+              <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24 }}>Ваш заказ</h2>
 
               {/* Cart Items */}
-              <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-                {cartItems.map((item: any) => (
-                  <div key={item.id} className="flex gap-3">
-                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                      {item.variant.product.images[0] && (
-                        <Image
-                          src={item.variant.product.images[0]}
-                          alt={item.variant.product.name}
-                          fill
-                          className="object-cover"
-                          sizes="64px"
-                        />
-                      )}
+              {cartLoading ? (
+                <div style={{ display: 'grid', gap: 16 }}>
+                  {[1, 2].map(i => (
+                    <div key={i} style={{ display: 'flex', gap: 12, animation: 'pulse 2s infinite' }}>
+                      <div style={{ width: 64, height: 64, background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)' }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ height: 16, background: 'var(--surface-2)', borderRadius: 4, marginBottom: 8, width: '80%' }} />
+                        <div style={{ height: 14, background: 'var(--surface-2)', borderRadius: 4, width: '50%' }} />
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {item.variant.product.name}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {item.quantity} × {formatPrice(item.variant.price)}
-                      </p>
+                  ))}
+                </div>
+              ) : cartItems.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: 24 }}>
+                  <p style={{ color: 'var(--text-muted)', marginBottom: 16 }}>Корзина пуста</p>
+                  <Link href="/catalog" className="btn btn-ghost">
+                    Перейти в каталог
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <div style={{ maxHeight: 320, overflowY: 'auto', marginBottom: 24 }}>
+                    {cartItems.map((item) => (
+                      <div
+                        key={item.id}
+                        style={{
+                          display: 'flex',
+                          gap: 12,
+                          paddingBottom: 16,
+                          marginBottom: 16,
+                          borderBottom: '1px solid var(--ring)'
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: 'relative',
+                            width: 64,
+                            height: 64,
+                            borderRadius: 'var(--radius-sm)',
+                            overflow: 'hidden',
+                            background: 'var(--surface-2)',
+                            flexShrink: 0
+                          }}
+                        >
+                          {item.variant?.product?.images?.[0] && (
+                            <Image
+                              src={item.variant.product.images[0]}
+                              alt={item.variant.product.name}
+                              fill
+                              style={{ objectFit: 'cover' }}
+                              sizes="64px"
+                            />
+                          )}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {item.variant?.product?.name}
+                          </p>
+                          <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                            {item.quantity} × {formatPrice(item.variant?.price || 0)}
+                          </p>
+                        </div>
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <p style={{ fontSize: 14, fontWeight: 700 }}>
+                            {formatPrice((item.variant?.price || 0) * item.quantity)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Totals */}
+                  <div style={{ borderTop: '1px solid var(--ring)', paddingTop: 16 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, color: 'var(--text-muted)' }}>
+                      <span>Товары:</span>
+                      <span>{formatPrice(subtotal)}</span>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold">
-                        {formatPrice(item.variant.price * item.quantity)}
-                      </p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, color: 'var(--text-muted)' }}>
+                      <span>Доставка:</span>
+                      <span>Бесплатно</span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        paddingTop: 16,
+                        borderTop: '1px solid var(--ring)',
+                        fontSize: 20,
+                        fontWeight: 700
+                      }}
+                    >
+                      <span>Итого:</span>
+                      <span style={{ color: 'var(--accent)' }}>{formatPrice(subtotal)}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Totals */}
-              <div className="border-t pt-4 space-y-2">
-                <div className="flex justify-between text-gray-600">
-                  <span>Товары:</span>
-                  <span>{formatPrice(subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-xl font-bold pt-2 border-t">
-                  <span>Итого:</span>
-                  <span className="text-primary">{formatPrice(subtotal)}</span>
-                </div>
-              </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       <BigFooter />
+
+      <style jsx global>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 0.8; }
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        @media (min-width: 1024px) {
+          .checkout-grid {
+            grid-template-columns: 1fr 400px !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .checkout-summary {
+            position: relative !important;
+            top: 0 !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

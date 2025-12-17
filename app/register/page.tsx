@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import Navbar from '@/app/_components/Navbar'
 import BigFooter from '@/app/_components/BigFooter'
@@ -42,7 +41,8 @@ export default function RegisterPage() {
       return
     }
 
-    if (formData.password.length < 12) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{};':"\\|,.<>\/])[A-Za-z\d@$!%*?&#^()_+\-=[\]{};':"\\|,.<>\/]{12,}$/
+    if (!passwordRegex.test(formData.password)) {
       setError('Пароль должен содержать минимум 12 символов, включая заглавные и строчные буквы, цифры и специальные символы')
       setLoading(false)
       return
@@ -67,23 +67,8 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Ошибка регистрации')
       }
 
-      // Auto-login with NextAuth
-      const result = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-        callbackUrl: '/account',
-      })
-
-      if (result?.error) {
-        throw new Error('Ошибка входа после регистрации')
-      }
-
-      // Wait for session to be established and redirect
-      if (result?.ok) {
-        // Redirect to account page (NextAuth will handle the session)
-        window.location.href = '/account'
-      }
+      // Registration API already sets auth_token cookie, just redirect
+      window.location.href = '/account/dashboard'
     } catch (err: any) {
       setError(err.message || 'Произошла ошибка')
       setLoading(false)

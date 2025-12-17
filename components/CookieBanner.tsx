@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { X } from 'lucide-react'
 
 interface CookieConsent {
   necessary: boolean
@@ -26,7 +25,6 @@ export default function CookieBanner() {
   useEffect(() => {
     const consent = localStorage.getItem('cookie_consent')
     if (!consent) {
-      // Задержка для лучшего UX
       setTimeout(() => setShow(true), 1000)
     }
   }, [])
@@ -35,8 +33,6 @@ export default function CookieBanner() {
     localStorage.setItem('cookie_consent', JSON.stringify(consent))
     setShow(false)
     setShowSettings(false)
-
-    // Перезагрузка страницы для применения настроек
     window.location.reload()
   }
 
@@ -74,55 +70,83 @@ export default function CookieBanner() {
       {/* Overlay */}
       {showSettings && (
         <div
-          className="fixed inset-0 bg-black/50 z-[100]"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.6)',
+            zIndex: 100
+          }}
           onClick={() => setShowSettings(false)}
         />
       )}
 
       {/* Cookie Banner */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-christmas-red shadow-2xl z-[101]">
-        <div className="container mx-auto max-w-6xl p-6">
+      <div
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: 'var(--surface)',
+          borderTop: '2px solid var(--accent)',
+          boxShadow: '0 -10px 40px rgba(0,0,0,0.3)',
+          zIndex: 101
+        }}
+      >
+        <div className="container" style={{ padding: '24px' }}>
           {!showSettings ? (
             // Simple Banner
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-start gap-3">
-                  <span className="text-3xl">🍪</span>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2 text-gray-900">
-                      Мы используем cookie
-                    </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Для работы сайта и аналитики. Вы можете{' '}
-                      <button
-                        onClick={() => setShowSettings(true)}
-                        className="text-blue-600 hover:underline font-medium"
-                      >
-                        настроить
-                      </button>{' '}
-                      предпочтения или принять все. Подробнее в{' '}
-                      <Link
-                        href="/legal/cookies"
-                        className="text-blue-600 hover:underline font-medium"
-                        target="_blank"
-                      >
-                        Политике cookie
-                      </Link>
-                      .
-                    </p>
-                  </div>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 16
+            }} className="cookie-banner-content">
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+                <span style={{ fontSize: 32 }}>🍪</span>
+                <div>
+                  <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 8, color: 'var(--text)' }}>
+                    Мы используем cookie
+                  </h3>
+                  <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                    Для работы сайта и аналитики. Вы можете{' '}
+                    <button
+                      onClick={() => setShowSettings(true)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--accent)',
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        padding: 0
+                      }}
+                    >
+                      настроить
+                    </button>{' '}
+                    предпочтения или принять все. Подробнее в{' '}
+                    <Link
+                      href="/legal/cookies"
+                      style={{ color: 'var(--accent)', textDecoration: 'underline', fontWeight: 600 }}
+                      target="_blank"
+                    >
+                      Политике cookie
+                    </Link>
+                    .
+                  </p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }} className="cookie-buttons">
                 <button
                   onClick={acceptNecessary}
-                  className="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-colors"
+                  className="btn btn-ghost"
+                  style={{ padding: '12px 24px' }}
                 >
                   Только необходимые
                 </button>
                 <button
                   onClick={acceptAll}
-                  className="px-6 py-3 bg-christmas-red text-white rounded-lg hover:bg-christmas-red/90 font-medium transition-colors shadow-md"
+                  className="btn btn-primary"
+                  style={{ padding: '12px 24px' }}
                 >
                   Принять все
                 </button>
@@ -130,107 +154,155 @@ export default function CookieBanner() {
             </div>
           ) : (
             // Settings Modal
-            <div className="relative">
+            <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setShowSettings(false)}
-                className="absolute right-0 top-0 p-2 hover:bg-gray-100 rounded-full"
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: 8,
+                  fontSize: 20
+                }}
               >
-                <X className="h-5 w-5" />
+                ✕
               </button>
 
-              <h3 className="font-semibold text-xl mb-4 pr-10">
+              <h3 style={{ fontWeight: 700, fontSize: 20, marginBottom: 20, paddingRight: 40, color: 'var(--text)' }}>
                 Настройка cookie
               </h3>
 
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-                {/* Необходимые */}
-                <div className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold">Необходимые cookie</h4>
-                      <span className="text-xs px-2 py-0.5 bg-gray-200 rounded-full text-gray-600">
+              <div style={{ display: 'grid', gap: 12, maxHeight: '50vh', overflowY: 'auto' }}>
+                {/* Necessary */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: 16,
+                  background: 'var(--surface-2)',
+                  borderRadius: 'var(--radius-md)',
+                  gap: 16
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <h4 style={{ fontWeight: 600, color: 'var(--text)' }}>Необходимые cookie</h4>
+                      <span style={{
+                        fontSize: 11,
+                        padding: '2px 8px',
+                        background: 'var(--ring)',
+                        borderRadius: 'var(--pill)',
+                        color: 'var(--text-muted)'
+                      }}>
                         Обязательно
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
-                      Обеспечивают базовую функциональность сайта (авторизация,
-                      корзина, навигация). Всегда включены.
+                    <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                      Обеспечивают базовую функциональность сайта. Всегда включены.
                     </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={true}
                     disabled
-                    className="mt-1 h-5 w-5"
+                    style={{ width: 20, height: 20, marginTop: 4, opacity: 0.5 }}
                   />
                 </div>
 
-                {/* Функциональные */}
-                <div className="flex items-start justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex-1">
-                    <h4 className="font-semibold mb-1">Функциональные cookie</h4>
-                    <p className="text-sm text-gray-600">
-                      Запоминают ваши предпочтения (язык, регион, тема
-                      оформления).
+                {/* Functional */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: 16,
+                  border: '1px solid var(--ring)',
+                  borderRadius: 'var(--radius-md)',
+                  gap: 16
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontWeight: 600, marginBottom: 4, color: 'var(--text)' }}>Функциональные cookie</h4>
+                    <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                      Запоминают ваши предпочтения (язык, регион).
                     </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.functional}
-                    onChange={(e) =>
-                      setSettings({ ...settings, functional: e.target.checked })
-                    }
-                    className="mt-1 h-5 w-5 text-christmas-red"
+                    onChange={(e) => setSettings({ ...settings, functional: e.target.checked })}
+                    style={{ width: 20, height: 20, marginTop: 4, accentColor: 'var(--accent)' }}
                   />
                 </div>
 
-                {/* Аналитические */}
-                <div className="flex items-start justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex-1">
-                    <h4 className="font-semibold mb-1">Аналитические cookie</h4>
-                    <p className="text-sm text-gray-600">
-                      Анонимная статистика посещаемости для улучшения сайта.
+                {/* Analytics */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: 16,
+                  border: '1px solid var(--ring)',
+                  borderRadius: 'var(--radius-md)',
+                  gap: 16
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontWeight: 600, marginBottom: 4, color: 'var(--text)' }}>Аналитические cookie</h4>
+                    <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                      Анонимная статистика для улучшения сайта.
                     </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.analytics}
-                    onChange={(e) =>
-                      setSettings({ ...settings, analytics: e.target.checked })
-                    }
-                    className="mt-1 h-5 w-5 text-christmas-red"
+                    onChange={(e) => setSettings({ ...settings, analytics: e.target.checked })}
+                    style={{ width: 20, height: 20, marginTop: 4, accentColor: 'var(--accent)' }}
                   />
                 </div>
 
-                {/* Маркетинговые */}
-                <div className="flex items-start justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex-1">
-                    <h4 className="font-semibold mb-1">Маркетинговые cookie</h4>
-                    <p className="text-sm text-gray-600">
-                      Персонализация рекламных предложений и рассылок.
+                {/* Marketing */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: 16,
+                  border: '1px solid var(--ring)',
+                  borderRadius: 'var(--radius-md)',
+                  gap: 16
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontWeight: 600, marginBottom: 4, color: 'var(--text)' }}>Маркетинговые cookie</h4>
+                    <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                      Персонализация рекламных предложений.
                     </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.marketing}
-                    onChange={(e) =>
-                      setSettings({ ...settings, marketing: e.target.checked })
-                    }
-                    className="mt-1 h-5 w-5 text-christmas-red"
+                    onChange={(e) => setSettings({ ...settings, marketing: e.target.checked })}
+                    style={{ width: 20, height: 20, marginTop: 4, accentColor: 'var(--accent)' }}
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6 pt-4 border-t border-gray-200">
+              <div style={{
+                display: 'flex',
+                gap: 12,
+                marginTop: 20,
+                paddingTop: 20,
+                borderTop: '1px solid var(--ring)'
+              }}>
                 <button
                   onClick={acceptNecessary}
-                  className="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                  className="btn btn-ghost"
+                  style={{ padding: '12px 24px' }}
                 >
                   Только необходимые
                 </button>
                 <button
                   onClick={acceptCustom}
-                  className="flex-1 px-6 py-3 bg-christmas-red text-white rounded-lg hover:bg-christmas-red/90 font-medium"
+                  className="btn btn-primary"
+                  style={{ flex: 1, padding: '12px 24px' }}
                 >
                   Сохранить настройки
                 </button>
@@ -239,6 +311,19 @@ export default function CookieBanner() {
           )}
         </div>
       </div>
+
+      <style jsx global>{`
+        @media (min-width: 768px) {
+          .cookie-banner-content {
+            flex-direction: row !important;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .cookie-buttons {
+            flex-shrink: 0;
+          }
+        }
+      `}</style>
     </>
   )
 }

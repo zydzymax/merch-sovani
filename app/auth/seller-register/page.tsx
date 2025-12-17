@@ -52,8 +52,9 @@ export default function SellerRegisterPage() {
         setError('Пароли не совпадают')
         return
       }
-      if (formData.password.length < 6) {
-        setError('Пароль должен содержать минимум 6 символов')
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{};':"\\|,.<>\/])[A-Za-z\d@$!%*?&#^()_+\-=[\]{};':"\\|,.<>\/]{12,}$/
+      if (!passwordRegex.test(formData.password)) {
+        setError('Пароль должен содержать минимум 12 символов, включая заглавные и строчные буквы, цифры и специальные символы')
         return
       }
     }
@@ -96,7 +97,7 @@ export default function SellerRegisterPage() {
       }
 
       // Успешная регистрация - перенаправляем на страницу входа
-      router.push('/seller/login?registered=true')
+      router.push('/auth/seller-login?registered=true')
     } catch (err: any) {
       setError('Произошла ошибка при регистрации')
       setLoading(false)
@@ -226,7 +227,7 @@ export default function SellerRegisterPage() {
                     style={{ width: '100%', padding: '12px 16px', fontSize: 16 }}
                   />
                   <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 5 }}>
-                    Минимум 6 символов
+                    Минимум 12 символов: заглавные и строчные буквы, цифры, спецсимволы (!@#$%^&*)
                   </div>
                 </div>
 
@@ -295,8 +296,11 @@ export default function SellerRegisterPage() {
                       onChange={handleChange}
                       className="input"
                       style={{ width: '100%', padding: '12px 16px', fontSize: 16 }}
-                      placeholder="123456789012"
+                      placeholder="1234567890 или 123456789012"
                     />
+                    <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 5 }}>
+                      10 цифр для ЮЛ или 12 цифр для ИП
+                    </div>
                   </div>
 
                   <div>
@@ -312,8 +316,11 @@ export default function SellerRegisterPage() {
                       onChange={handleChange}
                       className="input"
                       style={{ width: '100%', padding: '12px 16px', fontSize: 16 }}
-                      placeholder="1234567890123"
+                      placeholder="1234567890123 или 123456789012345"
                     />
+                    <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 5 }}>
+                      13 цифр для ЮЛ или 15 цифр для ИП (ОГРНИП)
+                    </div>
                   </div>
                 </div>
 
@@ -472,8 +479,8 @@ export default function SellerRegisterPage() {
 
             {step === 1 && (
               <div style={{ textAlign: 'center', fontSize: 14, color: 'var(--muted)', marginTop: 20 }}>
-                Уже есть аккаунт?{' '}
-                <Link href="/seller/login" style={{ color: 'var(--accent)', fontWeight: 600 }}>
+                Уже есть аккаунт продавца?{' '}
+                <Link href="/auth/seller-login" style={{ color: 'var(--accent)', fontWeight: 600 }}>
                   Войти
                 </Link>
               </div>

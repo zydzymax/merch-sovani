@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
@@ -27,30 +26,35 @@ function SellerLoginForm() {
     setLoading(true)
 
     try {
-      const result = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
       })
 
-      if (result?.error) {
-        setError('Неверный email или пароль')
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Неверный email или пароль')
         setLoading(false)
         return
       }
 
-      // После успешного входа проверим роль пользователя
-      const response = await fetch('/api/auth/session')
-      const session = await response.json()
+      // Проверим роль пользователя
+      const meResponse = await fetch('/api/auth/me')
+      const meData = await meResponse.json()
 
-      if (session?.user?.role !== 'SELLER') {
+      if (!meData.authenticated || meData.user.role !== 'SELLER') {
         setError('У вас нет доступа к личному кабинету продавца')
         setLoading(false)
         return
       }
 
-      router.push(callbackUrl)
-      router.refresh()
+      // Redirect to callback URL
+      window.location.href = callbackUrl
     } catch (err: any) {
       setError('Произошла ошибка при входе')
       setLoading(false)
@@ -137,7 +141,7 @@ function SellerLoginForm() {
 
             <div style={{ textAlign: 'center', fontSize: 14, color: 'var(--muted)' }}>
               Хотите стать продавцом?{' '}
-              <Link href="/seller/register" style={{ color: 'var(--accent)', fontWeight: 600 }}>
+              <Link href="/auth/seller-register" style={{ color: 'var(--accent)', fontWeight: 600 }}>
                 Зарегистрироваться
               </Link>
             </div>

@@ -72,8 +72,8 @@ export default function CookiesPage() {
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>5. Контакты</h2>
                 <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
                   <p>По вопросам использования cookies обращайтесь:</p>
-                  <p>Email: hello@sovani.ru<br/>
-                  Тел: +7 (999) 123-45-67</p>
+                  <p>Email: shop@sovani.info<br/>
+                  Тел: +7 (993) 898-13-01</p>
                 </div>
               </section>
 

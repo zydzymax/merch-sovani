@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/app/_components/Navbar'
@@ -17,7 +16,7 @@ function LoginForm() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const callbackUrl = searchParams.get('callbackUrl') || '/account'
+  const callbackUrl = searchParams.get('callbackUrl') || '/account/dashboard'
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -29,21 +28,25 @@ function LoginForm() {
     setLoading(true)
 
     try {
-      const result = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
       })
 
-      if (result?.error) {
-        setError('Неверный email или пароль')
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Неверный email или пароль')
         setLoading(false)
         return
       }
 
       // Redirect to callback URL or account page
-      router.push(callbackUrl)
-      router.refresh()
+      window.location.href = callbackUrl
     } catch (err: any) {
       setError('Произошла ошибка при входе')
       setLoading(false)

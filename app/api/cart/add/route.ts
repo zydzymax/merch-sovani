@@ -12,6 +12,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'variantId обязателен' }, { status: 400 })
     }
 
+    // Validate quantity
+    const qty = parseInt(quantity, 10)
+    if (isNaN(qty) || qty < 1 || qty > 100) {
+      return NextResponse.json({ error: 'Некорректное количество (1-100)' }, { status: 400 })
+    }
+
     // Get or create session
     const session = await getOrCreateSession()
 
@@ -26,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check inventory
-    if (variant.inventory && variant.inventory.quantity < quantity) {
+    if (variant.inventory && variant.inventory.quantity < qty) {
       return NextResponse.json({ error: 'Недостаточно товара на складе' }, { status: 400 })
     }
 
@@ -41,10 +47,11 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingCartItem) {
-      // Update quantity
+      // Update quantity with max limit
+      const newQuantity = Math.min(existingCartItem.quantity + qty, 100)
       await prisma.cartItem.update({
         where: { id: existingCartItem.id },
-        data: { quantity: existingCartItem.quantity + quantity },
+        data: { quantity: newQuantity },
       })
     } else {
       // Create new cart item
@@ -52,7 +59,7 @@ export async function POST(request: NextRequest) {
         data: {
           sessionId: session.id,
           variantId,
-          quantity,
+          quantity: qty,
         },
       })
     }

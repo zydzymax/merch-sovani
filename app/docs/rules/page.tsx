@@ -38,8 +38,8 @@ export default function RulesPage() {
               <section>
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>1. Организатор и технический оператор</h2>
                 <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
-                  <p><strong>Организатор акции:</strong> [ОРГАНИЗАТОР_НАЗВАНИЕ], ИНН [ОРГАНИЗАТОР_ИНН], ОГРН [ОРГАНИЗАТОР_ОГРН].</p>
-                  <p><strong>Технический оператор (Агент):</strong> ИП Zakriev Maksharip Ziavdinovich, ИНН 1234567890, ОГРНИП 1234567890123.</p>
+                  <p><strong>Организатор акции:</strong> ООО «ФЛАЙТ», ИНН 5403087589, ОГРН 1255400011261.</p>
+                  <p><strong>Технический оператор (Агент):</strong> ИП Гладких Виталий Олегович, ИНН 381705889083, ОГРНИП 325774600805724, адрес: г. Москва, ул. Маршала Бирюзова, д. 9, кв. 7.</p>
                   <p>Технический оператор обеспечивает работу сайта, приём платежей от имени Организатора и техническую поддержку акции. Организатор определяет победителей и вручает призы.</p>
                 </div>
               </section>
@@ -168,14 +168,14 @@ export default function RulesPage() {
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>11. Контакты</h2>
                 <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
                   <p><strong>Организатор акции:</strong></p>
-                  <p>[ОРГАНИЗАТОР_НАЗВАНИЕ]<br/>
-                  Email: [ОРГАНИЗАТОР_EMAIL]<br/>
-                  Тел: [ОРГАНИЗАТОР_ТЕЛ]</p>
+                  <p>ООО «ФЛАЙТ»<br/>
+                  Email: flight_ooo@mail.ru<br/>
+                  Тел: +7 (913) 911-08-32</p>
 
                   <p><strong>Технический оператор:</strong></p>
-                  <p>ИП Zakriev Maksharip Ziavdinovich<br/>
-                  Email: hello@sovani.ru<br/>
-                  Тел: +7 (999) 123-45-67</p>
+                  <p>ИП Гладких Виталий Олегович<br/>
+                  Email: shop@sovani.info<br/>
+                  Тел: +7 (993) 898-13-01</p>
                 </div>
               </section>
 

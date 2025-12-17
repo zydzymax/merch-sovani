@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { redis, isRedisReady } from '@/lib/redis/client'
 import { logger } from '@/lib/utils/logger'
 
 /**
@@ -12,45 +13,74 @@ import { logger } from '@/lib/utils/logger'
  */
 export async function GET() {
   const startTime = Date.now()
+  const services: Record<string, { status: string; responseTime?: string; error?: string }> = {}
 
+  let overallStatus = 'healthy'
+  let httpStatus = 200
+
+  // Check database connectivity
   try {
-    // Check database connectivity
+    const dbStart = Date.now()
     await prisma.$queryRaw`SELECT 1`
-
-    const responseTime = Date.now() - startTime
-
-    return NextResponse.json({
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      services: {
-        database: {
-          status: 'operational',
-          responseTime: `${responseTime}ms`
-        },
-        app: {
-          status: 'operational',
-          version: process.env.npm_package_version || '1.0.0',
-          nodeVersion: process.version
-        }
-      },
-      uptime: process.uptime()
-    }, { status: 200 })
-
+    services.database = {
+      status: 'operational',
+      responseTime: `${Date.now() - dbStart}ms`
+    }
   } catch (error) {
-    logger.error('Health check failed', error)
-
-    return NextResponse.json({
-      status: 'unhealthy',
-      timestamp: new Date().toISOString(),
-      error: 'Database connection failed',
-      services: {
-        database: {
-          status: 'down'
-        },
-        app: {
-          status: 'degraded'
-        }
-      }
-    }, { status: 503 })
+    services.database = {
+      status: 'down',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+    overallStatus = 'unhealthy'
+    httpStatus = 503
+    logger.error('Health check: Database down', error)
   }
+
+  // Check Redis connectivity
+  try {
+    const redisStart = Date.now()
+    if (isRedisReady()) {
+      await redis.ping()
+      services.redis = {
+        status: 'operational',
+        responseTime: `${Date.now() - redisStart}ms`
+      }
+    } else {
+      services.redis = {
+        status: 'degraded',
+        error: 'Not connected (using memory fallback)'
+      }
+    }
+  } catch (error) {
+    services.redis = {
+      status: 'degraded',
+      error: 'Connection failed (using memory fallback)'
+    }
+    // Redis is non-critical, don't change overall status
+  }
+
+  // App status
+  services.app = {
+    status: overallStatus === 'healthy' ? 'operational' : 'degraded',
+  }
+
+  const responseTime = Date.now() - startTime
+
+  return NextResponse.json({
+    status: overallStatus,
+    timestamp: new Date().toISOString(),
+    responseTime: `${responseTime}ms`,
+    services,
+    system: {
+      nodeVersion: process.version,
+      uptime: Math.floor(process.uptime()),
+      memoryUsage: {
+        heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`,
+        heapTotal: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)}MB`,
+      }
+    }
+  }, { status: httpStatus })
 }
+
+// Allow caching for 10 seconds
+export const revalidate = 10

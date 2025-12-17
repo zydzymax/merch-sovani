@@ -51,10 +51,23 @@ export async function POST(request: NextRequest) {
       variants,
     } = body
 
-    // Генерируем slug из названия
+    // Validate name length
+    if (name.length > 200) {
+      return NextResponse.json({ error: 'Product name too long (max 200 chars)' }, { status: 400 })
+    }
+
+    // Генерируем slug из названия с дополнительной санитизацией
     const baseSlug = name.toLowerCase()
-      .replace(/[^а-яa-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
+      .replace(/[^а-яa-z0-9\s-]/gi, '')  // Remove special chars
+      .replace(/\s+/g, '-')              // Replace spaces with dashes
+      .replace(/-+/g, '-')               // Remove duplicate dashes
+      .replace(/^-|-$/g, '')             // Remove leading/trailing dashes
+      .substring(0, 100)                 // Limit length
+
+    if (!baseSlug || baseSlug.length < 2) {
+      return NextResponse.json({ error: 'Invalid product name for slug generation' }, { status: 400 })
+    }
+
     let slug = baseSlug
     let counter = 1
 

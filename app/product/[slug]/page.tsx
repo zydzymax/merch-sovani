@@ -9,7 +9,7 @@ import BigFooter from '@/app/_components/BigFooter'
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const product = await prisma.product.findUnique({
-    where: { slug: params.slug, isActive: true },
+    where: { slug: params.slug },
     include: {
       variants: {
         where: { isActive: true },
@@ -21,6 +21,29 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   if (!product) {
     notFound()
+  }
+
+  // Редирект на Ozon для товаров не в наличии
+  const features = product.features as { ozonLink?: string; outOfStock?: boolean } | null
+  if (features?.outOfStock && features?.ozonLink) {
+    return (
+      <div className="min-h-screen" style={{background:"var(--bg)",color:"var(--text)"}}>
+        <Navbar />
+        <section className="section" style={{textAlign:"center",paddingTop:100}}>
+          <div className="container" style={{maxWidth:600}}>
+            <h1 style={{fontSize:32,marginBottom:24}}>{product.name}</h1>
+            <div style={{background:"#fef3c7",border:"1px solid #f59e0b",borderRadius:12,padding:24,marginBottom:32}}>
+              <p style={{fontSize:18,marginBottom:16}}>⚠️ Товар временно закончился на нашем сайте</p>
+              <p style={{color:"var(--muted)"}}>Вы можете заказать этот товар на Ozon</p>
+            </div>
+            <a href={features.ozonLink} target="_blank" rel="noopener noreferrer" style={{display:"inline-block",background:"#005bff",color:"white",padding:"16px 32px",borderRadius:8,fontSize:18,fontWeight:600,textDecoration:"none"}}>
+              Заказать на Ozon →
+            </a>
+          </div>
+        </section>
+        <BigFooter />
+      </div>
+    )
   }
 
   const defaultVariant = product.variants[0]

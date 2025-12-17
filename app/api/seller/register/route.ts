@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db/prisma'
 import bcrypt from 'bcryptjs'
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rateLimit'
 import { validateINN, validateOGRN } from '@/lib/utils/innOgrnValidation'
+import { normalizePhone } from '@/lib/utils/phoneNormalization'
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,6 +53,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate and normalize phone number
+    const normalizedPhone = normalizePhone(phone)
+    if (!normalizedPhone) {
+      return NextResponse.json(
+        { error: 'Неверный формат номера телефона. Используйте формат +79991234567 или 89991234567' },
+        { status: 400 }
+      )
+    }
+
     // Strong password validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{};':"\\|,.<>\/])[A-Za-z\d@$!%*?&#^()_+\-=[\]{};':"\\|,.<>\/]{12,}$/
     if (!passwordRegex.test(password)) {
@@ -93,8 +103,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Хешируем пароль
-    const passwordHash = await bcrypt.hash(password, 10)
+    // Проверяем, не используется ли телефон другим продавцом
+    const existingSellerWithPhone = await prisma.user.findFirst({
+      where: {
+        phone: normalizedPhone,
+        role: 'SELLER',
+      },
+    })
+
+    if (existingSellerWithPhone) {
+      return NextResponse.json(
+        { error: 'Этот номер телефона уже используется другим продавцом' },
+        { status: 400 }
+      )
+    }
+
+    // Хешируем пароль (cost factor 12 для безопасности)
+    const passwordHash = await bcrypt.hash(password, 12)
 
     // Создаём продавца
     const seller = await prisma.user.create({
@@ -102,7 +127,7 @@ export async function POST(request: NextRequest) {
         email,
         passwordHash,
         name,
-        phone,
+        phone: normalizedPhone,
         role: 'SELLER',
         companyName,
         inn,

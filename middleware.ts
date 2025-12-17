@@ -16,8 +16,21 @@ async function getTokenFromRequest(request: NextRequest) {
 }
 
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next()
   const { pathname } = request.nextUrl
+
+  // Check for subdomain header from nginx
+  const subdomain = request.headers.get('x-subdomain')
+
+  // Handle subdomain routing
+  if (subdomain === 'admin' && pathname === '/') {
+    return NextResponse.redirect(new URL('/admin', request.url))
+  }
+
+  if (subdomain === 'seller' && pathname === '/') {
+    return NextResponse.redirect(new URL('/seller', request.url))
+  }
+
+  const response = NextResponse.next()
 
   // Handle referral tracking
   const refParam = request.nextUrl.searchParams.get('ref')

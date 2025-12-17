@@ -18,11 +18,12 @@ export default function PrivacyPage() {
               <section>
                 <h2 className="font-display" style={{fontSize:'28px',marginBottom:16}}>1. Оператор персональных данных</h2>
                 <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
-                  <p><strong>Оператор:</strong> ИП Zakriev Maksharip Ziavdinovich</p>
-                  <p>ИНН: 1234567890<br/>
-                  ОГРНИП: 1234567890123<br/>
-                  Email: hello@sovani.ru<br/>
-                  Тел: +7 (999) 123-45-67</p>
+                  <p><strong>Оператор:</strong> ИП Гладких Виталий Олегович</p>
+                  <p>ИНН: 381705889083<br/>
+                  ОГРНИП: 325774600805724<br/>
+                  Адрес: г. Москва, ул. Маршала Бирюзова, д. 9, кв. 7<br/>
+                  Email: shop@sovani.info<br/>
+                  Тел: +7 (993) 898-13-01</p>
                 </div>
               </section>
 
@@ -78,7 +79,7 @@ export default function PrivacyPage() {
                     <li>Платёжные системы и банки-эквайеры (для обработки платежей);</li>
                     <li>ОФД и ККТ (для фискализации чеков);</li>
                     <li>Курьерские службы (для доставки товаров);</li>
-                    <li>Организатор акции [ОРГАНИЗАТОР_НАЗВАНИЕ] (для вручения призов и уплаты НДФЛ).</li>
+                    <li>Организатор акции ООО «ФЛАЙТ» (для вручения призов и уплаты НДФЛ).</li>
                   </ul>
                   <p>Оператор не передаёт персональные данные третьим лицам для маркетинговых целей без согласия Пользователя.</p>
                 </div>
@@ -113,7 +114,7 @@ export default function PrivacyPage() {
                     <li>Отозвать согласие на обработку персональных данных;</li>
                     <li>Обжаловать действия Оператора в Роскомнадзоре или суде.</li>
                   </ul>
-                  <p>Для реализации своих прав обращайтесь по email: hello@sovani.ru</p>
+                  <p>Для реализации своих прав обращайтесь по email: shop@sovani.info</p>
                 </div>
               </section>
 
@@ -122,7 +123,7 @@ export default function PrivacyPage() {
                 <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
                   <div style={{padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)',color:'#fff'}}>
                     <p style={{fontStyle:'italic'}}>
-                      «Я даю согласие Оператору площадки (ИП Zakriev Maksharip Ziavdinovich, ИНН 1234567890) на обработку моих персональных данных для оформления заказа, участия в стимулирующей акции (включая формирование и публикацию списка победителей в обезличенном виде) и получения уведомлений. Политика конфиденциальности: <Link href="/docs/privacy" style={{color:'var(--accent)'}}>justbusiness.lol/docs/privacy</Link>.»
+                      «Я даю согласие Оператору площадки (ИП Гладких Виталий Олегович, ИНН 381705889083) на обработку моих персональных данных для оформления заказа, участия в стимулирующей акции (включая формирование и публикацию списка победителей в обезличенном виде) и получения уведомлений. Политика конфиденциальности: <Link href="/docs/privacy" style={{color:'var(--accent)'}}>justbusiness.lol/docs/privacy</Link>.»
                     </p>
                   </div>
                   <p style={{marginTop:12,fontSize:'14px',opacity:0.8}}>

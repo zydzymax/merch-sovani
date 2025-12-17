@@ -42,7 +42,7 @@ class EmailService {
   }
 
   async sendEmail(options: EmailOptions): Promise<boolean> {
-    const from = options.from || process.env.EMAIL_FROM || 'noreply@mzakriev.ru'
+    const from = options.from || process.env.SMTP_FROM || 'SoVAni <shop@sovani.info>'
 
     // If email is not configured, just log and return success
     if (!this.isConfigured || !this.transporter) {

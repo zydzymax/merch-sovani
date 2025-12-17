@@ -117,7 +117,7 @@ export function renderRegistrationEmail(data: RegistrationEmailData): string {
     <div class="content">
       <h1>🎉 Добро пожаловать, ${data.name}!</h1>
 
-      <p>Спасибо за регистрацию в <strong>SoVAni</strong> — магазине стильной одежды и аксессуаров с еженедельными розыгрышами призов!</p>
+      <p>Спасибо за регистрацию в <strong>SoVAni</strong> — магазине стильной одежды и аксессуаров с розыгрышем iPhone!</p>
 
       ${data.password ? `
       <div class="highlight-box" style="background: rgba(52, 211, 153, 0.1); border-color: rgba(52, 211, 153, 0.3);">
@@ -130,17 +130,10 @@ export function renderRegistrationEmail(data: RegistrationEmailData): string {
 
       <div class="features">
         <div class="feature">
-          <div class="feature-icon">✨</div>
-          <div>
-            <strong>Участвуйте в розыгрышах</strong><br>
-            <span style="color: #999;">Каждую неделю разыгрываем ценные призы среди покупателей</span>
-          </div>
-        </div>
-        <div class="feature">
           <div class="feature-icon">🎁</div>
           <div>
-            <strong>Главный приз</strong><br>
-            <span style="color: #999;">iPhone 17 Pro Max разыгрываем в конце акции</span>
+            <strong>Главный приз — iPhone</strong><br>
+            <span style="color: #999;">Разыгрываем iPhone среди всех участников акции</span>
           </div>
         </div>
         <div class="feature">
@@ -148,6 +141,13 @@ export function renderRegistrationEmail(data: RegistrationEmailData): string {
           <div>
             <strong>Приглашайте друзей</strong><br>
             <span style="color: #999;">Получайте дополнительные шансы на победу</span>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">✨</div>
+          <div>
+            <strong>Участие при покупке</strong><br>
+            <span style="color: #999;">Каждая покупка даёт вам шанс выиграть</span>
           </div>
         </div>
       </div>
@@ -169,7 +169,7 @@ export function renderRegistrationEmail(data: RegistrationEmailData): string {
         1. Сделайте покупку и согласитесь участвовать в розыгрыше<br>
         2. Получите код участия после оплаты<br>
         3. Приглашайте друзей — получайте +1 шанс за каждую их покупку<br>
-        4. Выигрывайте еженедельные призы и главный приз!
+        4. Выиграйте iPhone в главном розыгрыше!
       </p>
     </div>
 
@@ -194,7 +194,7 @@ export function renderRegistrationEmailText(data: RegistrationEmailData): string
   return `
 Добро пожаловать в SoVAni, ${data.name}!
 
-Спасибо за регистрацию в нашем магазине стильной одежды и аксессуаров с еженедельными розыгрышами призов!
+Спасибо за регистрацию в нашем магазине стильной одежды и аксессуаров с розыгрышем iPhone!
 
 ${data.password ? `
 Ваши данные для входа:
@@ -214,7 +214,7 @@ Email: ${data.email}
 1. Сделайте покупку и согласитесь участвовать в розыгрыше
 2. Получите код участия после оплаты
 3. Приглашайте друзей — получайте +1 шанс за каждую их покупку
-4. Выигрывайте еженедельные призы и главный приз iPhone 17 Pro Max!
+4. Выиграйте iPhone в главном розыгрыше!
 
 Перейти на сайт: ${process.env.NEXT_PUBLIC_URL || 'https://mzakriev.ru'}
 

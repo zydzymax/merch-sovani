@@ -54,7 +54,7 @@ export function renderOrderConfirmationEmail(data: OrderConfirmationEmailData): 
     <div style="background: linear-gradient(135deg, #ff8534 0%, #ff6b35 100%); border-radius: 16px; padding: 30px; margin: 30px 0; text-align: center;">
       <h2 style="margin: 0 0 10px 0; font-size: 24px; color: #ffffff;">🎉 Вы участвуете в розыгрыше!</h2>
       <p style="margin: 0 0 20px 0; font-size: 16px; color: rgba(255,255,255,0.9);">
-        Ваш код участия в еженедельном розыгрыше призов:
+        Ваш код участия в розыгрыше iPhone:
       </p>
       <div style="background: rgba(0,0,0,0.2); border-radius: 12px; padding: 15px; margin: 0 auto; display: inline-block;">
         <div style="font-size: 32px; font-weight: 700; color: #ffffff; font-family: 'Courier New', monospace; letter-spacing: 3px;">

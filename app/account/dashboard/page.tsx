@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/app/_components/Navbar'
@@ -13,23 +12,38 @@ interface ReferralStats {
   referralUrl: string
 }
 
+interface User {
+  id: string
+  email: string
+  name: string | null
+}
+
 export default function DashboardPage() {
-  const { data: session, status } = useSession()
   const router = useRouter()
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState<ReferralStats | null>(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    checkAuth()
+  }, [])
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/account/referral')
+      if (!response.ok) {
+        router.push('/login?callbackUrl=/account/dashboard')
+        return
+      }
+      const data = await response.json()
+      setStats(data)
+      setUser({ id: data.userId, email: data.email, name: data.name })
+      setLoading(false)
+    } catch (error) {
       router.push('/login?callbackUrl=/account/dashboard')
     }
-  }, [status, router])
-
-  useEffect(() => {
-    if (session?.user) {
-      fetchReferralStats()
-    }
-  }, [session])
+  }
 
   const fetchReferralStats = async () => {
     try {
@@ -51,11 +65,7 @@ export default function DashboardPage() {
     }
   }
 
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' })
-  }
-
-  if (status === 'loading') {
+  if (loading) {
     return (
       <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
         <Navbar />
@@ -68,7 +78,7 @@ export default function DashboardPage() {
     )
   }
 
-  if (!session) {
+  if (!user) {
     return null
   }
 
@@ -78,14 +88,9 @@ export default function DashboardPage() {
 
       <section className="section">
         <div className="container" style={{ maxWidth: 900 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-            <h1 className="font-display" style={{ fontSize: '32px' }}>
-              Личный кабинет
-            </h1>
-            <button onClick={handleSignOut} className="btn btn-ghost" style={{ fontSize: 14 }}>
-              Выйти
-            </button>
-          </div>
+          <h1 className="font-display" style={{ fontSize: '32px', marginBottom: 32 }}>
+            Личный кабинет
+          </h1>
 
           <div style={{ display: 'grid', gap: 24 }}>
             {/* User Info Card */}
@@ -96,11 +101,11 @@ export default function DashboardPage() {
               <div style={{ display: 'grid', gap: 12 }}>
                 <div>
                   <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 4 }}>Имя</div>
-                  <div style={{ fontSize: 16, fontWeight: 600 }}>{session.user?.name || 'Не указано'}</div>
+                  <div style={{ fontSize: 16, fontWeight: 600 }}>{user.name || 'Не указано'}</div>
                 </div>
                 <div>
                   <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 4 }}>Email</div>
-                  <div style={{ fontSize: 16, fontWeight: 600 }}>{session.user?.email}</div>
+                  <div style={{ fontSize: 16, fontWeight: 600 }}>{user.email}</div>
                 </div>
               </div>
             </div>

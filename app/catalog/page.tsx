@@ -53,6 +53,7 @@ export default async function CatalogPage({
                 const price = variant?.price ? formatPrice(variant.price) : '0 ₽'
                 const isKeychain = product.slug === 'keychain' || product.name.toLowerCase().includes('брелок')
                 const badge = isKeychain ? '🎁 1 брелок = 1 шанс на iPhone' : undefined
+                const features = product.features as { ozonLink?: string; outOfStock?: boolean } | null
 
                 return (
                   <ProductCard
@@ -63,6 +64,8 @@ export default async function CatalogPage({
                     imageUrl={product.images[0] || '/placeholder.png'}
                     href={`/product/${product.slug}`}
                     badge={badge}
+                    ozonLink={features?.ozonLink}
+                    outOfStock={features?.outOfStock}
                   />
                 )
               })}
@@ -86,6 +89,7 @@ export default async function CatalogPage({
                 const price = variant?.price ? formatPrice(variant.price) : '0 ₽'
                 const isKeychain = product.slug === 'keychain' || product.name.toLowerCase().includes('брелок')
                 const badge = isKeychain ? '🎁 1 брелок = 1 шанс на iPhone' : undefined
+                const features = product.features as { ozonLink?: string; outOfStock?: boolean } | null
 
                 return (
                   <ProductCard
@@ -96,6 +100,8 @@ export default async function CatalogPage({
                     imageUrl={product.images[0] || '/placeholder.png'}
                     href={`/product/${product.slug}`}
                     badge={badge}
+                    ozonLink={features?.ozonLink}
+                    outOfStock={features?.outOfStock}
                   />
                 )
               })}

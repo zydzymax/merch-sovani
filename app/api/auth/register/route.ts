@@ -6,6 +6,7 @@ import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rateLimit'
 import { logger } from '@/lib/utils/logger'
 import { sendRegistrationEmail } from '@/lib/email'
 import { SignJWT } from 'jose'
+import { normalizePhone } from '@/lib/utils/phoneNormalization'
 
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable must be defined')
@@ -55,6 +56,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate and normalize phone number if provided
+    let normalizedPhone: string | null = null
+    if (phone) {
+      normalizedPhone = normalizePhone(phone)
+      if (!normalizedPhone) {
+        return NextResponse.json(
+          { error: 'Неверный формат номера телефона. Используйте формат +79991234567 или 89991234567' },
+          { status: 400 }
+        )
+      }
+    }
+
     // Strong password validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{};':"\\|,.<>\/])[A-Za-z\d@$!%*?&#^()_+\-=[\]{};':"\\|,.<>\/]{12,}$/
     if (!passwordRegex.test(password)) {
@@ -76,6 +89,23 @@ export async function POST(request: NextRequest) {
         { error: 'Пользователь с таким email уже существует' },
         { status: 400 }
       )
+    }
+
+    // Проверяем, не используется ли телефон другим покупателем
+    if (normalizedPhone) {
+      const existingCustomerWithPhone = await prisma.user.findFirst({
+        where: {
+          phone: normalizedPhone,
+          role: 'CUSTOMER',
+        },
+      })
+
+      if (existingCustomerWithPhone) {
+        return NextResponse.json(
+          { error: 'Этот номер телефона уже используется другим покупателем' },
+          { status: 400 }
+        )
+      }
     }
 
     // Hash password
@@ -108,7 +138,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         email: email.toLowerCase(),
-        phone: phone || null,
+        phone: normalizedPhone,
         passwordHash,
         referralCode,
         role: 'CUSTOMER',

@@ -44,8 +44,7 @@ export default function AccountPage() {
       }
 
       // Redirect to dashboard
-      router.push('/account/dashboard')
-      router.refresh()
+      window.location.href = '/account/dashboard'
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -90,8 +89,7 @@ export default function AccountPage() {
       }
 
       // Redirect to dashboard
-      router.push('/account/dashboard')
-      router.refresh()
+      window.location.href = '/account/dashboard'
     } catch (err: any) {
       setError(err.message)
     } finally {

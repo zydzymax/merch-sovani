@@ -15,7 +15,7 @@ export default async function AdminLayout({
   // Check admin authentication
   const user = await getUser()
   if (!user || user.role !== 'ADMIN') {
-    redirect('/login')
+    redirect('/auth/admin-login?callbackUrl=/admin')
   }
 
   const navLinks = [

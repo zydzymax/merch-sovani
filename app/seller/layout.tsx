@@ -1,17 +1,16 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth/authOptions'
+import { getUser } from '@/lib/auth/getUser'
 
 export default async function SellerLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerSession(authOptions)
+  const user = await getUser()
 
-  if (!session || session.user.role !== 'SELLER') {
-    redirect('/login?callbackUrl=/seller')
+  if (!user || user.role !== 'SELLER') {
+    redirect('/auth/seller-login?callbackUrl=/seller')
   }
 
   return (
@@ -24,8 +23,8 @@ export default async function SellerLayout({
               Кабинет продавца
             </Link>
             <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
-              <span style={{ color: 'var(--muted)' }}>{session.user.email}</span>
-              <Link href="/api/auth/signout" className="btn btn-ghost">
+              <span style={{ color: 'var(--muted)' }}>{user.email}</span>
+              <Link href="/api/auth/logout" className="btn btn-ghost">
                 Выход
               </Link>
             </div>

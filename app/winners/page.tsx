@@ -105,7 +105,7 @@ export default function WinnersPage() {
                 Как принять участие?
               </h3>
               <p className="lead" style={{fontSize:'16px',lineHeight:1.6}}>
-                Приобретите брелок на сайте <Link href="/" style={{color:'var(--accent)'}}>sovani.info</Link> стоимостью 1 999 ₽. Каждый брелок = 1 шанс участия в розыгрыше.
+                Приобретите брелок на сайте <Link href="/" style={{color:'var(--accent)'}}>fashion.sovani.ru</Link> стоимостью 1 999 ₽. Каждый брелок = 1 шанс участия в розыгрыше.
               </p>
               <p className="lead" style={{fontSize:'16px',lineHeight:1.6}}>
                 Пригласите друзей по реферальной ссылке и получите дополнительный шанс после их первой покупки.

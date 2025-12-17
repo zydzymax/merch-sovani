@@ -19,11 +19,11 @@ export default function LegalPage() {
                 Оператор площадки (Технический оператор и Агент)
               </h2>
               <div className="lead" style={{fontSize:'16px',lineHeight:1.8,display:'grid',gap:8}}>
-                <p><strong>Индивидуальный предприниматель:</strong> Zakriev Maksharip Ziavdinovich</p>
-                <p><strong>ИНН:</strong> 1234567890</p>
-                <p><strong>ОГРНИП:</strong> 1234567890123</p>
-                <p><strong>Email:</strong> <a href="mailto:hello@sovani.ru" style={{color:'var(--accent)'}}>hello@sovani.ru</a></p>
-                <p><strong>Телефон:</strong> <a href="tel:+79991234567" style={{color:'var(--accent)'}}>+7 (999) 123-45-67</a></p>
+                <p><strong>Индивидуальный предприниматель:</strong> Гладких Виталий Олегович</p>
+                <p><strong>ИНН:</strong> 381705889083</p>
+                <p><strong>ОГРНИП:</strong> 325774600805724</p>
+                <p><strong>Email:</strong> <a href="mailto:shop@sovani.info" style={{color:'var(--accent)'}}>shop@sovani.info</a></p>
+                <p><strong>Телефон:</strong> <a href="tel:+79938981301" style={{color:'var(--accent)'}}>+7 (993) 898-13-01</a></p>
               </div>
 
               <div style={{marginTop:24,padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)'}}>
@@ -38,12 +38,12 @@ export default function LegalPage() {
                 Организатор акции и Продавец
               </h2>
               <div className="lead" style={{fontSize:'16px',lineHeight:1.8,display:'grid',gap:8}}>
-                <p><strong>Наименование:</strong> [ОРГАНИЗАТОР_НАЗВАНИЕ]</p>
-                <p><strong>ИНН:</strong> [ОРГАНИЗАТОР_ИНН]</p>
-                <p><strong>ОГРН:</strong> [ОРГАНИЗАТОР_ОГРН]</p>
-                <p><strong>Адрес:</strong> [ОРГАНИЗАТОР_АДРЕС]</p>
-                <p><strong>Email:</strong> [ОРГАНИЗАТОР_EMAIL]</p>
-                <p><strong>Телефон:</strong> [ОРГАНИЗАТОР_ТЕЛ]</p>
+                <p><strong>Наименование:</strong> ООО «ФЛАЙТ»</p>
+                <p><strong>ИНН:</strong> 5403087589</p>
+                <p><strong>ОГРН:</strong> 1255400011261</p>
+                <p><strong>Адрес:</strong> 630088, Новосибирская область, г. Новосибирск, ул. Петухова, д. 22/1</p>
+                <p><strong>Email:</strong> flight_ooo@mail.ru</p>
+                <p><strong>Телефон:</strong> +7 (913) 911-08-32</p>
               </div>
 
               <div style={{marginTop:24,padding:20,background:'var(--surface)',borderRadius:16,borderLeft:'4px solid var(--accent)'}}>
@@ -65,7 +65,7 @@ export default function LegalPage() {
                   </h3>
                   <div className="lead" style={{fontSize:'16px',lineHeight:1.6,display:'grid',gap:12}}>
                     <p>
-                      <strong>Оператор площадки (ИП Zakriev Maksharip Ziavdinovich)</strong> выполняет исключительно технические функции:
+                      <strong>Оператор площадки (ИП Гладких Виталий Олегович)</strong> выполняет исключительно технические функции:
                     </p>
                     <ul style={{paddingLeft:24}}>
                       <li>Обеспечивает работу сайта justbusiness.lol;</li>
@@ -118,7 +118,7 @@ export default function LegalPage() {
                       Деятельность Meta Platforms Inc. на территории РФ запрещена решением суда.
                     </p>
                     <p style={{marginTop:12}}>
-                      <strong>Размещение материалов в Instagram*</strong> осуществляется исключительно Организатором акции. Оператор площадки (ИП Zakriev Maksharip Ziavdinovich) не размещает рекламу и контент в Instagram*.
+                      <strong>Размещение материалов в Instagram*</strong> осуществляется исключительно Организатором акции. Оператор площадки (ИП Гладких Виталий Олегович) не размещает рекламу и контент в Instagram*.
                     </p>
                   </div>
                 </section>

@@ -86,10 +86,10 @@ export default function FooterNew() {
               Контакты
             </h4>
             <p style={{ fontSize: '14px', color: 'var(--muted)', marginBottom: 'var(--gap-1)' }}>
-              Email: hello@sovani.ru
+              Email: flight_ooo@mail.ru
             </p>
             <p style={{ fontSize: '14px', color: 'var(--muted)' }}>
-              Тел: +7 (999) 123-45-67
+              Тел: +7 (913) 911-08-32
             </p>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function FooterNew() {
             fontSize: '12px',
             color: 'var(--muted)',
           }}>
-            ИНН: 1234567890 | ОГРНИП: 1234567890123
+            ИНН: 5403087589 | ОГРН: 1255400011261
           </p>
         </div>
       </div>

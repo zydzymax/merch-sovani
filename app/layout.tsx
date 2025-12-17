@@ -4,6 +4,7 @@ import './globals.css'
 import { cn } from '@/lib/utils/cn'
 import CookieBanner from '@/components/CookieBanner'
 import { SessionProvider } from './_providers/SessionProvider'
+import { ToastProvider } from '@/components/Toast'
 
 const montserrat = Montserrat({ subsets: ['latin', 'cyrillic'], weight: ['400','500','600'], variable: '--font-body' })
 const unbounded = Unbounded({ subsets: ['latin', 'cyrillic'], weight: ['600','700','800'], variable: '--font-display' })
@@ -93,8 +94,10 @@ export default function RootLayout({
       </head>
       <body className={cn(montserrat.className, 'antialiased')}>
         <SessionProvider>
-          {children}
-          <CookieBanner />
+          <ToastProvider>
+            {children}
+            <CookieBanner />
+          </ToastProvider>
         </SessionProvider>
       </body>
     </html>

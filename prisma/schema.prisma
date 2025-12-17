@@ -320,6 +320,7 @@ model Order {
   shippingRegion       String?
   shippingPostalCode   String?
   shippingCountry      String      @default("RU")
+  cdekTrackingNumber   String? // Номер накладной СДЭК
 
   // Totals
   subtotal             Int // сумма товаров
