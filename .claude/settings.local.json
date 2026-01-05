@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(python test_new_analysis.py:*)",
+      "WebFetch(domain:platform.openai.com)",
+      "Bash(python test_gpt5_debug.py:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(sqlite3:*)",
+      "Bash(python process_production_calls.py:*)",
+      "Bash(tee:*)",
+      "Bash(python test_caching.py:*)",
+      "Bash(echo:*)",
+      "Bash(systemctl status:*)",
+      "Bash(systemctl restart:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

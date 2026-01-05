@@ -1,0 +1,154 @@
+.header {
+  background: #15151e;
+  color: #fafafa;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+  background: rgba(21, 21, 30, 0.95);
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  font-size: 20px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.logo:hover {
+  opacity: 0.9;
+}
+
+.nav {
+  display: flex;
+  gap: 14px;
+  margin-left: 8px;
+}
+
+.nav a {
+  color: #fff;
+  opacity: 0.9;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.nav a:hover {
+  opacity: 1;
+}
+
+.tools {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.cart {
+  position: relative;
+  color: #fff;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.cart:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ctaBtn {
+  background: #0087FE;
+  color: #fafafa;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ctaBtn:hover {
+  background: #0076dd;
+  transform: translateY(-1px);
+}
+
+.search {
+  height: 36px;
+  width: 220px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid #b94;
+  background: #fff;
+  color: #222;
+  font-size: 14px;
+}
+
+.search::placeholder {
+  color: #888;
+}
+
+.btn {
+  background: #e52a27;
+  color: #fafafa;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: #d01f1c;
+}
+
+.separator {
+  height: 3px;
+  background: linear-gradient(90deg, #0087FE, #00a3ff, #0087FE);
+}
+
+@media (max-width: 860px) {
+  .inner {
+    flex-wrap: wrap;
+  }
+  .nav {
+    order: 3;
+    width: 100%;
+    gap: 10px;
+  }
+  .tools {
+    width: auto;
+  }
+  .search {
+    width: 180px;
+  }
+}
+
+@media (max-width: 640px) {
+  .logo {
+    font-size: 18px;
+  }
+  .nav {
+    gap: 8px;
+    font-size: 14px;
+  }
+  .search {
+    width: 120px;
+    font-size: 13px;
+  }
+  .btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}
